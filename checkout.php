@@ -37,7 +37,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			public function __construct() 
 			{
 				$this->id = 'bitpay';
-				//$this->icon = apply_filters('woocommerce_cheque_icon', '');
+				$this->icon = plugin_dir_url(__FILE__).'bitpay.png';
 				$this->has_fields = false;
 			 
 				// Load the form fields.
@@ -77,7 +77,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'title' => __( 'Customer Message', 'woothemes' ),
 						'type' => 'textarea',
 						'description' => __( 'Message to explain how the customer will be paying for the purchase.', 'woothemes' ),
-						'default' => 'You will be redirect to bitpay.com to complete your purchase.'
+						'default' => 'You will be redirected to bitpay.com to complete your purchase.'
 					),
 					'apiKey' => array(
 						'title' => __('API Key', 'woothemes'),
@@ -89,10 +89,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'type' => 'select',
 						'description' => 'Choose a transaction speed.  For details, see the API documentation at bitpay.com',
 						'options' => array(
-							'fast' => 'Fast',
+							'high' => 'High',
 							'medium' => 'Medium',
-							'slow' => 'Slow',
+							'low' => 'Low',
 						),
+						'default' => 'high',
 					),
 				);
 			}
@@ -160,53 +161,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'result'    => 'success',
 						'redirect'  => $invoice['url'],
 					);
-				}
-
-				// Empty awaiting payment session
-				//
-			 
+				}			 
 			}
 		}
 	}
-	
-	function bitpay_callback()
-	{				
-		if(isset($_GET['bitpay_callback']))
-		{
-			global $woocommerce;
-			
-			require(plugin_dir_path(__FILE__).'bp_lib.php');
-			
-			$gateways = $woocommerce->payment_gateways->payment_gateways();
-			if (!isset($gateways['bitpay']))
-			{
-				bplog('bitpay plugin not enabled in woocommerce');
-				return;
-			}
-			$bp = $gateways['bitpay'];
-			$response = bpVerifyNotification( $bp->settings['apiKey'] );
 
-			if (isset($response['error']))
-				bplog($response);
-			else
-			{
-				$orderId = $response['posData'];
-				$order = new WC_Order( $orderId );
-
-				switch($response['status'])
-				{
-					case 'paid':
-						break;
-					case 'confirmed':
-					case 'complete':
-						unset($_SESSION['order_awaiting_payment']);
-						
-						$order->payment_complete();						
-						break;
-				}
-			}
-		}
-	}
+	include plugin_dir_path(__FILE__).'callback.php';
 
 	function add_bitpay_gateway( $methods ) {
 		$methods[] = 'WC_Bitpay'; 
@@ -217,5 +177,5 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 	add_action('plugins_loaded', 'declareWooBitpay', 0);
 	
-	add_action('init', 'bitpay_callback');
+	
 }

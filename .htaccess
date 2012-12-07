@@ -1,2 +1,5 @@
 Order deny,allow
 Deny from all
+<Files bitpay.png>
+allow from all
+</Files>
