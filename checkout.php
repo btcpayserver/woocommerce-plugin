@@ -95,6 +95,58 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						),
 						'default' => 'high',
 					),
+					'fbaEnabled' => array(
+						'title' => __('Fullfullment By Amazon Enabled', 'woothemes'),
+						'type' => 'checkbox',
+						'description' => 'FBA account requred',
+						'default' => 'no',
+					),
+					'fbaAccessKeyId' => array(
+						'title' => __('FBA Access Key ID', 'woothemes'),
+						'type' => 'text',
+						'description' => '',
+					),
+					'fbaSecretAccessKey' => array(
+						'title' => __('FBA Secret Access Key', 'woothemes'),
+						'type' => 'text',
+						'description' => '',
+					),						
+					'fbaSellerId' => array(
+						'title' => __('FBA Seller ID', 'woothemes'),
+						'type' => 'text',
+						'description' => '',
+					),
+					'fbaMarketplaceId' => array(
+						'title' => __('FBA Marketplace ID', 'woothemes'),
+						'type' => 'text',
+						'description' => '',
+					),
+					'fbaEndpointUrl' => array(
+						'title' => __('FBA Endpoint URL', 'woothemes'),
+						'type' => 'text',
+						'description' => '',
+						'default' => 'https://mws.amazonservices.com/FulfillmentOutboundShipment/2010-10-01/',
+					),
+					'fbaShippingSpeed' => array(
+						'title' => __('FBA Shipping Speed', 'woothemes'),
+						'type' => 'select',
+						'description' => '',
+						'options' => array(
+							'Standard' => 'Standard',
+							'Expedited' => 'Expedited',
+							'Priority' => 'Priority'),
+						'default' => 'standard',
+					),
+					'fbaFulfillmentPolicy' => array(
+						'title' => __('FBA Fulfillment Policy', 'woothemes'),
+						'type' => 'select',
+						'description' => '',
+						'options' => array(
+							'FillOrKill' => 'Fill or Kill',
+							'FillAll' => 'Fill All',
+							'FillAllAvailable' => 'Fill All Available'),
+						'default' => 'fillOrKill',
+					)
 				);
 			}
 				
