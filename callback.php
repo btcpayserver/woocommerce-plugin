@@ -120,7 +120,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$secretKey = $bpfba['secretAccessKey'];
 		$merchantId = $bpfba['merchantId'];
 		$marketplaceId = $bpfba['marketplaceId'];
-		$endpointUrl = $bitpay->settings['fbaEndpointUrl']; // this one comes from the WP control panel
+		$endpointUrl = $bpfba['endpointUrl'];
 
 		// create required FBA objects
 		$config = array (

@@ -101,12 +101,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'description' => 'FBA account requred.  Fill in account info at ./fba_options.php.',
 						'default' => 'no',
 					),
-					'fbaEndpointUrl' => array(
-						'title' => __('FBA Endpoint URL', 'woothemes'),
-						'type' => 'text',
-						'description' => '',
-						'default' => 'https://mws.amazonservices.com/FulfillmentOutboundShipment/2010-10-01/',
-					),
 				);
 			}
 				
