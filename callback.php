@@ -52,8 +52,16 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	{
 		if (!$bitpay->settings['fbaEnabled'])
 			return;
+			
+		$orderInfo = 'order '.$order->id.':'; // for log
 
-		require_once (plugin_dir_path(__FILE__).'FBAOutboundServiceMWS/config.inc.php');
+		require_once (plugin_dir_path(__FILE__).'FBAOutboundServiceMWS/config.inc.php');		
+		$optionsFile = plugin_dir_path(__FILE__).'fba_options.php';
+		if (!file_exists($optionsFile)) {
+			bplog($orderInfo.'fba_options.php not found.  Copy fba_options.php.sample and fill in details.');
+			return;
+		}
+		require_once ($optionsFile);
 		
 		// gather order info
 		$items = $order->get_items();
@@ -64,16 +72,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$product = new WC_Product($i['id']);			
 			if (!strlen($product->get_sku()))
 			{
-				bplog('No product SKU. FBA order not sent');
-				return false;
+				bplog($orderInfo.'No product SKU in order'.$order->id.'.  FBA order not sent');
+				return;
 			}
 			$orderItems[] = array(
 				'currency' => get_woocommerce_currency(),
 				'value' => $i['line_subtotal'],
 				'sku' => $product->get_sku(),
 				'quantity' => $i['qty']);
-		}
-				
+		}				
 		$prefix = ($order->shipping_address_1) ? 'shipping_' : 'billing_';
 		$address = array(
 			'name' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
@@ -87,30 +94,44 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			'phone' => $order->billing_phone); // there is no shipping_phone
 		if (strlen($order->{$prefix.company}))
 			$address['name'] = $order->{$prefix.company}.' c/o '.$address['name'];
+				
+		// find fba options by looking for country
+		foreach($bpfbaOptions as $o) {
+			if (!strlen($o['countries'])) { 
+				$bpfba = $o; // blank country means "use this if above entries don't match"
+				break;
+			}
+			$countries = explode(',',$o['countries']);
+			if (in_array($address['country'], $countries) === TRUE) {
+				$bpfba = $o;
+				break;
+			}
+		}		
+		if (!isset($bpfba)) {	
+			bplog($orderInfo.'Destination address not found in fba_options.php');
+			return false;
+		}
 		
+		// apply fba options 
 		$orderId = $order->id;
-		$shippingSpeed = $bitpay->settings['fbaShippingSpeed'];
-		$fulfillmentPolicy = $bitpay->settings['fbaFulfillmentPolicy'];
-		
-
-		define('ACCESS_KEY_ID', $bitpay->settings['fbaAccessKeyId']);
-		define('SECRET_ACCESS_KEY', $bitpay->settings['fbaSecretAccessKey']);  
-		define('SELLER_ID', $bitpay->settings['fbaSellerId']);
-		define('MARKETPLACE_ID', $bitpay->settings['fbaMarketplaceId']);
-		define('MWS_ENDPOINT_URL', $bitpay->settings['fbaEndpointUrl']);
+		$shippingSpeed = $bpfba['shippingSpeed'];
+		$fulfillmentPolicy = $bpfba['fulfillmentPolicy'];
+		$awsAccessKey = $bpfba['awsAccessKey'];
+		$secretKey = $bpfba['secretAccessKey'];
+		$merchantId = $bpfba['merchantId'];
+		$marketplaceId = $bpfba['marketplaceId'];
+		$endpointUrl = $bitpay->settings['fbaEndpointUrl']; // this one comes from the WP control panel
 
 		// create required FBA objects
-
 		$config = array (
-			'ServiceURL' => MWS_ENDPOINT_URL,
+			'ServiceURL' => $endpointUrl,
 			'ProxyHost' => null,
 			'ProxyPort' => -1,
 			'MaxErrorRetry' => 3
 			);
-
 		$service = new FBAOutboundServiceMWS_Client(
-			ACCESS_KEY_ID, 
-			SECRET_ACCESS_KEY, 
+			$awsAccessKey, 
+			$secretKey, 
 			$config,
 			APPLICATION_NAME,
 			APPLICATION_VERSION);
@@ -126,7 +147,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$item->setSellerSKU($i['sku']); // must be amazon's SKU
 			$item->setSellerFulfillmentOrderItemId(count($orderItems)+1); // seller can choose this
 			$item->setQuantity( (int)$i['quantity'] ); // must be integer or FBA server fails
-			//$item->setPerUnitDeclaredValue($value); // not required -- this isn't the right format anyway
 			$items[] = $item;
 		}
 
@@ -134,7 +154,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$list->setMember($items);
 
 		$emails = new FBAOutboundServiceMWS_Model_NotificationEmailList();
-		
 		
 		$fbaAddress = new FBAOutboundServiceMWS_Model_Address();
 		$fbaAddress->setName($address['name']);
@@ -145,12 +164,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$fbaAddress->setStateOrProvinceCode($address['state']);
 		$fbaAddress->setCountryCode($address['country']);
 		$fbaAddress->setPostalCode($address['zip']);
-		$fbaAddress->setPhoneNumber($address['phone']);
-		
+		$fbaAddress->setPhoneNumber($address['phone']);		
 
 		$request = new FBAOutboundServiceMWS_Model_CreateFulfillmentOrderRequest();
-		$request->setSellerId(SELLER_ID);
-		$request->setMarketplace(MARKETPLACE_ID);
+		$request->setSellerId($merchantId);
+		$request->setMarketplace($marketplaceId);
 		$request->setSellerFulfillmentOrderId($orderId);
 		$request->setDisplayableOrderId($orderId);
 		$request->setDisplayableOrderDateTime(date('Y-m-d', time()));
@@ -166,10 +184,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		try {
 			$response = $service->createFulfillmentOrder($request);
 
-			bplog ("Service Response");
-			bplog ("=============================================================================");
-
-			bplog("        CreateFulfillmentOrderResponse");
+			bplog($orderInfo);
+			bplog("CreateFulfillmentOrderResponse");
 			if ($response->isSetResponseMetadata()) { 
 				bplog("            ResponseMetadata");
 				$responseMetadata = $response->getResponseMetadata();
@@ -182,7 +198,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 		} catch (FBAOutboundServiceMWS_Exception $ex) {
 			bplog("Caught Exception: " . $ex->getMessage());
-			bplog('order '.$order->id);
 			bplog("Response Status Code: " . $ex->getStatusCode());
 			bplog("Error Code: " . $ex->getErrorCode());
 			bplog("Error Type: " . $ex->getErrorType());
