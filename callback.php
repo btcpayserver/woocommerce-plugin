@@ -147,6 +147,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$item->setSellerSKU($i['sku']); // must be amazon's SKU
 			$item->setSellerFulfillmentOrderItemId(count($orderItems)+1); // seller can choose this
 			$item->setQuantity( (int)$i['quantity'] ); // must be integer or FBA server fails
+			$c = new FBAOutboundServiceMWS_Model_Currency();
+			$c->setCurrencyCode(get_woocommerce_currency());
+			$c->setValue($i['value']);
+			$item->setPerUnitDeclaredValue($c);
 			$items[] = $item;
 		}
 
