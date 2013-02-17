@@ -142,6 +142,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				
 				$currency = get_woocommerce_currency();
 				
+				$prefix = 'billing_';
 				$options = array(
 					'apiKey' => $this->settings['apiKey'],
 					'transactionSpeed' => $this->settings['transactionSpeed'],
@@ -149,8 +150,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'redirectURL' => $redirect,
 					'notificationURL' => $notificationURL,
 					'fullNotifications' => true,
+					'buyerName' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
+					'buyerAddess1' => $order->{$prefix.address_1},
+					'buyerAddress2' => $order->{$prefix.address_2},
+					'buyerCity' => $order->{$prefix.city},
+					'buyerState' => $order->{$prefix.state},
+					'buyerZip' => $order->{$prefix.postcode},
+					'buyerCountry' => $order->{$prefix.country},
+					'buyerPhone' =>  $order->billing_phone,
 					);
-				//bplog($options);
+				if (strlen($order->{$prefix.company}))
+					$options['buyerName'] = $order->{$prefix.company}.' c/o '.$options['buyerName'];
 				
 				$invoice = bpCreateInvoice($order_id, $order->order_total, $order_id, $options );
 				if (isset($invoice['error']))
