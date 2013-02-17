@@ -137,20 +137,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			APPLICATION_VERSION);
 		
 		$items = array();
+		$orderItemId=1;
 		foreach($orderItems as $i)
 		{
 			$value = new FBAOutboundServiceMWS_Model_Currency();
 			$value->setCurrencyCode($i['currency']);
-			$value->setValue($i['price']);
+			$value->setValue($i['value']);
 			 
 			$item = new FBAOutboundServiceMWS_Model_FulfillmentOrderItem();
 			$item->setSellerSKU($i['sku']); // must be amazon's SKU
-			$item->setSellerFulfillmentOrderItemId(count($orderItems)+1); // seller can choose this
+			$item->setSellerFulfillmentOrderItemId($orderItemId++); // seller can choose this
 			$item->setQuantity( (int)$i['quantity'] ); // must be integer or FBA server fails
-			$c = new FBAOutboundServiceMWS_Model_Currency();
-			$c->setCurrencyCode(get_woocommerce_currency());
-			$c->setValue($i['value']);
-			$item->setPerUnitDeclaredValue($c);
+			$item->setPerUnitDeclaredValue($value);
 			$items[] = $item;
 		}
 
@@ -183,7 +181,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$request->setFulfillmentMethod('Consumer');
 		$request->setNotificationEmailList($emails);
 		$request->setItems($list);
-
+		
 		// send request to amazon
 		try {
 			$response = $service->createFulfillmentOrder($request);
