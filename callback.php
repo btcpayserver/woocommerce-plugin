@@ -35,12 +35,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						break;
 					case 'confirmed':
 					case 'complete':
-						unset($_SESSION['order_awaiting_payment']);
 						
-						$order->payment_complete();		
-
-						if ($response['status'] == 'complete')
+						if ( in_array($order->status, array('on-hold', 'pending', 'failed' ) ) )
+						{
+							$order->payment_complete();		
 							processOrderFBA($bp, $order);
+						}
 						
 						break;
 				}
@@ -67,20 +67,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$items = $order->get_items();
 		
 		$orderItems = array();
+		$hasSku = false; // does this order have any skus?
 		foreach ($items as $i)
 		{
 			$product = new WC_Product($i['id']);			
-			if (!strlen($product->get_sku()))
-			{
-				bplog($orderInfo.'No product SKU in order'.$order->id.'.  FBA order not sent');
-				return;
-			}
+			if (strlen($product->get_sku()))
+				$hasSku = true;
+			else
+				continue;
 			$orderItems[] = array(
 				'currency' => get_woocommerce_currency(),
 				'value' => $i['line_subtotal'],
 				'sku' => $product->get_sku(),
 				'quantity' => $i['qty']);
 		}				
+		if (!$hasSku)
+			return true; // nothing to do
 		$prefix = ($order->shipping_address_1) ? 'shipping_' : 'billing_';
 		$address = array(
 			'name' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
