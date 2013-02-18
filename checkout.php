@@ -151,13 +151,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'notificationURL' => $notificationURL,
 					'fullNotifications' => true,
 					'buyerName' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
-					'buyerAddess1' => $order->{$prefix.address_1},
+					'buyerAddress1' => $order->{$prefix.address_1},
 					'buyerAddress2' => $order->{$prefix.address_2},
 					'buyerCity' => $order->{$prefix.city},
 					'buyerState' => $order->{$prefix.state},
 					'buyerZip' => $order->{$prefix.postcode},
 					'buyerCountry' => $order->{$prefix.country},
-					'buyerPhone' =>  $order->billing_phone,
+					'buyerPhone' => $order->billing_phone,
+					'buyerEmail' => $order->billing_email,
 					);
 				if (strlen($order->{$prefix.company}))
 					$options['buyerName'] = $order->{$prefix.company}.' c/o '.$options['buyerName'];
