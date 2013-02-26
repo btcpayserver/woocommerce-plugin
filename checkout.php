@@ -152,6 +152,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				
 				$currency = get_woocommerce_currency();
 				
+				
 				$prefix = 'billing_';
 				$options = array(
 					'apiKey' => $this->settings['apiKey'],
@@ -159,7 +160,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'currency' => $currency,
 					'redirectURL' => $redirect,
 					'notificationURL' => $notificationURL,
-					'fullNotifications' => $this->settings['fullNotifications'],
+					'fullNotifications' => ($this->settings['fullNotifications'] == 'yes') ? true : false,
 					'buyerName' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
 					'buyerAddress1' => $order->{$prefix.address_1},
 					'buyerAddress2' => $order->{$prefix.address_2},
@@ -170,9 +171,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'buyerPhone' => $order->billing_phone,
 					'buyerEmail' => $order->billing_email,
 					);
+					
 				if (strlen($order->{$prefix.company}))
 					$options['buyerName'] = $order->{$prefix.company}.' c/o '.$options['buyerName'];
 				
+				foreach(array('buyerName', 'buyerAddress1', 'buyerAddress2', 'buyerCity', 'buyerState', 'buyerZip', 'buyerCountry', 'buyerPhone', 'buyerEmail') as $trunc)
+					$options[$trunc] = substr($options[$trunc], 0, 100); // api specifies max 100-char len
+
 				$invoice = bpCreateInvoice($order_id, $order->order_total, $order_id, $options );
 				if (isset($invoice['error']))
 				{
