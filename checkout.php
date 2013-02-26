@@ -95,6 +95,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						),
 						'default' => 'high',
 					),
+					'fullNotifications' => array(
+						'title' => __('Full Notifications', 'woothemes'),
+						'type' => 'checkbox',
+						'description' => 'Yes: receive an email for each status update on a payment.  No: receive an email only when payment is confirmed.',
+						'default' => 'no',
+					),
 					'fbaEnabled' => array(
 						'title' => __('Fullfullment By Amazon Enabled', 'woothemes'),
 						'type' => 'checkbox',
@@ -116,6 +122,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				</table>
 				<?php
 			} // End admin_options()
+			
+			public function email_instructions( $order, $sent_to_admin ) {
+				return;
+			}
 
 			function payment_fields() {
 				if ($this->description) echo wpautop(wptexturize($this->description));
@@ -149,7 +159,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					'currency' => $currency,
 					'redirectURL' => $redirect,
 					'notificationURL' => $notificationURL,
-					'fullNotifications' => true,
+					'fullNotifications' => $this->settings['fullNotifications'],
 					'buyerName' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
 					'buyerAddress1' => $order->{$prefix.address_1},
 					'buyerAddress2' => $order->{$prefix.address_2},

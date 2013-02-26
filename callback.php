@@ -8,6 +8,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		if(isset($_GET['bitpay_callback']))
 		{
 			//bplog(file_get_contents("php://input"));
+			ini_set('error_log', plugin_dir_path(__FILE__).'bplog.txt');
+			ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_NOTICE);
 			
 			global $woocommerce;
 			
