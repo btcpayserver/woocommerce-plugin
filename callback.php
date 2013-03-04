@@ -7,7 +7,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	{				
 		if(isset($_GET['bitpay_callback']))
 		{
-			//bplog(file_get_contents("php://input"));
+			bplog(file_get_contents("php://input"));
+			
 			ini_set('error_log', plugin_dir_path(__FILE__).'bplog.txt');
 			ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_NOTICE);
 			
@@ -69,21 +70,25 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$items = $order->get_items();
 		
 		$orderItems = array();
-		$hasSku = false; // does this order have any skus?
+		$hasSkus = false; // does this order have any skus?
+		$hasBlanks = false; // does this order have any blank skus?
 		foreach ($items as $i)
 		{
 			$product = new WC_Product($i['id']);			
 			if (strlen($product->get_sku()))
-				$hasSku = true;
-			else
+				$hasSkus = true;
+			else 
+			{
+				$hasBlanks = true;
 				continue;
+			}
 			$orderItems[] = array(
 				'currency' => get_woocommerce_currency(),
 				'value' => $i['line_subtotal'],
 				'sku' => $product->get_sku(),
 				'quantity' => $i['qty']);
 		}				
-		if (!$hasSku)
+		if (!$hasSkus)
 			return true; // nothing to do
 		$prefix = ($order->shipping_address_1) ? 'shipping_' : 'billing_';
 		$address = array(
@@ -105,7 +110,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$bpfba = $o; // blank country means "use this if above entries don't match"
 				break;
 			}
-			$countries = explode(',',$o['countries']);
+			$countries = array_map('trim', explode(',',$o['countries']));			
 			if (in_array($address['country'], $countries) === TRUE) {
 				$bpfba = $o;
 				break;
@@ -113,6 +118,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		}		
 		if (!isset($bpfba)) {	
 			bplog($orderInfo.'Destination address not found in fba_options.php');
+			$order->update_status('failed');
 			return false;
 		}
 		
@@ -152,7 +158,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$item->setSellerSKU($i['sku']); // must be amazon's SKU
 			$item->setSellerFulfillmentOrderItemId($orderItemId++); // seller can choose this
 			$item->setQuantity( (int)$i['quantity'] ); // must be integer or FBA server fails
-			$item->setPerUnitDeclaredValue($value);
+			//$item->setPerUnitDeclaredValue($value);
 			$items[] = $item;
 		}
 
@@ -199,10 +205,15 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				{
 					bplog("                RequestId");
 					bplog("                    " . $responseMetadata->getRequestId());
+					// success!
+					if (!$hasBlanks)
+						$order->update_status('completed');
 				}
 			} 
 
 		} catch (FBAOutboundServiceMWS_Exception $ex) {
+			$order->update_status('failed');
+				
 			bplog("Caught Exception: " . $ex->getMessage());
 			bplog("Response Status Code: " . $ex->getStatusCode());
 			bplog("Error Code: " . $ex->getErrorCode());
