@@ -20,7 +20,7 @@
 	
 	set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__) . '/../.');
 	
-	function __autoload($className){
+	function fbaAutoload($className){
         $filePath = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
         $includePaths = explode(PATH_SEPARATOR, get_include_path());
         foreach($includePaths as $includePath){
@@ -30,4 +30,6 @@
             }
         }
     }
+	
+	spl_autoload_register('fbaAutoload');
  ?>

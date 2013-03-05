@@ -59,6 +59,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$orderInfo = 'order '.$order->id.':'; // for log
 
 		require_once (plugin_dir_path(__FILE__).'FBAOutboundServiceMWS/config.inc.php');		
+		
 		$optionsFile = plugin_dir_path(__FILE__).'fba_options.php';
 		if (!file_exists($optionsFile)) {
 			bplog($orderInfo.'fba_options.php not found.  Copy fba_options.php.sample and fill in details.');
@@ -74,7 +75,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		$hasBlanks = false; // does this order have any blank skus?
 		foreach ($items as $i)
 		{
-			$product = new WC_Product($i['id']);			
+			$product = get_product($i['product_id']);
 			if (strlen($product->get_sku()))
 				$hasSkus = true;
 			else 

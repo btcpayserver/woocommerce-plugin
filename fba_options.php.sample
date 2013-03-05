@@ -8,7 +8,7 @@ $bpfbaOptions[] = array(
 	'awsAccessKey' => '',
 	'secretAccessKey' => '',
 	'shippingSpeed' => 'Standard', 
-	'fulfillmentPolicy' => 'FillOrKill'
+	'fulfillmentPolicy' => 'FillOrKill',
 	'endpointUrl' => 'https://mws.amazonservices.com/FulfillmentOutboundShipment/2010-10-01/'
 	);
 

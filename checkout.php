@@ -28,7 +28,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 	function declareWooBitpay() 
 	{
-		if ( ! class_exists( 'woocommerce_payment_gateway' ) ) 
+		if ( ! class_exists( 'WC_Payment_Gateways' ) ) 
 			return;
 
 		class WC_Bitpay extends WC_Payment_Gateway 
