@@ -1,0 +1,28 @@
+<?
+$bpfbaOptions = array();
+
+$bpfbaOptions[] = array(
+	'marketplaceId' => 'ATVPDKIKX0DER', 
+	'countries' => 'US',
+	'merchantId' => '',
+	'awsAccessKey' => '',
+	'secretAccessKey' => '',
+	'shippingSpeed' => 'Standard', 
+	'fulfillmentPolicy' => 'FillOrKill',
+	'endpointUrl' => 'https://mws.amazonservices.com/FulfillmentOutboundShipment/2010-10-01/'
+	);
+
+/*
+// to add more marketplaces:
+$bpfbaOptions[] = array(
+	'marketplaceId' => '', 
+	'countries' => 'EG1,EG2,EG3', // comma-separated or blank for "all countries except above"
+	'merchantId' => '',
+	'awsAccessKey' => '',
+	'secretAccessKey' => '',
+	'shippingSpeed' => 'Standard', // or Expedited or Priority
+	'fulfillmentPolicy' => 'FillOrKill', // or FillAll or FillAllAvailable
+	'endpointUrl' => ''
+
+	);
+*/

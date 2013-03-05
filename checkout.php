@@ -28,7 +28,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 	function declareWooBitpay() 
 	{
-		if ( ! class_exists( 'woocommerce_payment_gateway' ) ) 
+		if ( ! class_exists( 'WC_Payment_Gateways' ) ) 
 			return;
 
 		class WC_Bitpay extends WC_Payment_Gateway 
@@ -95,6 +95,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						),
 						'default' => 'high',
 					),
+					'fullNotifications' => array(
+						'title' => __('Full Notifications', 'woothemes'),
+						'type' => 'checkbox',
+						'description' => 'Yes: receive an email for each status update on a payment.  No: receive an email only when payment is confirmed.',
+						'default' => 'no',
+					),
+					'fbaEnabled' => array(
+						'title' => __('Fullfullment By Amazon Enabled', 'woothemes'),
+						'type' => 'checkbox',
+						'description' => 'FBA account requred.  Fill in account info at ./fba_options.php.',
+						'default' => 'no',
+					),
 				);
 			}
 				
@@ -110,6 +122,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				</table>
 				<?php
 			} // End admin_options()
+			
+			public function email_instructions( $order, $sent_to_admin ) {
+				return;
+			}
 
 			function payment_fields() {
 				if ($this->description) echo wpautop(wptexturize($this->description));
@@ -136,16 +152,32 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				
 				$currency = get_woocommerce_currency();
 				
+				
+				$prefix = 'billing_';
 				$options = array(
 					'apiKey' => $this->settings['apiKey'],
 					'transactionSpeed' => $this->settings['transactionSpeed'],
 					'currency' => $currency,
 					'redirectURL' => $redirect,
 					'notificationURL' => $notificationURL,
-					'fullNotifications' => true,
+					'fullNotifications' => ($this->settings['fullNotifications'] == 'yes') ? true : false,
+					'buyerName' => $order->{$prefix.first_name}.' '.$order->{$prefix.last_name},
+					'buyerAddress1' => $order->{$prefix.address_1},
+					'buyerAddress2' => $order->{$prefix.address_2},
+					'buyerCity' => $order->{$prefix.city},
+					'buyerState' => $order->{$prefix.state},
+					'buyerZip' => $order->{$prefix.postcode},
+					'buyerCountry' => $order->{$prefix.country},
+					'buyerPhone' => $order->billing_phone,
+					'buyerEmail' => $order->billing_email,
 					);
-				//bplog($options);
+					
+				if (strlen($order->{$prefix.company}))
+					$options['buyerName'] = $order->{$prefix.company}.' c/o '.$options['buyerName'];
 				
+				foreach(array('buyerName', 'buyerAddress1', 'buyerAddress2', 'buyerCity', 'buyerState', 'buyerZip', 'buyerCountry', 'buyerPhone', 'buyerEmail') as $trunc)
+					$options[$trunc] = substr($options[$trunc], 0, 100); // api specifies max 100-char len
+
 				$invoice = bpCreateInvoice($order_id, $order->order_total, $order_id, $options );
 				if (isset($invoice['error']))
 				{
