@@ -51,7 +51,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$this->description = $this->settings['description'];
 			 
 				// Actions
-				add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
+				add_action('woocommerce_update_options_payment_gateways_'.$this->id, array(&$this, 'process_admin_options'));
 				//add_action('woocommerce_thankyou_cheque', array(&$this, 'thankyou_page'));
 			 
 				// Customer Emails
