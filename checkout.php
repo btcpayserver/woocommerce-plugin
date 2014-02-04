@@ -140,7 +140,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				
 				global $woocommerce, $wpdb;
 
-				$order = &new WC_Order( $order_id );
+				$order = new WC_Order( $order_id );
 
 				// Mark as on-hold (we're awaiting the coins)
 				$order->update_status('on-hold', __('Awaiting payment notification from bitpay.com', 'woothemes'));
