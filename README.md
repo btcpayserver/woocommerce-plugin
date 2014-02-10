@@ -10,7 +10,7 @@ Installation
 ------------
 Copy this folder and its contents into your plugins directory.  It will look something like this: wp-content/plugins/bitpayMagento-master/
 
-Configuration
+Configuration for Woocommerce versions 2.0.x and older
 -------------
 1. Create an API key at bitpay.com by clicking My Account > API Access Keys > Add New API Key.
 2. In the Admin panel click Plugins, then click Activate under Bitpay Woocommerce.
@@ -18,6 +18,16 @@ Configuration
 	a. Verify that the module is enabled.
 	b. Enter your API key from step 2.
 	c. Select a transaction speed.  The high speed will send a confirmation as soon as a transaction is received in the bitcoin network (usually a few seconds).  A medium speed setting will typically take 10 minutes.  The low speed setting usually takes around 1 hour.  See the bitpay.com merchant documentation for a full description of the transaction speed settings.
+
+Configuration for Woocommerce versions 2.1.x and newer
+-------------
+1. Create an API key at bitpay.com by clicking My Account > API Access Keys > Add New API Key.
+2. In the Admin panel click Plugins, then click Activate under Bitpay Woocommerce.
+3. In Admin panel click Woocommerce > Settings > Checkout > Bitpay. 
+	a. Verify that the module is enabled.
+	b. Enter your API key from step 2.
+	c. Select a transaction speed.
+	d. Click the Save changes button to store your settings.
 
 Usage
 -----
@@ -28,7 +38,7 @@ The order status in the admin panel will be "on-hold" when the order is placed a
 Note: This extension does not provide a means of automatically pulling a current BTC exchange rate for presenting BTC prices to shoppers.
 
 Version 1.1
-	Tested against Woocommerce 2.0.1, Wordpress version 3.5.1, PHP version 5.3.8
+	Tested against Woocommerce 2.0.1, 2.1.0, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
 
 	
 	
