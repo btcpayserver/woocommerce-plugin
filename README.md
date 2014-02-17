@@ -38,7 +38,7 @@ The order status in the admin panel will be "on-hold" when the order is placed a
 Note: This extension does not provide a means of automatically pulling a current BTC exchange rate for presenting BTC prices to shoppers.
 
 Version 1.1
-	Tested against Woocommerce 2.0.1, 2.1.0, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
+	- Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
 
 	
 	
