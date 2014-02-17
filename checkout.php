@@ -146,7 +146,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$order->update_status('on-hold', __('Awaiting payment notification from bitpay.com', 'woothemes'));
 				
 				// invoice options
-				$redirect = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+				$vcheck = explode('.',WC_VERSION);
+                                if(trim($vcheck[0]) == '2' && trim($vcheck[1]) == '1')
+                                    $thanks_link = $this->get_return_url($this->order);
+                                else
+                                    $thanks_link =  get_permalink(get_option('woocommerce_thanks_page_id'));
+
+				$redirect = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, $thanks_link));
 				
 				$notificationURL = get_option('siteurl')."/?bitpay_callback=1";
 				
