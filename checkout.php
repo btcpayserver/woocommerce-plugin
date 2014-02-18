@@ -147,7 +147,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				
 				// invoice options
 				$vcheck = explode('.',WC_VERSION);
-                                if(trim($vcheck[0]) == '2' && trim($vcheck[1]) == '1')
+                                if(trim($vcheck[0]) >= '2' && trim($vcheck[1]) >= '1')
                                     $thanks_link = $this->get_return_url($this->order);
                                 else
                                     $thanks_link =  get_permalink(get_option('woocommerce_thanks_page_id'));
