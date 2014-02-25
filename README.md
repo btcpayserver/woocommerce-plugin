@@ -40,5 +40,15 @@ Note: This extension does not provide a means of automatically pulling a current
 Version 1.1
 	- Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
 
-	
-	
+Troubleshooting
+----------------
+The official BitPay API documentation should always be your first reference for development, errors and troubleshooting:
+https://bitpay.com/downloads/bitpayApi.pdf
+
+Some web servers have outdated root CA certificates and will cause this curl error: "SSL certificate problem, verify that the CA cert is OK. Details: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed'".  The fix is to contact your hosting provider or server administrator and request a root CA cert update.
+
+The log file is named 'bplog.txt' and can be found in the same directory as the plugin files.  Checking this log file will give you exact responses from the BitPay network, in case of failures.
+
+Check the version of this plugin agains the official repository to ensure you are using the latest version. Your issue might have been addressed in a newer version of the plugin.
+
+If all else fails, send an email describing your issue *in detail* to support@bitpay.com and attach the bplog.txt file.

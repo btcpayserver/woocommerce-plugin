@@ -188,8 +188,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				if (isset($invoice['error']))
 				{
 					bplog($invoice);
-					$order->add_order_note(var_export($invoice['error']));
-					$woocommerce->add_error(__('Error creating bitpay invoice.  Please try again or try another payment method.'));
+					$order->add_order_note(var_export($invoice['error'], true));
+					$woocommerce->add_error(__('Error creating BitPay invoice.  Please try again or try another payment method.'));
 				}
 				else
 				{
