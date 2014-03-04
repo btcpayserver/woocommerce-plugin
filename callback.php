@@ -37,14 +37,20 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					case 'paid':
 						break;
 					case 'confirmed':
+						$order->add_order_note( __('BitPay bitcoin payment confirmed. Awaiting network confirmation and completed status.', 'woothemes') );
 					case 'complete':
 						
 						if ( in_array($order->status, array('on-hold', 'pending', 'failed' ) ) )
 						{
 							$order->payment_complete();		
 							processOrderFBA($bp, $order);
+							$order->add_order_note( __('BitPay bitcoin payment completed. Payment credited to your merchant account.', 'woothemes') );
 						}
 						
+						break;
+					case 'invalid':
+						$order->add_order_note( __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within 1 hour.', 'woothemes') );
+						$order->update_status('failed');
 						break;
 				}
 			}
