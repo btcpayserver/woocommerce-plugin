@@ -1,4 +1,4 @@
-(c)2012-2014 BITPAY, INC.
+<strong>(c)2012-2014 BITPAY, INC.</strong>
 
 Permission is hereby granted to any person obtaining a copy of this software and associated documentation for use and/or modification in association with the bitpay.com service.
 
@@ -58,5 +58,8 @@ If all else fails, send an email describing your issue *in detail* to support@bi
 
 Version
 -------
+Version 1.2
+- Added new HTTP header for version tracking
+
 Version 1.1
-	- Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
+- Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
