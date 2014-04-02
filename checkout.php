@@ -9,10 +9,24 @@ Author URI: http://www.bitpay.com
 License: 
 */
 
+
+if (!function_exists('nn_active_nw_plugins')) {
+  function nn_active_nw_plugins() {
+
+        if (!is_multisite())
+            return false;
+
+        $nn_activePlugins = (get_site_option('active_sitewide_plugins')) ? array_keys(get_site_option('active_sitewide_plugins')) : array();
+        return $nn_activePlugins;
+
+  }
+}
+
+
 /**
  * Check if WooCommerce is active
  **/
-if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) 
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) || in_array('woocommerce/woocommerce.php', (array) nn_active_nw_plugins()) ) 
 {
 	function bplog($contents)
 	{
