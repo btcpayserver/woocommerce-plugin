@@ -3,8 +3,8 @@
 Plugin Name: Bitpay Woocommerce
 Plugin URI: http://www.bitpay.com
 Description: This plugin adds the Bitpay payment gateway to your Woocommerce plugin.  Woocommerce is required.
-Version: 1.0
-Author: Japhet Stevens
+Version: 1.2
+Author: Japhet Stevens, Rich Morgan
 Author URI: http://www.bitpay.com
 License: 
 */
