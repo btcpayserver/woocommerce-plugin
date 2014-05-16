@@ -30,14 +30,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 {
 	function bplog($contents)
 	{
-		$file = plugin_dir_path(__FILE__).'bplog.txt';
-		file_put_contents($file, date('m-d H:i:s').": ", FILE_APPEND);
-		if (is_array($contents))
-			file_put_contents($file, var_export($contents, true)."\n", FILE_APPEND);		
-		else if (is_object($contents))
-			file_put_contents($file, json_encode($contents)."\n", FILE_APPEND);
-		else
-			file_put_contents($file, $contents."\n", FILE_APPEND);
+		error_log($contents);
 	}
 
 	function declareWooBitpay() 
@@ -201,7 +194,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$invoice = bpCreateInvoice($order_id, $order->order_total, $order_id, $options );
 				if (isset($invoice['error']))
 				{
-					bplog($invoice);
 					$order->add_order_note(var_export($invoice['error'], true));
 					$woocommerce->add_error(__('Error creating BitPay invoice.  Please try again or try another payment method.'));
 				}
