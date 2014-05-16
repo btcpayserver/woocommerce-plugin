@@ -66,8 +66,11 @@ If all else fails, send an email describing your issue *in detail* to support@bi
 
 Version
 -------
+Version 1.3
+  - Fix to use server error handling
+
 Version 1.2
-- Added new HTTP header for version tracking
+  - Added new HTTP header for version tracking
 
 Version 1.1
-- Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
+  - Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
