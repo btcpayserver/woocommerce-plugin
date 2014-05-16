@@ -7,11 +7,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	{				
 		if(isset($_GET['bitpay_callback']))
 		{
-			bplog(file_get_contents("php://input"));
-			
-			ini_set('error_log', plugin_dir_path(__FILE__).'bplog.txt');
-			ini_set('error_reporting', E_ALL & ~E_STRICT & ~E_NOTICE);
-			
 			global $woocommerce;
 			
 			require(plugin_dir_path(__FILE__).'bp_lib.php');
@@ -19,14 +14,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			$gateways = $woocommerce->payment_gateways->payment_gateways();
 			if (!isset($gateways['bitpay']))
 			{
-				bplog('bitpay plugin not enabled in woocommerce');
+				error_log('bitpay plugin not enabled in woocommerce');
 				return;
 			}
 			$bp = $gateways['bitpay'];
 			$response = bpVerifyNotification( $bp->settings['apiKey'] );
 
 			if (isset($response['error']))
-				bplog($response);
+				error_log($response);
 			else
 			{
 				$orderId = $response['posData'];
@@ -68,7 +63,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		
 		$optionsFile = plugin_dir_path(__FILE__).'fba_options.php';
 		if (!file_exists($optionsFile)) {
-			bplog($orderInfo.'fba_options.php not found.  Copy fba_options.php.sample and fill in details.');
+			error_log($orderInfo.'fba_options.php not found.  Copy fba_options.php.sample and fill in details.');
 			return;
 		}
 		require_once ($optionsFile);
@@ -124,7 +119,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			}
 		}		
 		if (!isset($bpfba)) {	
-			bplog($orderInfo.'Destination address not found in fba_options.php');
+			error_log($orderInfo.'Destination address not found in fba_options.php');
 			$order->update_status('failed');
 			return false;
 		}
@@ -203,15 +198,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		try {
 			$response = $service->createFulfillmentOrder($request);
 
-			bplog($orderInfo);
-			bplog("CreateFulfillmentOrderResponse");
 			if ($response->isSetResponseMetadata()) { 
-				bplog("            ResponseMetadata");
 				$responseMetadata = $response->getResponseMetadata();
 				if ($responseMetadata->isSetRequestId()) 
 				{
-					bplog("                RequestId");
-					bplog("                    " . $responseMetadata->getRequestId());
 					// success!
 					if (!$hasBlanks)
 						$order->update_status('completed');
@@ -221,12 +211,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 		} catch (FBAOutboundServiceMWS_Exception $ex) {
 			$order->update_status('failed');
 				
-			bplog("Caught Exception: " . $ex->getMessage());
-			bplog("Response Status Code: " . $ex->getStatusCode());
-			bplog("Error Code: " . $ex->getErrorCode());
-			bplog("Error Type: " . $ex->getErrorType());
-			bplog("Request ID: " . $ex->getRequestId());
-			bplog("XML: " . $ex->getXML());
+			error_log("Caught Exception: " . $ex->getMessage());
+			error_log("Response Status Code: " . $ex->getStatusCode());
+			error_log("Error Code: " . $ex->getErrorCode());
+			error_log("Error Type: " . $ex->getErrorType());
+			error_log("Request ID: " . $ex->getRequestId());
 		}
 	
 	}
