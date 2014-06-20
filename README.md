@@ -68,6 +68,7 @@ Version
 -------
 Version 1.3
   - Fix to use server error handling
+  - Tested against Woocommerce version 2.1.11, Wordpress version 3.9.1, and PHP version 5.3.10
 
 Version 1.2
   - Added new HTTP header for version tracking
