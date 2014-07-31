@@ -79,13 +79,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$this->title = $this->settings['title'];
 				$this->description = $this->settings['description'];
 			 
+
 				// Actions
 				add_action('woocommerce_update_options_payment_gateways_'.$this->id, array(&$this, 'process_admin_options'));
 				//add_action('woocommerce_thankyou_cheque', array(&$this, 'thankyou_page'));
-			 
+
 				// Customer Emails
 				add_action('woocommerce_email_before_order_table', array(&$this, 'email_instructions'), 10, 2);
 			}
+
+
+
 			
 			function init_form_fields() 
 			{
@@ -148,6 +152,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					// Generate the HTML For the settings form.
 					$this->generate_settings_html();
 				?>
+				<?php
+			 	//check if cURL is enabled, throw error if false
+			 	if(!function_exists('curl_init')){
+
+			 		$message = "You must enable cURL to use BitPay plugin";
+					echo '<div id="message" class="error">';
+					echo "<p><strong>$message</strong></p></div>";
+
+			 	}
+			 		
+				?>
 				</table>
 				<?php
 			} // End admin_options()
@@ -163,6 +178,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 			function thankyou_page() {
 				if ($this->description) echo wpautop(wptexturize($this->description));
 			}
+
+
+
 
 			function process_payment( $order_id ) {
 				require 'bp_lib.php';
@@ -242,6 +260,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	add_filter('woocommerce_payment_gateways', 'add_bitpay_gateway' );
 
 	add_action('plugins_loaded', 'declareWooBitpay', 0);
-	
+
 	
 }
