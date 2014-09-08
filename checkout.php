@@ -248,11 +248,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 					$order->add_order_note(var_export($invoice['error'], true));
 					$woocommerce->add_error(__('Error creating BitPay invoice.  Please try again or try another payment method.'));
 					if($this->settings['testMode']) {
-						$woocommerce->add_error(__('Are you using a Live API key but using the Test setting?'));
+						$woocommerce->add_error(__('Are you using a Test API key but using the Live setting?'));
 
 					}
 					else {
-						$woocommerce->add_error(__('Are you using a Test API key but using the Live setting?'));
+						$woocommerce->add_error(__('Are you using a Live API key but using the Test setting?'));
 					}
 					
 				}
