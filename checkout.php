@@ -117,6 +117,16 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 						'type' => 'text',
 						'description' => __('Enter the API key you created at bitpay.com'),
 					),
+					'testMode' => array(
+						'title' => __('API Mode', 'woothemes'),
+						'type' => 'select',
+						'description' => 'Select whether API is Test or Live',
+						'options' => array(
+							'live' => 'Live',
+							'test' => 'Test',
+						),
+						'default' => 'Live',
+					),
 					'transactionSpeed' => array(
 						'title' => __('Transaction Speed', 'woothemes'),
 						'type' => 'select',
@@ -209,6 +219,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				$prefix = 'billing_';
 				$options = array(
 					'apiKey' => $this->settings['apiKey'],
+					'testMode' => ($this->settings['testMode'] == 'test') ? true : false,
 					'transactionSpeed' => $this->settings['transactionSpeed'],
 					'currency' => $currency,
 					'redirectURL' => $redirect,
@@ -236,6 +247,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				{
 					$order->add_order_note(var_export($invoice['error'], true));
 					$woocommerce->add_error(__('Error creating BitPay invoice.  Please try again or try another payment method.'));
+					if($this->settings['testMode']) {
+						$woocommerce->add_error(__('Are you using a Live API key but using the Test setting?'));
+
+					}
+					else {
+						$woocommerce->add_error(__('Are you using a Test API key but using the Live setting?'));
+					}
+					
 				}
 				else
 				{

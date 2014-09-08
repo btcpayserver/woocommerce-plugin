@@ -51,4 +51,6 @@ $bpOptions['transactionSpeed'] = 'low';
 
 $bpOptions['verifyPos'] = true;
 
+$bpOptions['testMode'] = false;
+
 ?>
