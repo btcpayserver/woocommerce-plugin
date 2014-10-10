@@ -133,7 +133,12 @@ function bpVerifyNotification($apiKey = false) {
 		return array('error' => 'authentication failed (bad hash)');
 	$json['posData'] = $posData['posData'];
 		
-	return $json;
+	if (!array_key_exists('id', $json))
+        {
+            return 'Cannot find invoice ID';
+        }
+
+        return bpGetInvoice($json['id'], $apiKey);
 }
 
 // $options can include ('apiKey')
@@ -147,7 +152,10 @@ function bpGetInvoice($invoiceId, $apiKey=false) {
 		return array('error' => $response); 
 	//decode posData
 	$response['posData'] = json_decode($response['posData'], true);
-	$response['posData'] = $response['posData']['posData'];
+	if($bpOptions['verifyPos'])
+        {
+            $response['posData'] = $response['posData']['posData'];
+        }
 
 	return $response;	
 }
