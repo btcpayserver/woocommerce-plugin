@@ -1,0 +1,28 @@
+<phpunit
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.3/phpunit.xsd"
+  bootstrap= "tests/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	>
+	<testsuites>
+		<testsuite>
+      <directory prefix="test-" suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+        <whitelist>
+            <directory>wordpress/wp-content/plugins/woocommerce-bitpay</directory>
+            <exclude>
+		      <directory suffix=".php">wordpress/wp-content/plugins/woocommerce-bitpay/vendor</directory>
+		    </exclude>
+        </whitelist>
+
+    </filter>
+	<logging>
+        <log type="coverage-html" target="build/docs/code-coverage"/>
+    </logging>
+</phpunit>
