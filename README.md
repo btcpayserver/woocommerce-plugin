@@ -1,73 +1,157 @@
-bitpay/woocommerce-plugin
-=========================
+WooCommerce BitPay Payment Gateway
+=====================
+
+# Build Status
+
+[![Build Status](https://travis-ci.org/bitpay/woocommerce-plugin.svg?branch=master)](https://travis-ci.org/bitpay/woocommerce-plugin)
+
+# Brief Description
+
+Add the ability to accept bitcoin in WooCommerce via BitPay.
+
+# Detail Description
+
+Bitcoin is a powerful new peer-to-peer platform for the next generation of
+financial technology. The decentralized nature of the Bitcoin network allows
+for a highly resilient value transfer infrastructure, and this allows merchants
+to gain greater profits.
+
+This is because there are little to no fees for transferring Bitcoins from one
+person to another. Unlike other payment methods, Bitcoin payments cannot be
+reversed, so once you are paid you can ship! No waiting days for a payment to
+clear.
+
+# Requirements
+
+* [Wordpress](https://wordpress.org/about/requirements/) >= 3.8 (Older versions will work, but we do not test against those)
+* [WooCommerce](http://docs.woothemes.com/document/server-requirements/) >= 2.2
+* [GMP](http://us2.php.net/gmp) You may have to install this as most servers do not come with it.
+* [mcrypt](http://us2.php.net/mcrypt)
+* [OpenSSL](http://us2.php.net/openssl) Must be compiled with PHP
+* PHP >= 5.4
+
+# Upgrade From Version 1.x to 2.x
+
+Merchants who have a previous version of the WooCommerce BitPay Payment Gateway will need to remove it.
+This can be done by going to the Wordpress's Adminstration Panels > Plugins.  Deactivate the old plugin, then delete it.
 
 # Installation
 
-<strong>Manual Method:</strong><br />
-After you have downloaded the latest plugin zip file from https://github.com/bitpay/woocommerce-plugin/zipball/master unzip this archive and copy the folder including its contents into your plugins directory.  It will look something like this: wp-content/plugins/bitpay-woocommerce-plugin-e266cd2/
+## From Downloadable Archive
 
-<strong>Note:</strong> The random string of digits is appended to the folder name by GitHub and will be different for you - this is normal and does not affect how the plugin functions.
+Visit the [Releases](https://github.com/bitpay/woocommerce-plugin/releases) page of
+this repository and download the latest version. Once this is done, you can just
+go to Wordpress's Adminstration Panels > Plugins > Add New > Upload Plugin, select the downloaded archive and click Install Now.
+After the plugin is installed, click on Activate.
 
-<strong>Automated Method:</strong><br />
-After you have downloaded the latest plugin zip file from https://github.com/bitpay/woocommerce-plugin/zipball/master log into your WordPress admin control panel and go to Plugins.  At the top of the page, click the Add New button and then Upload.  You should see a form that is asking you to upload your plugin in Zip format.  Click the Choose File button, select the plugin Zip file and click Ok.  Click the Install Now button to install the plugin to your Wordpress site.  The file will now be uploaded, unzipped and installed.  The next screen will show the status of this process and display a "Plugin installed successfully" message when finished.
+***WARNING*** It is good practice to backup your database before installing
+plugins. Please make sure you create backups.
 
-<strong>Note:</strong> If the automated method fails because the plugins folder is not writable, you can correct the permissions and try again or perform the manual install method.
+# Configuration
 
+Configuration can be done using the Administrator section of Wordpress.
+Once Logged in, you will find the configuration settings under **WooCommerce > Settings > Checkout > BitPay**.
+Alternatively, you can also get to the configuration settings via Plugins and clicking the Settings link for this plugin.
 
-# Configuration for Woocommerce versions 2.0.x and older
+![BitPay Settings](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/admin.png "BitPay Settings")
 
-1. Create an API key at bitpay.com by clicking My Account > API Access Keys > Add New API Key.
-2. In the Admin panel click Plugins, then click Activate under Bitpay Woocommerce.
-3. In Admin panel click Woocommerce > Settings > Payment Gateways > Bitpay.<br />
-a. Verify that the module is enabled.<br />
-b. Enter your API key from step 2.<br />
-c. Select a transaction speed.  The high speed will send a confirmation as soon as a transaction is received in the bitcoin network (usually a few seconds).  A medium speed setting will typically take 10 minutes.  The low speed setting usually takes around 1 hour.  See the bitpay.com merchant documentation for a full description of the transaction speed settings: https://bitpay.com/downloads/bitpayApi.pdf
+Here your will need to create a [pairing code](https://bitpay.com/api-tokens) using
+your BitPay merchant account. Once you have a Pairing Code, put the code in the
+Pairing Code field:
+![Pairing Code field](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/pairingcode.png "Pairing Code field")
 
+On success, you'll receive a token:
+![BitPay Token](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/token.png "Bitpay Token")
 
-# Configuration for Woocommerce versions 2.1.x and newer
+***NOTE*** Pairing Codes are only valid for a short period of time. If it expires
+before you get to use it, you can always create a new one and pair with it.
 
-1. Create an API key at bitpay.com by clicking My Account > API Access Keys > Add New API Key.
-2. In the Admin panel click Plugins, then click Activate under Bitpay Woocommerce.
-3. In Admin panel click Woocommerce > Settings > Checkout > Bitpay.<br />
-a. Verify that the module is enabled.<br />
-b. Enter your API key from step 2.<br />
-c. Select a transaction speed. (See notes above regarding transaction speed.)<br />
-d. Click the Save changes button to store your settings.
+***NOTE*** You will only need to do this once since each time you do this, the
+extension will generate public and private keys that are used to identify you
+when using the API.
 
+You are also able to configure how BitPay's IPN (Instant Payment Notifications)
+changes the order in your WooCommerce store.
+
+![Invoice Settings](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/ordersettings.png "Invoice Settings")
+
+Save your changes and you're good to go!
 
 # Usage
 
-When a shopper chooses the Bitcoin payment method and places their order, they will be redirected to bitpay.com to pay.  Bitpay will send a notification to your server which this plugin handles.  Then the customer will be redirected to an order summary page.  
+Once enabled, your customers will be given the option to pay with Bitcoins. Once
+they checkout they are redirected to a full screen BitPay invoice to pay for
+the order.
 
-The order status in the admin panel will be "on-hold" when the order is placed and "processing" if payment has been submitted. Order notes will be added as the order progresses from "processing" to "complete". Invalid orders will be marked as "failed".
+As a merchant, the orders in your WooCommerce store can be treated as any other
+order. You may need to adjust the Invoice Settings depending on your order
+fulfillment.
 
-Note: This extension does not provide a means of automatically pulling a current BTC exchange rate for presenting BTC prices to shoppers. The invoice automatically displays the correctly converted bitcoin amount as determined by BitPay.
+# Development
+
+##Setup
+
+ * NodeJS & NPM
+ * Grunt
+ * Composer
+ 
+Clone the repo:
+```bash
+$ git clone https://github.com/bitpay/woocommerce-plugin
+$ cd woocommerce-plugin
+```
+Install the dependencies:
+```bash
+$ npm install
+$ curl -sS https://getcomposer.org/installer | php
+$ ./composer.phar install
+```
+##Build
+Perform the [setup](#Setup), then:
+```bash
+$ ./node_modules/.bin/grunt build
+# Outputs plugin at dist/woocommerce-plugin
+# Outputs plugin archive at dist/woocommerce-plugin.zip
+```
 
 # Support
 
 ## BitPay Support
-* [Github Issues](https://github.com/bitpay/woocommerce-plugin/issues)
-  * Open an Issue if you are having issues with this plugin
-* [Support](https://support.bitpay.com/)
-  * Checkout the BitPay support site
+
+* [GitHub Issues](https://github.com/bitpay/woocommerce-plugin/issues)
+  * Open an issue if you are having issues with this plugin.
+* [Support](https://support.bitpay.com)
+  * BitPay merchant support documentation
 
 ## WooCommerce Support
+
 * [Homepage](http://www.woothemes.com/woocommerce/)
-* [Documentation](http://docs.woothemes.com/documentation/plugins/woocommerce/)
-* [Forums](http://wordpress.org/support/plugin/woocommerce)
+* [Documentation](http://docs.woothemes.com)
+* [Support](https://support.woothemes.com)
 
 # Troubleshooting
 
-The official BitPay API documentation should always be your first reference for development, errors and troubleshooting:
-https://bitpay.com/downloads/bitpayApi.pdf
+1. Ensure a valid SSL certificate is installed on your server. Also ensure your
+   root CA cert is updated. If your CA cert is not current, you will see curl
+   SSL verification errors.
+2. Verify that your web server is not blocking POSTs from servers it may not
+   recognize. Double check this on your firewall as well, if one is being used.
+3. Check the version of this plugin against the official plugin repository to
+   ensure you are using the latest version. Your issue might have been
+   addressed in a newer version! See the [Releases](https://github.com/bitpay/woocommerce-plugin/releases)
+   page for the latest.
+4. If all else fails, send an email describing your issue **in detail** to
+   support@bitpay.com
 
-Some web servers have outdated root CA certificates and will cause this curl error: "SSL certificate problem, verify that the CA cert is OK. Details: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE:certificate verify failed'".  The fix is to contact your hosting provider or server administrator and request a root CA cert update.
+***TIP***: When contacting support it will help us is you provide:
 
-The log file is named 'bplog.txt' and can be found in the same directory as the plugin files. Checking this log file will give you exact responses from the BitPay network, in case of failures.
-
-Check the version of this plugin against the official repository to ensure you are using the latest version. Your issue might have been addressed in a newer version of the plugin: https://github.com/bitpay/woocommerce-plugin/zipball/master
-
-If all else fails, send an email describing your issue *in detail* to support@bitpay.com and attach the bplog.txt file.
+* WordPress and WooCommerce Version
+* Other plugins you have installed
+  * Some plugins do not play nice
+* Configuration settings for the plugin (Most merchants take screen grabs)
+* Any log files that will help
+  * Web server error logs
+* Screen grabs of error message if applicable.
 
 # Contribute
 
@@ -77,7 +161,7 @@ To contribute to this project, please fork and submit a pull request.
 
 The MIT License (MIT)
 
-Copyright (c) 2011-2014 BitPay
+Copyright (c) 2011-2014 BitPay, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

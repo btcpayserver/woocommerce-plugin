@@ -1,0 +1,31 @@
+{
+	"repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/bitpay/php-bitpay-client.git"
+        },
+        {
+          "type": "package",
+          "package": {
+            "name": "wordpress",
+            "version": "3.8",
+            "dist": {
+              "type": "zip",
+              "url": "https://github.com/WordPress/WordPress/archive/3.8.zip"
+            }
+          }
+        }
+    ],
+    "require": {
+        "bitpay/php-client": "dev-master@dev"
+    },
+	"require-dev": {
+        "wp-cli/wp-cli": "*",
+        "fabpot/php-cs-fixer": "@stable",
+        "phpunit/phpunit": "~3.7"
+	},
+  "minimum-stability": "stable",
+  "config": {
+      "bin-dir": "bin/"
+  }
+}

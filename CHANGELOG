@@ -1,9 +1,0 @@
-1.3
-	* Fix to use server error handling
-	* Tested against Woocommerce version 2.1.11, Wordpress version 3.9.1, and PHP version 5.3.10
-
-1.2
-	* Added new HTTP header for version tracking
-
-1.1
-	* Tested against Woocommerce 2.0.1, 2.1.0, 2.1.1, Wordpress versions 3.5.1, 3.8.1, PHP version 5.3.8
