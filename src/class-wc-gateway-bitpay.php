@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version: 	       2.0.0
+    Version: 	       2.0.1
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -21,7 +21,6 @@ require_once __DIR__ . '/lib/Bitpay/Autoloader.php';
 // Ensures WooCommerce is loaded before initializing the BitPay plugin
 add_action('plugins_loaded', 'woocommerce_bitpay_init', 0);
 register_activation_hook( __FILE__, 'woocommerce_bitpay_activate' );
-register_deactivation_hook( __FILE__, 'woocommerce_bitpay_deactivate' );
 
 function woocommerce_bitpay_init()
 {
@@ -641,45 +640,25 @@ function woocommerce_bitpay_init()
 // Activating the plugin
 function woocommerce_bitpay_activate()
 {
-    if ( class_exists( 'WC_Bitpay' ) ) {
-        $reflector = new ReflectionClass( 'WC_Bitpay' );
-        $old_plugin_dir = dirname( $reflector->getFileName() );
-        woocommerce_bitpay_remove_old( $old_plugin_dir );
+    // Currently requires GMP
+    if ( !extension_loaded( 'gmp' ) ) {
+        $plugins_url = admin_url('plugins.php');
+        deactivate_plugins( plugin_basename( __FILE__ ) );
+        wp_die( 'BitPay for WooCommerce requires the GMP extension for PHP.  Sorry about that.<br><a href="'.$plugins_url.'">Return to plugins screen</a>' );
     }
-}
 
-// Deactivating the plugin
-function woocommerce_bitpay_deactivate()
-{
-    delete_option( 'woocommerce_bitpay_key' );
-    delete_option( 'woocommerce_bitpay_pub' );
-    delete_option( 'woocommerce_bitpay_sin' );
-    delete_option( 'woocommerce_bitpay_token' );
-    delete_option( 'woocommerce_bitpay_label' );
-    delete_option( 'woocommerce_bitpay_network' );
-    delete_option( 'woocommerce_bitpay_order_state_complete' );
-    delete_option( 'woocommerce_bitpay_order_state_confirmed' );
-    delete_option( 'woocommerce_bitpay_order_state_invalid' );
-    delete_option( 'woocommerce_bitpay_order_state_paid' );
-    delete_option( 'woocommerce_bitpay_settings' );
-}
-
-// Remove old plugin
-function woocommerce_bitpay_remove_old($dirPath)
-{
-    if (! is_dir($dirPath)) {
-        throw new InvalidArgumentException("$dirPath must be a directory");
-    }
-    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
-        $dirPath .= '/';
-    }
-    $files = glob($dirPath . '*', GLOB_MARK);
-    foreach ($files as $file) {
-        if (is_dir($file)) {
-            woocommerce_bitpay_remove_old($file);
-        } else {
-            unlink($file);
+    // Deactivate any older versions that might still be present
+    $plugins = get_plugins();
+    foreach ($plugins as $file => $plugin) {
+        if ($plugin['Name'] == 'Bitpay Woocommerce') {
+            if (is_plugin_active( $file )) {
+                $plugins_url = admin_url('plugins.php');
+                deactivate_plugins( plugin_basename( __FILE__ ) );
+                wp_die( 'BitPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>' );
+            }
         }
     }
-    rmdir($dirPath);
+
+    // TODO: Refactor the version
+    update_option('woocommerce_bitpay_version', '2.0.1');
 }

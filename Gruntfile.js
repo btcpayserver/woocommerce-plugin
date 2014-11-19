@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     clean: {
       build: ['dist'],
       dev: {
-        src: ['/var/www/html/woocommerce/wp-content/plugins/woocommerce-plugin/'],
+        src: ['/var/www/html/woocommerce/wp-content/plugins/bitpay-for-woocommerce/'],
         options: {
           force: true
         }
@@ -22,11 +22,11 @@ module.exports = function(grunt) {
     compress: {
       build: {
         options: {
-          archive: 'dist/woocommerce-plugin.zip'
+          archive: 'dist/bitpay-for-woocommerce.zip'
         },
         files: [{
           expand: true,
-          cwd: 'dist/woocommerce-plugin',
+          cwd: 'dist',
           src: ['**']
         }]
       }
@@ -38,22 +38,30 @@ module.exports = function(grunt) {
             expand: true,
             cwd: 'src/',
             src: ['**/**.php', 'assets/js/**/**.*', 'assets/img/**/**.*', 'templates/**/**.*'],
-            dest: 'dist/woocommerce-plugin'
+            dest: 'dist/bitpay-for-woocommerce'
           },
           {
             expand: true,
             cwd: 'vendor/bitpay/php-client/src/',
             src: ['**/**.*'],
-            dest: 'dist/woocommerce-plugin/lib'
+            dest: 'dist/bitpay-for-woocommerce/lib'
+          },
+          {
+            src: 'readme.txt',
+            dest: 'dist/bitpay-for-woocommerce/readme.txt'
+          },
+          {
+            src: 'LICENSE',
+            dest: 'dist/bitpay-for-woocommerce/license.txt'
           }
         ]
       },
       dev: {
         files: [{
           expand: true,
-          cwd: 'dist/woocommerce-plugin',
+          cwd: 'dist/bitpay-for-woocommerce',
           src: ['**/**'],
-          dest: '/var/www/html/woocommerce/wp-content/plugins/woocommerce-plugin/'
+          dest: '/var/www/html/woocommerce/wp-content/plugins/bitpay-for-woocommerce/'
         }]
       }
     },
@@ -63,7 +71,7 @@ module.exports = function(grunt) {
           banner: '/**\n * @license Copyright 2011-2014 BitPay Inc., MIT License\n * see https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE\n */'
         },
         files: {
-          'dist/woocommerce-plugin/assets/css/style.css': ['src/assets/css/**.css']
+          'dist/bitpay-for-woocommerce/assets/css/style.css': ['src/assets/css/**.css']
         }
       }
     },
