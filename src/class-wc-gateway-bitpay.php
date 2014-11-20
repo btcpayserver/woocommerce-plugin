@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version: 	       2.0.1
+    Version: 	       2.0.2
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin

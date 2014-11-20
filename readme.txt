@@ -4,7 +4,7 @@ Donate link: http://example.com/
 Tags: bitcoin, bitpay, payment gateway, woocommerce, btc, xbt
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 2.0.1
+Stable tag: trunk
 License: MIT
 License URI: https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/LICENSE
 
