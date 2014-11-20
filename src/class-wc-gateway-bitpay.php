@@ -101,8 +101,8 @@ function woocommerce_bitpay_init()
                         'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce' ),
                         'default'     => __( 'Bitcoin', 'bitpay' ),
                     ),
-                    'message' => array(
-                        'title' => __( 'Customer Message', 'woothemes' ),
+                    'description' => array(
+                        'title' => __( 'Customer Message', 'woocommerce' ),
                         'type' => 'textarea',
                         'description' => __( 'Message to explain how the customer will be paying for the purchase.', 'bitpay' ),
                         'default' => 'You will be redirected to bitpay.com to complete your purchase.'
