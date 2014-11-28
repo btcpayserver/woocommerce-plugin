@@ -25,7 +25,7 @@ clear.
 
 * [Wordpress](https://wordpress.org/about/requirements/) >= 3.8 (Older versions will work, but we do not test against those)
 * [WooCommerce](http://docs.woothemes.com/document/server-requirements/) >= 2.2
-* [GMP](http://us2.php.net/gmp) You may have to install this as most servers do not come with it.
+* [GMP](http://php.net/manual/en/book.gmp.php) or [BCMath](http://php.net/manual/en/book.bc.php) You may have to install GMP as most servers do not come with it, but generally BCMath is already included.
 * [mcrypt](http://us2.php.net/mcrypt)
 * [OpenSSL](http://us2.php.net/openssl) Must be compiled with PHP
 * PHP >= 5.4
@@ -46,6 +46,7 @@ After the plugin is installed, click on Activate.
 
 ***WARNING*** It is good practice to backup your database before installing
 plugins. Please make sure you create backups.
+
 
 # Configuration
 
@@ -113,6 +114,42 @@ $ ./node_modules/.bin/grunt build
 # Outputs plugin at dist/woocommerce-plugin
 # Outputs plugin archive at dist/woocommerce-plugin.zip
 ```
+
+# GMP Installation
+
+It is highly recommended you install GMP for this plugin to acheive maximum performance.
+
+## Compile PHP with GMP
+[http://php.net/manual/en/gmp.installation.php](http://php.net/manual/en/gmp.installation.php)
+
+## Enable Extension
+If the extension has been included with your PHP install, you only need to uncomment the line in the PHP ini configuration file.
+
+On Windows:
+```ini
+; From
+;extension=php_gmp.dll
+; To
+extension=php_gmp.dll
+```
+
+On Linux:
+```ini
+; From
+;extension=gmp.so
+; To
+extension=gmp.so
+```
+
+## Ubuntu
+```bash
+$ sudo apt-get update
+$ sudo apt-get install php5-gmp
+$ sudo php5enmod gmp
+
+# Restart your server
+```
+
 
 # Support
 
