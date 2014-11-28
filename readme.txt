@@ -1,6 +1,5 @@
 === BitPay for WooCommerce ===
 Contributors: bitpay
-Donate link: http://example.com/
 Tags: bitcoin, bitpay, payment gateway, woocommerce, btc, xbt
 Requires at least: 3.9
 Tested up to: 4.0
@@ -12,7 +11,7 @@ Enable your WooCommerce store to accept Bitcoin with BitPay!
 
 == Description ==
 
-[youtube http://youtu.be/JP_I9zNRpEo]
+[youtube http://www.youtube.com/watch?v=JP_I9zNRpEo]
 
 Bitcoin is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the Bitcoin network allows for a highly resilient value transfer infrastructure, and this allows merchants to gain greater profits.
 
@@ -25,7 +24,7 @@ This is because there are little to no fees for transferring Bitcoins from one p
 * WordPress 3.9 or greater
 * WooCommerce 2.2 or greater
 * PHP version 5.4 or greater
-* GMP extension for PHP
+* GMP *or* BCMath extension for PHP
 
 = Automatic Installation =
 
@@ -47,6 +46,14 @@ Any < 2.0 versions of the BitPay payment gateway for WooCommerce will need to be
 
 Follow the [directions found on the plugin's GitHub page](https://github.com/bitpay/woocommerce-plugin#configuration).
 
+= Do I have to have GMP installed? =
+
+The requirement of the GMP extension for PHP has been removed, but it is still **highly** recommended that you install it for better performance.
+
+= How do I install GMP =
+
+Follow the [directions found on the plugin's GitHub page](https://github.com/bitpay/woocommerce-plugin#gmp-nstallation).
+
 == Screenshots ==
 
 1. When selected, this is how the payment option will appear
@@ -57,5 +64,14 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
-= 2.0 =
-* Implements BitPay's new cryptographically secure authentication
+= 2.1.0 - 2014-11-28 =
+* Tweak - Uses newer BitPay Library that no longer solely requires GMP, but can use BCMath as an alternative
+
+= 2.0.2 - 2014-11-20 =
+* Fix - Payment method description/message display on checkout
+
+= 2.0.1 - 2014-11-19 =
+* Tweak - Changed plugin activation to fail on presence of old plugin instead of attempting to delete old plugin and also detect GMP requirement.
+
+= 2.0.0 - 2014-11-18 =
+* Feature - Implements BitPay's new cryptographically secure authentication.

@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version: 	       2.0.2
+    Version: 	       2.1.0
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -58,6 +58,7 @@ function woocommerce_bitpay_init()
                 $this->api_token_label    = get_option( 'woocommerce_bitpay_label' );
                 $this->api_network        = get_option( 'woocommerce_bitpay_network' );
 
+                $this->transactionSpeed   = $this->get_option( 'transactionSpeed' );
                 $this->notification_url   = WC()->api_request_url( 'WC_Gateway_Bitpay' );
 
                 // Logs
@@ -328,16 +329,20 @@ function woocommerce_bitpay_init()
                 $invoice->setRedirectUrl( $redirectUrl );
                 $invoice->setNotificationUrl( $this->notification_url );
 
+                $invoice->setTransactionSpeed( $this->transactionSpeed );
+
                 try {
                     $invoice = $client->createInvoice($invoice);
                 } catch (Exception $e) {
-                    // TODO: add error logging
+                    if ('yes' == $this->debug) {
+                        $this->log->add( 'bitpay', 'Error generating invoice for ' . $order->get_order_number()."\n".$e->getMessage()."\n".$client->getResponse()->getBody() );
+                    }
                     error_log($e->getMessage());
                     error_log($client->getResponse()->getBody());
 
                     return array(
-                        'result'    => 'error'
-                        // TODO: add error message
+                        'result'    => 'failure',
+                        'messages'  => $e->getMessage()
                     );
                 }
                 // Reduce stock levels
@@ -640,12 +645,6 @@ function woocommerce_bitpay_init()
 // Activating the plugin
 function woocommerce_bitpay_activate()
 {
-    // Currently requires GMP
-    if ( !extension_loaded( 'gmp' ) ) {
-        $plugins_url = admin_url('plugins.php');
-        deactivate_plugins( plugin_basename( __FILE__ ) );
-        wp_die( 'BitPay for WooCommerce requires the GMP extension for PHP.  Sorry about that.<br><a href="'.$plugins_url.'">Return to plugins screen</a>' );
-    }
 
     // Deactivate any older versions that might still be present
     $plugins = get_plugins();
@@ -660,5 +659,5 @@ function woocommerce_bitpay_activate()
     }
 
     // TODO: Refactor the version
-    update_option('woocommerce_bitpay_version', '2.0.1');
+    update_option('woocommerce_bitpay_version', '2.1.0');
 }
