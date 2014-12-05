@@ -23,7 +23,7 @@ clear.
 
 # Requirements
 
-* [Wordpress](https://wordpress.org/about/requirements/) >= 3.8 (Older versions will work, but we do not test against those)
+* [Wordpress](https://wordpress.org/about/requirements/) >= 3.9 (Older versions will work, but we do not test against those)
 * [WooCommerce](http://docs.woothemes.com/document/server-requirements/) >= 2.2
 * [GMP](http://php.net/manual/en/book.gmp.php) or [BCMath](http://php.net/manual/en/book.bc.php) You may have to install GMP as most servers do not come with it, but generally BCMath is already included.
 * [mcrypt](http://us2.php.net/mcrypt)
