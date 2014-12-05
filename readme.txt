@@ -64,6 +64,10 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= 2.2.0 - 2014-12-05 =
+* Tweak - More robust debug logging
+* Fix - PHP 5.4 related issues (array literals, api credentials' serialization)
+
 = 2.1.0 - 2014-11-28 =
 * Tweak - Uses newer BitPay Library that no longer solely requires GMP, but can use BCMath as an alternative
 
