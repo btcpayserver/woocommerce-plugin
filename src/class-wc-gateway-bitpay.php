@@ -1086,12 +1086,16 @@ function woocommerce_bitpay_init()
         $client->setPrivateKey($key);
         $client->setPublicKey($pub);
 
+        // Sanitize label
+        $label = preg_replace('/[^a-zA-Z0-9 \-\_\.]/', '', get_bloginfo());
+        $label = substr('WooCommerce - '.$label, 0, 59);
+
         try {
             $token = $client->createToken(
                 array(
                     'id'          => (string) $sin,
                     'pairingCode' => $pairing_code,
-                    'label'       => substr("WooCommerce - {$_SERVER['SERVER_NAME']}", 0, 60),
+                    'label'       => $label,
                 )
             );
         } catch (\Exception $e) {
@@ -1102,10 +1106,10 @@ function woocommerce_bitpay_init()
         update_option('woocommerce_bitpay_pub', bitpay_encrypt($pub));
         update_option('woocommerce_bitpay_sin', (string)$sin);
         update_option('woocommerce_bitpay_token', bitpay_encrypt($token));
-        update_option('woocommerce_bitpay_label', "WooCommerce - {$_SERVER['SERVER_NAME']}");
+        update_option('woocommerce_bitpay_label', $label);
         update_option('woocommerce_bitpay_network', $network);
 
-        wp_send_json(array('sin' => (string) $sin, 'label' => "WooCommerce - {$_SERVER['SERVER_NAME']}", 'network' => $network));
+        wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $network));
     }
 
     function ajax_bitpay_revoke_token()
