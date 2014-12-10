@@ -64,6 +64,9 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= 2.2.1 - 2014-12-10 =
+* Fix - Token pairing label sanitization which caused issues when accented characters or symbols were used
+
 = 2.2.0 - 2014-12-05 =
 * Tweak - More robust debug logging
 * Fix - PHP 5.4 related issues (array literals, api credentials' serialization)
