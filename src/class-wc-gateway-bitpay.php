@@ -1019,15 +1019,17 @@ function woocommerce_bitpay_init()
 
     function ajax_bitpay_pair_code()
     {
-        if (true === isset($_POST['pairing_code'])) {
+        if (true === isset($_POST['pairing_code']) && trim($_POST['pairing_code']) !== '') {
             // Validate the Pairing Code
             $pairing_code = trim($_POST['pairing_code']);
         } else {
-            wp_send_json(array("error" => "Invalid Pairing Code"));
+            wp_send_json_error("Pairing Code is required");
+            return;
         }
 
-        if (false === preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
-            wp_send_json(array("error" => "Invalid Pairing Code"));
+        if (!preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
+            wp_send_json_error("Invalid Pairing Code");
+            return;
         }
 
         // Validate the Network
@@ -1099,7 +1101,8 @@ function woocommerce_bitpay_init()
                 )
             );
         } catch (\Exception $e) {
-            wp_send_json(array("error" => $e->getMessage()));
+            wp_send_json_error($e->getMessage());
+            return;
         }
 
         update_option('woocommerce_bitpay_key', bitpay_encrypt($key));
@@ -1211,9 +1214,9 @@ function woocommerce_bitpay_failed_requirements()
     }
 
     // WooCommerce 2.2+ required
-    if (true === version_compare(WOOCOMMERCE_VERSION, '2.2', '<')) {
-        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Please contact your web server administrator for assistance.';
-    }
+    // if (true === version_compare(WOOCOMMERCE_VERSION, '2.2.0', '<')) {
+    //     $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.WOOCOMMERCE_VERSION.'. Please contact your web server administrator for assistance.';
+    // }
 
     // GMP or BCMath required
     if (false === extension_loaded('gmp') && false === extension_loaded('bcmath')) {
