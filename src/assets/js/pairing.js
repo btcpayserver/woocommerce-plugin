@@ -67,7 +67,7 @@
         // Pairing failed
         else if (data && data.success === false) {
           $('.bitpay-pairing').show();
-          alert(data.data);
+          alert('Unable to pair with BitPay.');
         }
         
       });

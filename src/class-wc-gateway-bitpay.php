@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:            2.2.1
+    Version:            2.2.2
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -602,8 +602,8 @@ function woocommerce_bitpay_init()
                 error_log($e->getMessage());
 
                 return array(
-                    'result'    => 'failure',
-                    'messages'  => $e->getMessage(),
+                    'result'    => 'success',
+                    'messages'  => 'Sorry, but Bitcoin checkout with BitPay does not appear to be working.'
                 );
             }
 
@@ -1214,9 +1214,9 @@ function woocommerce_bitpay_failed_requirements()
     }
 
     // WooCommerce 2.2+ required
-    // if (true === version_compare(WOOCOMMERCE_VERSION, '2.2.0', '<')) {
-    //     $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.WOOCOMMERCE_VERSION.'. Please contact your web server administrator for assistance.';
-    // }
+    if (true === version_compare(WOOCOMMERCE_VERSION, '2.2', '<')) {
+        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.WOOCOMMERCE_VERSION.'. Please contact your web server administrator for assistance.';
+    }
 
     // GMP or BCMath required
     if (false === extension_loaded('gmp') && false === extension_loaded('bcmath')) {
@@ -1263,7 +1263,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.1');
+        update_option('woocommerce_bitpay_version', '2.2.2');
 
     } else {
         // Requirements not met, return an error message
