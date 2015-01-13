@@ -64,6 +64,10 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= 2.2.2 - 2015-01-13 =
+* Fix - Checkout error message when invoice can't be generated
+* Fix - Admin error message when pairing with BitPay fails
+
 = 2.2.1 - 2014-12-10 =
 * Fix - Token pairing label sanitization which caused issues when accented characters or symbols were used
 

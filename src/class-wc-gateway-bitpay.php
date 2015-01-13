@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:            2.2.1
+    Version:            2.2.2
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -602,8 +602,8 @@ function woocommerce_bitpay_init()
                 error_log($e->getMessage());
 
                 return array(
-                    'result'    => 'failure',
-                    'messages'  => $e->getMessage(),
+                    'result'    => 'success',
+                    'messages'  => 'Sorry, but Bitcoin checkout with BitPay does not appear to be working.'
                 );
             }
 
@@ -1019,15 +1019,17 @@ function woocommerce_bitpay_init()
 
     function ajax_bitpay_pair_code()
     {
-        if (true === isset($_POST['pairing_code'])) {
+        if (true === isset($_POST['pairing_code']) && trim($_POST['pairing_code']) !== '') {
             // Validate the Pairing Code
             $pairing_code = trim($_POST['pairing_code']);
         } else {
-            wp_send_json(array("error" => "Invalid Pairing Code"));
+            wp_send_json_error("Pairing Code is required");
+            return;
         }
 
-        if (false === preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
-            wp_send_json(array("error" => "Invalid Pairing Code"));
+        if (!preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
+            wp_send_json_error("Invalid Pairing Code");
+            return;
         }
 
         // Validate the Network
@@ -1099,7 +1101,8 @@ function woocommerce_bitpay_init()
                 )
             );
         } catch (\Exception $e) {
-            wp_send_json(array("error" => $e->getMessage()));
+            wp_send_json_error($e->getMessage());
+            return;
         }
 
         update_option('woocommerce_bitpay_key', bitpay_encrypt($key));
@@ -1212,7 +1215,7 @@ function woocommerce_bitpay_failed_requirements()
 
     // WooCommerce 2.2+ required
     if (true === version_compare(WOOCOMMERCE_VERSION, '2.2', '<')) {
-        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Please contact your web server administrator for assistance.';
+        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.WOOCOMMERCE_VERSION.'. Please contact your web server administrator for assistance.';
     }
 
     // GMP or BCMath required
@@ -1260,7 +1263,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.1');
+        update_option('woocommerce_bitpay_version', '2.2.2');
 
     } else {
         // Requirements not met, return an error message

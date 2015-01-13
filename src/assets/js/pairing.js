@@ -47,6 +47,8 @@
       })
       .done(function (data) {
 
+        $('.bitpay-pairing__loading').remove();
+
         // Make sure the data is valid
         if (data && data.sin && data.label) {
 
@@ -63,15 +65,11 @@
           $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BitPay account!</strong></p></div>');
         }
         // Pairing failed
-        else {
+        else if (data && data.success === false) {
           $('.bitpay-pairing').show();
+          alert('Unable to pair with BitPay.');
         }
-        $('.bitpay-pairing__loading').remove();
-      })
-      .fail(function () {
-        // TODO: refactor the pair fail into its own function
-        $('.bitpay-pairing').show();
-        $('.bitpay-pairing__loading').remove();
+        
       });
     });
 
