@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+DB_USER=$1
+DB_PASS=$2
+echo $SHELL
+export DB_USER=$DB_USER
+export DB_PASS=$DB_PASS
+echo "Removing conflicting files..."
+rm -rf wordpress
+rm -rf wp-content
+rm -rf build
+rm -rf /tmp/wordpress-test
+rm -rf /tmp/wordpress
+rm wp-cli.yml
+mysqladmin --force -u $DB_USER -p$DB_PASS drop wordpress_test
+echo "Creating wp-cli.yml..."
+echo "path: wordpress
+debug: true
+core config:
+  site_url: http://localhost
+  dbname: wordpress_test
+  dbuser: $DB_USER
+  dbpass: $DB_PASS
+  dbhost: 127.0.0.1
+  extra-php: |
+    define( 'WP_DEBUG', true );
+    \$table_prefix  = 'wptests_';
+core install:
+  url: http://localhost
+  title: BitPay Wordpress
+  admin_user: bitpay
+  admin_password: bitpay
+  admin_email: NULL@localhost.net" >> wp-cli.yml
+if [ -e composer.lock ]
+then
+       echo "Running Composer update..."
+       #composer update
+else
+       echo "Running Composer Install..."
+       composer install
+fi
+echo "Creating test database..."
+mysqladmin -u $DB_USER -p$DB_PASS create wordpress_test
+echo "Checking if wp-cli is working..."
+./vendor/bin/wp --info
+echo "Installing wordpress..."
+./vendor/bin/wp core download --debug
+./vendor/bin/wp core config --debug
+./vendor/bin/wp core install --debug
+echo "Setting up wordpress plugins..."
+./vendor/bin/wp plugin install woocommerce --version=2.2.8 --activate
+./vendor/bin/wp plugin install ./dist/woocommerce-bitpay.zip --activate
+echo "Setting up wordpress test files..."
+./vendor/bin/wp scaffold plugin-tests woocommerce-bitpay
+echo "Downloading Wordpress Tests"
+sudo bash ./wordpress/wp-content/plugins/woocommerce-bitpay/bin/install-wp-tests.sh wordpress_test $DB_USER $DB_PASS localhost latest
+wget -nv -O wp-tests-config.php http://develop.svn.wordpress.org/trunk/wp-tests-config-sample.php
+sudo mkdir /tmp/wordpress/wp-content/uploads
+#sudo mv ./wordpress /tmp/wordpress
+#sudo chmod 777 /tmp/wordpress
+#cp -avr dist/woocommerce-bitpay wp-content/plugins/woocommerce-bitpay
+#cp -r wp-content wordpress/wp-content

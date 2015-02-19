@@ -1,0 +1,61 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400);
+.bitpay-token {
+	background: #002855;
+	font-family: 'Ubuntu', sans-serif;
+	color: #fff;
+	border-left: 4px solid #0F0;
+	display: inline-block;
+	position: relative;
+	padding-bottom: 1em;
+	border-radius: 4px;
+}
+.bitpay-token--hidden {
+	display: none;
+}
+.bitpay-token--testnet {
+	border-color: #cc0;
+}
+.bitpay-token__prop {
+	padding: 0 1em;
+	font-size: 0.85em;
+	color: #ccddff;
+}
+.bitpay-token__label {
+	color: #fff;
+	display: inline-block;
+	min-width: 4em;
+}
+.bitpay-token__header {
+	margin-bottom: 0.5em;
+	white-space: nowrap;
+}
+.bitpay-token__logo {
+	width: 5em;
+	display: inline-block;
+	box-sizing: border-box;
+	text-align: center;
+	margin-right: 3em;
+}
+.bitpay-token__logo img {
+	margin-bottom: -13px;
+}
+.bitpay-token__logo:after {
+	content: "Livenet";
+	display: inline;
+	color: #0f0;
+}
+.bitpay-token--testnet .bitpay-token__logo:after {
+	content: "Testnet";
+	color: #cc0;
+}
+.bitpay-token__revoke {
+	display: block;
+	float: right;
+	padding: 0.5em 0.75em;
+	color: #f00;
+	text-decoration: none;
+	text-align: right;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+}
