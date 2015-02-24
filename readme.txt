@@ -64,6 +64,7 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= 2.2.3 - 2015-02-24 =
 * Fix - Requirements check doesn't lock up WordPress when WooCommerce is upgraded
 
 = 2.2.2 - 2015-01-13 =
