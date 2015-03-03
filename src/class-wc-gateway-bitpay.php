@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:            2.2.3
+    Version:           2.2.3
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -103,7 +103,9 @@ function woocommerce_bitpay_init()
             $this->api_token_label    = get_option('woocommerce_bitpay_label');
             $this->api_network        = get_option('woocommerce_bitpay_network');
 
-            $this->debug_php_version  = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
+            // Define debugging & informational settings
+            $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
+            $this->debug_plugin_version = '2.2.3';
 
             $this->log('BitPay Woocommerce payment plugin object constructor called. Server is PHP v' . $this->debug_php_version);
             $this->log('    [Info] $this->api_key            = ' . $this->api_key);
@@ -250,12 +252,14 @@ function woocommerce_bitpay_init()
                     'type'        => 'text',
                     'description' => __('This controls the title which the user sees during checkout.', 'woocommerce'),
                     'default'     => __('Bitcoin', 'bitpay'),
+                    'desc_tip'    => true,
                ),
                 'description' => array(
                     'title'       => __('Customer Message', 'woocommerce'),
                     'type'        => 'textarea',
                     'description' => __('Message to explain how the customer will be paying for the purchase.', 'bitpay'),
-                    'default'     => 'You will be redirected to bitpay.com to complete your purchase.'
+                    'default'     => 'You will be redirected to bitpay.com to complete your purchase.',
+                    'desc_tip'    => true,
                ),
                 'api_token' => array(
                     'type'        => 'api_token'
@@ -268,8 +272,9 @@ function woocommerce_bitpay_init()
                         'high'    => 'High',
                         'medium'  => 'Medium',
                         'low'     => 'Low',
-                   ),
+                    ),
                     'default' => 'high',
+                    'desc_tip'    => true,
                ),
                 'order_states' => array(
                     'type' => 'order_states'
@@ -279,12 +284,18 @@ function woocommerce_bitpay_init()
                     'type'        => 'checkbox',
                     'label'       => __('Enable logging', 'woocommerce'),
                     'default'     => 'no',
-                    'description' => sprintf(__('Log BitPay events, such as IPN requests, inside <code>%s</code>', 'bitpay'), wc_get_log_file_path('bitpay'))
+                    'description' => sprintf(__('Log BitPay events, such as IPN requests, inside <code>%s</code>', 'bitpay'), wc_get_log_file_path('bitpay')),
+                    'desc_tip'    => true,
                ),
+                'support_details' => array(
+		            'title'       => __( 'Plugin & Support Information', 'woocommerce' ),
+		            'type'        => 'title',
+		            'description' => __('This plugin version is ' . $this->debug_plugin_version . ' and your PHP version is ' . $this->debug_php_version . '. If you need assistance, please contact support@bitpay.com.', 'woocommerce'),
+	           ),
            );
 
-                $this->log('    [Info] Initialized form fields: ' . var_export($this->form_fields, true));
-                $this->log('    [Info] Leaving init_form_fields()...');
+            $this->log('    [Info] Initialized form fields: ' . var_export($this->form_fields, true));
+            $this->log('    [Info] Leaving init_form_fields()...');
         }
 
         /**
@@ -427,7 +438,7 @@ function woocommerce_bitpay_init()
                     $wc_state = $_POST['bitpay_order_state'][ $bp_state ];
 
                     if (true === array_key_exists($wc_state, $wc_statuses)) {
-                        $this->log('Updating order state ' . $bp_state . ' to ' . $wc_state);
+                        $this->log('    [Info] Updating order state ' . $bp_state . ' to ' . $wc_state);
                         update_option('woocommerce_bitpay_order_state_'.$bp_state, $wc_state);
                     }
 
@@ -928,6 +939,7 @@ function woocommerce_bitpay_init()
 
                 return $encrypted;
             } else {
+                $this->log('    [Error] Invalid server fingerprint generated in bitpay_encrypt()');
                 wp_die('Invalid server fingerprint generated');
             }
         }
@@ -970,6 +982,7 @@ function woocommerce_bitpay_init()
 
                 return unserialize($decrypted);
             } else {
+                $this->log('    [Error] Invalid server fingerprint generated in bitpay_decrypt()');
                 wp_die('Invalid server fingerprint generated');
             }
         }
@@ -990,7 +1003,6 @@ function woocommerce_bitpay_init()
     /**
      * Add Settings link to the plugin entry in the plugins menu
      **/
-
     add_filter('plugin_action_links', 'bitpay_plugin_action_links', 10, 2);
 
     function bitpay_plugin_action_links($links, $file)
