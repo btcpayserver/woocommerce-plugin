@@ -107,7 +107,7 @@ function woocommerce_bitpay_init()
             $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
             $this->debug_plugin_version = '2.2.3';
 
-            $this->log('BitPay Woocommerce payment plugin object constructor called. Server is PHP v' . $this->debug_php_version);
+            $this->log('BitPay Woocommerce payment plugin object constructor called. Plugin is v' . $this->debug_plugin_version . ' and server is PHP v' . $this->debug_php_version);
             $this->log('    [Info] $this->api_key            = ' . $this->api_key);
             $this->log('    [Info] $this->api_pub            = ' . $this->api_pub);
             $this->log('    [Info] $this->api_sin            = ' . $this->api_sin);
