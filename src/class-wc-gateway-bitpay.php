@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:            2.2.2
+    Version:            2.2.3
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -48,14 +48,11 @@ register_activation_hook(__FILE__, 'woocommerce_bitpay_activate');
 
 function woocommerce_bitpay_init()
 {
-    // Check for Requirements
-    $failed = woocommerce_bitpay_failed_requirements();
-
-    if (false !== $failed) {
-        wp_die($failed);
+    if (true === class_exists('WC_Gateway_Bitpay')) {
+        return;
     }
 
-    if (true === class_exists('WC_Gateway_Bitpay')) {
+    if (false === class_exists('WC_Payment_Gateway')) {
         return;
     }
 
@@ -1201,6 +1198,8 @@ function woocommerce_bitpay_init()
 function woocommerce_bitpay_failed_requirements()
 {
     global $wp_version;
+    global $woocommerce;
+
     $errors = array();
 
     // PHP 5.4+ required
@@ -1213,9 +1212,11 @@ function woocommerce_bitpay_failed_requirements()
         $errors[] = 'Your WordPress version is too old. The BitPay payment plugin requires Wordpress 3.9 or higher to function. Please contact your web server administrator for assistance.';
     }
 
-    // WooCommerce 2.2+ required
-    if (true === version_compare(WOOCOMMERCE_VERSION, '2.2', '<')) {
-        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.WOOCOMMERCE_VERSION.'. Please contact your web server administrator for assistance.';
+    // WooCommerce required
+    if (true === empty($woocommerce)) {
+        $errors[] = 'The WooCommerce plugin for WordPress needs to be installed and activated. Please contact your web server administrator for assistance.';
+    }elseif (true === version_compare($woocommerce->version, '2.2', '<')) {
+        $errors[] = 'Your WooCommerce version is too old. The BitPay payment plugin requires WooCommerce 2.2 or higher to function. Your version is '.$woocommerce->version.'. Please contact your web server administrator for assistance.';
     }
 
     // GMP or BCMath required
@@ -1237,6 +1238,8 @@ function woocommerce_bitpay_activate()
     // Check for Requirements
     $failed = woocommerce_bitpay_failed_requirements();
 
+    $plugins_url = admin_url('plugins.php');
+
     // Requirements met, activate the plugin
     if ($failed === false) {
 
@@ -1245,7 +1248,6 @@ function woocommerce_bitpay_activate()
 
         foreach ($plugins as $file => $plugin) {
             if ('Bitpay Woocommerce' === $plugin['Name'] && true === is_plugin_active($file)) {
-                $plugins_url = admin_url('plugins.php');
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('BitPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
 
@@ -1263,10 +1265,10 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.2');
+        update_option('woocommerce_bitpay_version', '2.2.3');
 
     } else {
         // Requirements not met, return an error message
-        wp_die($failed);
+        wp_die($failed . '<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
     }
 }
