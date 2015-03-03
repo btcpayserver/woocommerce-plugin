@@ -4,8 +4,11 @@
  *
  * @author 		bitpay
  */
-if( ! defined( 'WP_UNINSTALL_PLUGIN' ) )
+
+// Prevents script from being called directly.
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit();
+}
 
 global $wpdb;
 
