@@ -81,10 +81,9 @@ $ ./node_modules/.bin/grunt build
    ensure you are using the latest version. Your issue might have been
    addressed in a newer version! See the [Releases](https://github.com/bitpay/woocommerce-plugin/releases)
    page for the latest.
-4. If all else fails, send an email describing your issue **in detail** to
-   support@bitpay.com
+4. If all else fails, enable debug logging in the plugin options and send the log along with an email describing your issue **in detail** to support@bitpay.com
 
-***TIP***: When contacting support it will help us is you provide:
+**TIP**: When contacting support it will help us is you provide:
 
 * WordPress and WooCommerce Version
 * Other plugins you have installed
