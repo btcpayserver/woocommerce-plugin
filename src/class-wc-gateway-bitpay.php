@@ -93,6 +93,7 @@ function woocommerce_bitpay_init()
             // Define user set variables
             $this->title              = $this->get_option('title');
             $this->description        = $this->get_option('description');
+            $this->order_states       = $this->get_option('order_states');
             $this->debug              = 'yes' === $this->get_option('debug', 'no');
 
             // Define BitPay settings
@@ -379,11 +380,13 @@ function woocommerce_bitpay_init()
                             <tr>
                             <th><?php echo $bp_name; ?></th>
                             <td>
-                                <select name="bitpay_order_state[<?php echo $bp_state; ?>]">
+                                <select name="woocommerce_bitpay_order_states[<?php echo $bp_state; ?>]">
                                 <?php
 
+                                $order_states = get_option('woocommerce_bitpay_settings');
+                                $order_states = $order_states['order_states'];
                                 foreach ($wc_statuses as $wc_state => $wc_name) {
-                                    $current_option = get_option('woocommerce_bitpay_order_state_'.$bp_state);
+                                    $current_option = $order_states[$bp_state];
 
                                     if (true === empty($current_option)) {
                                         $current_option = $df_statuses[$bp_state];
@@ -430,21 +433,26 @@ function woocommerce_bitpay_init()
 
             $wc_statuses = wc_get_order_statuses();
 
-            if (true === isset($_POST['bitpay_order_state'])) {
+            if (true === isset($_POST['woocommerce_bitpay_order_states'])) {
+
+                $bp_settings = get_option('woocommerce_bitpay_settings');
+                $order_states = $bp_settings['order_states'];
 
                 foreach ($bp_statuses as $bp_state => $bp_name) {
-                    if (true === isset($_POST['bitpay_order_state'][ $bp_state ])) {
+                    if (false === isset($_POST['woocommerce_bitpay_order_states'][ $bp_state ])) {
                         continue;
                     }
 
-                    $wc_state = $_POST['bitpay_order_state'][ $bp_state ];
+                    $wc_state = $_POST['woocommerce_bitpay_order_states'][ $bp_state ];
 
                     if (true === array_key_exists($wc_state, $wc_statuses)) {
                         $this->log('    [Info] Updating order state ' . $bp_state . ' to ' . $wc_state);
-                        update_option('woocommerce_bitpay_order_state_'.$bp_state, $wc_state);
+                        $order_states[$bp_state] = $wc_state;
                     }
 
                 }
+                $bp_settings['order_states'] = $order_states;
+                update_option('woocommerce_bitpay_settings', $bp_settings);
             }
 
             $this->log('    [Info] Leaving save_order_states()...');
@@ -780,10 +788,12 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] The current order status for this order is ' . $current_status);
             }
 
-            $paid_status      = get_option('woocommerce_bitpay_order_state_paid', 'processing');
-            $confirmed_status = get_option('woocommerce_bitpay_order_state_confirmed', 'processing');
-            $complete_status  = get_option('woocommerce_bitpay_order_state_complete', 'completed');
-            $invalid_status   = get_option('woocommerce_bitpay_order_state_invalid', 'failed');
+            $order_states = $this->get_option('order_states');
+
+            $paid_status      = $order_states['paid'];
+            $confirmed_status = $order_states['confirmed'];
+            $complete_status  = $order_states['complete'];
+            $invalid_status   = $order_states['invalid'];
 
             $checkStatus = $invoice->getStatus();
 
