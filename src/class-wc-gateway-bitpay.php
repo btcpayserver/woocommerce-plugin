@@ -180,9 +180,6 @@ function woocommerce_bitpay_init()
             $this->transaction_speed  = $this->get_option('transaction_speed');
             $this->log('    [Info] Transaction speed is now set to: ' . $this->transaction_speed);
 
-            $this->notification_url   = WC()->api_request_url('WC_Gateway_Bitpay');
-            $this->log('    [Info] Notification URL is now set to: ' . $this->notification_url);
-
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
@@ -288,6 +285,22 @@ function woocommerce_bitpay_init()
                     'label'       => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'bitpay'), $logs_href),
                     'default'     => 'no',
                     'description' => sprintf(__('Log BitPay events, such as IPN requests, inside <code>%s</code>', 'bitpay'), wc_get_log_file_path('bitpay')),
+                    'desc_tip'    => true,
+               ),
+                'notification_url' => array(
+                    'title'       => __('Notification URL', 'bitpay'),
+                    'type'        => 'url',
+                    'description' => __('BitPay will send IPNs for orders to this URL with the BitPay invoice data', 'bitpay'),
+                    'default'     => '',
+                    'placeholder' => WC()->api_request_url('WC_Gateway_Bitpay'),
+                    'desc_tip'    => true,
+               ),
+                'redirect_url' => array(
+                    'title'       => __('Redirect URL', 'bitpay'),
+                    'type'        => 'url',
+                    'description' => __('After paying the BitPay invoice, users will be redirected back to this URL', 'bitpay'),
+                    'default'     => '',
+                    'placeholder' => $this->get_return_url(),
                     'desc_tip'    => true,
                ),
                 'support_details' => array(
@@ -459,6 +472,69 @@ function woocommerce_bitpay_init()
         }
 
         /**
+         * Validate API Token
+         */
+        public function validate_api_token_field()
+        {    
+            return '';
+        }
+
+        /**
+         * Validate Support Details
+         */
+        public function validate_support_details_field()
+        {    
+            return '';
+        }
+
+        /**
+         * Validate Order States
+         */
+        public function validate_order_states_field()
+        { 
+            $order_states = $this->get_option('order_states');
+
+            if ( isset( $_POST[ $this->plugin_id . $this->id . '_order_states' ] ) ) {
+                $order_states = $_POST[ $this->plugin_id . $this->id . '_order_states' ];
+            }     
+            return $order_states;
+        }
+
+        /**
+         * Validate Notification URL
+         */
+        public function validate_url_field($key)
+        {
+            $url = $this->get_option($key);
+
+            if ( isset( $_POST[ $this->plugin_id . $this->id . '_' . $key ] ) ) {
+                 if (filter_var($_POST[ $this->plugin_id . $this->id . '_' . $key ], FILTER_VALIDATE_URL) !== false) {
+                     $url = $_POST[ $this->plugin_id . $this->id . '_' . $key ];
+                 } else {
+                     $url = '';
+                 }
+             }     
+             return $url;
+        }
+
+        /**
+         * Validate Redirect URL
+         */
+        public function validate_redirect_url_field()
+        {
+            $redirect_url = $this->get_option('redirect_url', '');
+
+            if ( isset( $_POST['woocommerce_bitpay_redirect_url'] ) ) {
+                 if (filter_var($_POST['woocommerce_bitpay_redirect_url'], FILTER_VALIDATE_URL) !== false) {
+                     $redirect_url = $_POST['woocommerce_bitpay_redirect_url'];
+                 } else {
+                     $redirect_url = '';
+                 }
+             }     
+             return $redirect_url;
+        }
+
+        /**
          * Output for the order received page.
          */
         public function thankyou_page($order_id)
@@ -502,9 +578,11 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] The variable thanks_link = ' . $thanks_link . '...');
 
             // Redirect URL & Notification URL
-            $redirect_url = $thanks_link;
-
+            $redirect_url = $this->get_option('redirect_url', $thanks_link);
             $this->log('    [Info] The variable redirect_url = ' . $redirect_url  . '...');
+
+            $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_Bitpay'));
+            $this->log('    [Info] Notification URL is now set to: ' . $notification_url . '...');
 
             // Setup the currency
             $currency_code = get_woocommerce_currency();
@@ -601,7 +679,7 @@ function woocommerce_bitpay_init()
 
             // Add the Redirect and Notification URLs
             $invoice->setRedirectUrl($redirect_url);
-            $invoice->setNotificationUrl($this->notification_url);
+            $invoice->setNotificationUrl($notification_url);
             $invoice->setTransactionSpeed($this->transaction_speed);
 
             try {
