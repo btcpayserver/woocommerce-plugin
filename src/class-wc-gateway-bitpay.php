@@ -1250,6 +1250,11 @@ function woocommerce_bitpay_failed_requirements()
         $errors[] = 'The BitPay payment plugin requires the GMP or BC Math extension for PHP in order to function. Please contact your web server administrator for assistance.';
     }
 
+    // Curl required
+    if (false === extension_loaded('curl')) {
+        $errors[] = 'The BitPay payment plugin requires the Curl extension for PHP in order to function. Please contact your web server administrator for assistance.';
+    }
+
     if (false === empty($errors)) {
         return implode("<br>\n", $errors);
     } else {
