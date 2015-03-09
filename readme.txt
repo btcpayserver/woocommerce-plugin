@@ -64,28 +64,33 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= Unreleased =
+* Added - Curl requirement check during activation
+* Added - Notification and Redirect URL settings for advanced users
+* Fixed - Order States now save correctly to the database
+
 = 2.2.3 - 2015-02-24 =
-* Fix - Requirements check doesn't lock up WordPress when WooCommerce is upgraded
+* Fixed - Requirements check doesn't lock up WordPress when WooCommerce is upgraded
 
 = 2.2.2 - 2015-01-13 =
-* Fix - Checkout error message when invoice can't be generated
-* Fix - Admin error message when pairing with BitPay fails
+* Fixed - Checkout error message when invoice can't be generated
+* Fixed - Admin error message when pairing with BitPay fails
 
 = 2.2.1 - 2014-12-10 =
-* Fix - Token pairing label sanitization which caused issues when accented characters or symbols were used
+* Fixed - Token pairing label sanitization which caused issues when accented characters or symbols were used
 
 = 2.2.0 - 2014-12-05 =
-* Tweak - More robust debug logging
-* Fix - PHP 5.4 related issues (array literals, api credentials' serialization)
+* Changed - More robust debug logging
+* Fixed - PHP 5.4 related issues (array literals, api credentials' serialization)
 
 = 2.1.0 - 2014-11-28 =
-* Tweak - Uses newer BitPay Library that no longer solely requires GMP, but can use BCMath as an alternative
+* Changed - Uses newer BitPay Library that no longer solely requires GMP, but can use BCMath as an alternative
 
 = 2.0.2 - 2014-11-20 =
-* Fix - Payment method description/message display on checkout
+* Fixed - Payment method description/message display on checkout
 
 = 2.0.1 - 2014-11-19 =
-* Tweak - Changed plugin activation to fail on presence of old plugin instead of attempting to delete old plugin and also detect GMP requirement.
+* Changed - Plugin activation fails on presence of old plugin instead of attempting to delete old plugin and also detect GMP requirement.
 
 = 2.0.0 - 2014-11-18 =
-* Feature - Implements BitPay's new cryptographically secure authentication.
+* Changed - Implements BitPay's new cryptographically secure authentication.
