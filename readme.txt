@@ -64,6 +64,8 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
+= Unreleased =
+
 = 2.2.4 - 2015-03-09 =
 * Added - Curl requirement check during activation
 * Added - Notification and Redirect URL settings for advanced users

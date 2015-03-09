@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Curl requirement check during activation
 - Notification and Redirect URL settings for advanced users
+
 ### Fixed
 - Order States now save correctly to the database
 
@@ -27,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.0] - 2014-12-05
 ### Changed
 - More robust debug logging
+
 ### Fixed
 - PHP 5.4 related issues (array literals, api credentials' serialization)
 
