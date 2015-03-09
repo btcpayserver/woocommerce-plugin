@@ -2,7 +2,7 @@
   "author": "BitPay",
   "name": "woocommerce-plugin",
   "description": "BitPay payment gateway for WooCommerce",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "repository": {
     "type": "git",
     "url": "git://github.com/bitpay/woocommerce-plugin.git"
