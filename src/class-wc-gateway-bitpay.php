@@ -654,7 +654,8 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] Invoice object created successfully...');
             }
 
-            $invoice->setOrderId((string)$order_id);
+            $order_number = $order->get_order_number();
+            $invoice->setOrderId((string)$order_number);
             $invoice->setCurrency($currency);
             $invoice->setFullNotifications(true);
 
