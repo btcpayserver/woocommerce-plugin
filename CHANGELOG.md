@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [2.2.5] - 2015-04-02
+### Fixed
+- Bundled BitPay PHP Client for releases now includes entire client
+
 ## [2.2.4] - 2015-03-09
 ### Added
 - Curl requirement check during activation
