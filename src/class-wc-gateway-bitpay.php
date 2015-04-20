@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.5
+    Version:           2.2.6
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -60,11 +60,11 @@ function woocommerce_bitpay_init()
     if (false === class_exists('PrivateKey')) {
         include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
     }
-    
+
     if (false === class_exists('PublicKey')) {
         include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
     }
-    
+
     if (false === class_exists('Token')) {
         include_once(__DIR__ . '/lib/Bitpay/Token.php');
     }
@@ -130,7 +130,7 @@ function woocommerce_bitpay_init()
                     $this->log('    [Error] Private Key corrupt. Message is: ' . $e->getMessage());
                 }
             } else {
-                
+
             }
 
             if (false === empty($this->api_pub)) {
@@ -150,7 +150,7 @@ function woocommerce_bitpay_init()
             if (false === empty($this->api_token)) {
                 try {
                     $this->api_token    = $this->bitpay_decrypt($this->api_token);
-                    
+
                     if (true === isset($this->api_token) && false === empty($this->api_token)) {
                         $this->log('    [Info] API Token decrypted successfully.');
                     } else {
@@ -166,7 +166,7 @@ function woocommerce_bitpay_init()
                 $this->api_key        = null;
                 $this->log('    [Error] The API Key was NOT an instance of PrivateKey!  Instead, it appears to be a ' . gettype($this->api_key) . ' value.');
             }
- 
+
             if (!($this->api_pub instanceof \Bitpay\PublicKey)) {
                 $this->api_pub        = null;
                 $this->log('    [Error] The Public Key was NOT an instance of PublicKey!  Instead, it appears to be a ' . gettype($this->api_pub) . ' value.');
@@ -189,7 +189,7 @@ function woocommerce_bitpay_init()
                 $this->enabled = 'no';
                 $this->log('    [Info] The plugin is NOT valid for use!');
             } else {
-                $this->enabled = 'yes'; 
+                $this->enabled = 'yes';
                 $this->log('    [Info] The plugin is ok to use.');
                 add_action('woocommerce_api_wc_gateway_bitpay', array($this, 'ipn_callback'));
             }
@@ -216,7 +216,7 @@ function woocommerce_bitpay_init()
             // Ensure the currency is supported by BitPay
             try {
                 $currency = new \Bitpay\Currency(get_woocommerce_currency());
-                
+
                 if (false === isset($currency) || true === empty($currency)) {
                     $this->log('    [Error] The Bitpay payment plugin was called to check if it was valid for use but could not instantiate a currency object.');
                     throw new \Exception('The Bitpay payment plugin was called to check if it was valid for use but could not instantiate a currency object. Cannot continue!');
@@ -476,7 +476,7 @@ function woocommerce_bitpay_init()
          * Validate API Token
          */
         public function validate_api_token_field()
-        {    
+        {
             return '';
         }
 
@@ -484,7 +484,7 @@ function woocommerce_bitpay_init()
          * Validate Support Details
          */
         public function validate_support_details_field()
-        {    
+        {
             return '';
         }
 
@@ -492,12 +492,12 @@ function woocommerce_bitpay_init()
          * Validate Order States
          */
         public function validate_order_states_field()
-        { 
+        {
             $order_states = $this->get_option('order_states');
 
             if ( isset( $_POST[ $this->plugin_id . $this->id . '_order_states' ] ) ) {
                 $order_states = $_POST[ $this->plugin_id . $this->id . '_order_states' ];
-            }     
+            }
             return $order_states;
         }
 
@@ -514,7 +514,7 @@ function woocommerce_bitpay_init()
                  } else {
                      $url = '';
                  }
-             }     
+             }
              return $url;
         }
 
@@ -531,7 +531,7 @@ function woocommerce_bitpay_init()
                  } else {
                      $redirect_url = '';
                  }
-             }     
+             }
              return $redirect_url;
         }
 
@@ -1019,7 +1019,7 @@ function woocommerce_bitpay_init()
                 strlen($fingerprint) > 24)
             {
                 $fingerprint = substr($fingerprint, 0, 24);
-        
+
                 if (false === isset($fingerprint) || true === empty($fingerprint)) {
                     throw new \Exception('The Bitpay payment plugin was called to encrypt data but could not generate a fingerprint parameter!');
                 }
@@ -1038,7 +1038,7 @@ function woocommerce_bitpay_init()
                 wp_die('Invalid server fingerprint generated');
             }
         }
-        
+
         public function bitpay_decrypt($encrypted)
         {
             if (false === isset($encrypted) || true === empty($encrypted)) {
@@ -1184,7 +1184,7 @@ function woocommerce_bitpay_init()
         }
 
         $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
-        
+
         if (true === empty($curlAdapter)) {
             throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a CurlAdapter object. Cannot continue!');
         }
@@ -1287,7 +1287,7 @@ function woocommerce_bitpay_init()
 
             // Strict base64 char check
             if (false === base64_decode($decrypted, true)) {
-                $error_string .= '    [Warning] In bitpay_decrypt: data appears to have already been decrypted. Strict base64 check failed.';                    
+                $error_string .= '    [Warning] In bitpay_decrypt: data appears to have already been decrypted. Strict base64 check failed.';
             } else {
                 $decrypted = base64_decode($decrypted);
             }
@@ -1379,7 +1379,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.5');
+        update_option('woocommerce_bitpay_version', '2.2.6');
 
     } else {
         // Requirements not met, return an error message

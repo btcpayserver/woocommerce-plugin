@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [2.2.6] - 2015-04-20
+### Added
+- New order status setting which also fixes issues with new orders being set to On-Hold and triggering emails
+
 ## [2.2.5] - 2015-04-02
 ### Fixed
 - Bundled BitPay PHP Client for releases now includes entire client
@@ -52,7 +56,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Implements BitPay's new cryptographically secure authentication.
 
-[unreleased]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.4...HEAD
+[unreleased]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.6...HEAD
+[2.2.6]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.5...v2.2.6
+[2.2.5]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.4...v2.2.5
 [2.2.4]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.3...v2.2.4
 [2.2.3]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.2...v2.2.3
 [2.2.2]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.1...v2.2.2
