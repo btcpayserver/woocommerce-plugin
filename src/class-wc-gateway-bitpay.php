@@ -376,8 +376,8 @@ function woocommerce_bitpay_init()
             $pairing_form = file_get_contents(plugin_dir_url(__FILE__).'templates/pairing.tpl');
             $token_format = file_get_contents(plugin_dir_url(__FILE__).'templates/token.tpl');
 
-            $bp_statuses = array('paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
-            $df_statuses = array('paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
+            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
+            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
 
@@ -438,6 +438,7 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] Entered save_order_states()...');
 
             $bp_statuses = array(
+                'new'      => 'New Order',
                 'paid'      => 'Paid',
                 'confirmed' => 'Confirmed',
                 'complete'  => 'Complete',
@@ -570,8 +571,10 @@ function woocommerce_bitpay_init()
 
             $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notification_url);
 
-            // Mark as on-hold (we're awaiting the payment)
-            $order->update_status('on-hold', 'Awaiting payment notification from BitPay.');
+            // Mark new order according to user settings (we're awaiting the payment)
+            $new_order_states = $this->get_option('order_states');
+            $new_order_status = $new_order_states['new'];
+            $order->update_status($new_order_status, 'Awaiting payment notification from BitPay.');
 
             $thanks_link = $this->get_return_url($order);
 
@@ -869,6 +872,7 @@ function woocommerce_bitpay_init()
 
             $order_states = $this->get_option('order_states');
 
+            $new_order_status = $order_states['new'];
             $paid_status      = $order_states['paid'];
             $confirmed_status = $order_states['confirmed'];
             $complete_status  = $order_states['complete'];
