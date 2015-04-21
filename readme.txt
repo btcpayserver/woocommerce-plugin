@@ -25,6 +25,8 @@ This is because there are little to no fees for transferring Bitcoins from one p
 * WooCommerce 2.2 or greater
 * PHP version 5.4 or greater
 * GMP *or* BCMath extension for PHP
+* mcrypt
+* OpenSSL Must be compiled with PHP
 
 = Automatic Installation =
 
