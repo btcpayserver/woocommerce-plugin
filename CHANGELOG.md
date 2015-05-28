@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [2.2.7] - 2015-05-28
+### Fixed
+- Security issue with ajax calls
+
 ## [2.2.6] - 2015-04-20
 ### Added
 - New order status setting which also fixes issues with new orders being set to On-Hold and triggering emails
@@ -56,7 +60,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Implements BitPay's new cryptographically secure authentication.
 
-[unreleased]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.6...HEAD
+[unreleased]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.7...HEAD
+[2.2.7]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.6...v2.2.7
 [2.2.6]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.5...v2.2.6
 [2.2.5]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.4...v2.2.5
 [2.2.4]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.3...v2.2.4
