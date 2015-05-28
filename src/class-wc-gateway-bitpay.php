@@ -325,8 +325,14 @@ function woocommerce_bitpay_init()
 
             // TODO: CSS Imports aren't optimal, but neither is this.  Maybe include the css to be css-minimized?
             wp_enqueue_style('font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css');
-            wp_enqueue_style('woocommerce-plugin', plugins_url('assets/css/style.css', __FILE__));
-            wp_enqueue_script('woocommerce-plugin', plugins_url('assets/js/pairing.js', __FILE__), array('jquery'), null, true);
+            wp_enqueue_style('bitpay-token', plugins_url('assets/css/style.css', __FILE__));
+            wp_enqueue_script('bitpay-pairing', plugins_url('assets/js/pairing.js', __FILE__), array('jquery'), null, true);
+            wp_localize_script( 'bitpay-pairing', 'BitpayAjax', array(
+                'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+                'pairNonce'   => wp_create_nonce( 'bitpay-pair-nonce' ),
+                'revokeNonce' => wp_create_nonce( 'bitpay-revoke-nonce' )
+                )
+            );
 
             $pairing_form = file_get_contents(plugin_dir_url(__FILE__).'templates/pairing.tpl');
             $token_format = file_get_contents(plugin_dir_url(__FILE__).'templates/token.tpl');
@@ -367,14 +373,6 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] Entered generate_order_states_html()...');
 
             ob_start();
-
-            // TODO: CSS Imports aren't optimal, but neither is this.  Maybe include the css to be css-minimized?
-            wp_enqueue_style('font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css');
-            wp_enqueue_style('woocommerce-plugin', plugins_url('assets/css/style.css', __FILE__));
-            wp_enqueue_script('woocommerce-plugin', plugins_url('assets/js/pairing.js', __FILE__), array('jquery'), null, true);
-
-            $pairing_form = file_get_contents(plugin_dir_url(__FILE__).'templates/pairing.tpl');
-            $token_format = file_get_contents(plugin_dir_url(__FILE__).'templates/token.tpl');
 
             $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
             $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
@@ -1125,112 +1123,129 @@ function woocommerce_bitpay_init()
 
     function ajax_bitpay_pair_code()
     {
-        if (true === isset($_POST['pairing_code']) && trim($_POST['pairing_code']) !== '') {
-            // Validate the Pairing Code
-            $pairing_code = trim($_POST['pairing_code']);
-        } else {
-            wp_send_json_error("Pairing Code is required");
-            return;
+        $nonce = $_POST['pairNonce'];
+        if ( ! wp_verify_nonce( $nonce, 'bitpay-pair-nonce' ) ) {
+            die ( 'Unauthorized!');
         }
 
-        if (!preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
-            wp_send_json_error("Invalid Pairing Code");
-            return;
+        if ( current_user_can( 'manage_options' ) ) {
+
+            if (true === isset($_POST['pairing_code']) && trim($_POST['pairing_code']) !== '') {
+                // Validate the Pairing Code
+                $pairing_code = trim($_POST['pairing_code']);
+            } else {
+                wp_send_json_error("Pairing Code is required");
+                return;
+            }
+
+            if (!preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
+                wp_send_json_error("Invalid Pairing Code");
+                return;
+            }
+
+            // Validate the Network
+            $network = ($_POST['network'] === 'livenet') ? 'livenet' : 'testnet';
+
+            // Generate Private Key
+            $key = new \Bitpay\PrivateKey();
+
+            if (true === empty($key)) {
+                throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a PrivateKey object. Cannot continue!');
+            }
+
+            $key->generate();
+
+            // Generate Public Key
+            $pub = new \Bitpay\PublicKey();
+
+            if (true === empty($pub)) {
+                throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a PublicKey object. Cannot continue!');
+            }
+
+            $pub->setPrivateKey($key);
+            $pub->generate();
+
+            // Get SIN Format
+            $sin = new \Bitpay\SinKey();
+
+            if (true === empty($sin)) {
+                throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a SinKey object. Cannot continue!');
+            }
+
+            $sin->setPublicKey($pub);
+            $sin->generate();
+
+            // Create an API Client
+            $client = new \Bitpay\Client\Client();
+
+            if (true === empty($client)) {
+                throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
+            }
+
+            if ($network === 'livenet') {
+                $client->setNetwork(new \Bitpay\Network\Livenet());
+            } else {
+                $client->setNetwork(new \Bitpay\Network\Testnet());
+            }
+
+            $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
+
+            if (true === empty($curlAdapter)) {
+                throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a CurlAdapter object. Cannot continue!');
+            }
+
+            $client->setAdapter($curlAdapter);
+
+            $client->setPrivateKey($key);
+            $client->setPublicKey($pub);
+
+            // Sanitize label
+            $label = preg_replace('/[^a-zA-Z0-9 \-\_\.]/', '', get_bloginfo());
+            $label = substr('WooCommerce - '.$label, 0, 59);
+
+            try {
+                $token = $client->createToken(
+                    array(
+                        'id'          => (string) $sin,
+                        'pairingCode' => $pairing_code,
+                        'label'       => $label,
+                    )
+                );
+            } catch (\Exception $e) {
+                wp_send_json_error($e->getMessage());
+                return;
+            }
+
+            update_option('woocommerce_bitpay_key', bitpay_encrypt($key));
+            update_option('woocommerce_bitpay_pub', bitpay_encrypt($pub));
+            update_option('woocommerce_bitpay_sin', (string)$sin);
+            update_option('woocommerce_bitpay_token', bitpay_encrypt($token));
+            update_option('woocommerce_bitpay_label', $label);
+            update_option('woocommerce_bitpay_network', $network);
+
+            wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $network));
         }
-
-        // Validate the Network
-        $network = ($_POST['network'] === 'livenet') ? 'livenet' : 'testnet';
-
-        // Generate Private Key
-        $key = new \Bitpay\PrivateKey();
-
-        if (true === empty($key)) {
-            throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a PrivateKey object. Cannot continue!');
-        }
-
-        $key->generate();
-
-        // Generate Public Key
-        $pub = new \Bitpay\PublicKey();
-
-        if (true === empty($pub)) {
-            throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a PublicKey object. Cannot continue!');
-        }
-
-        $pub->setPrivateKey($key);
-        $pub->generate();
-
-        // Get SIN Format
-        $sin = new \Bitpay\SinKey();
-
-        if (true === empty($sin)) {
-            throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a SinKey object. Cannot continue!');
-        }
-
-        $sin->setPublicKey($pub);
-        $sin->generate();
-
-        // Create an API Client
-        $client = new \Bitpay\Client\Client();
-
-        if (true === empty($client)) {
-            throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
-        }
-
-        if ($network === 'livenet') {
-            $client->setNetwork(new \Bitpay\Network\Livenet());
-        } else {
-            $client->setNetwork(new \Bitpay\Network\Testnet());
-        }
-
-        $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
-
-        if (true === empty($curlAdapter)) {
-            throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a CurlAdapter object. Cannot continue!');
-        }
-
-        $client->setAdapter($curlAdapter);
-
-        $client->setPrivateKey($key);
-        $client->setPublicKey($pub);
-
-        // Sanitize label
-        $label = preg_replace('/[^a-zA-Z0-9 \-\_\.]/', '', get_bloginfo());
-        $label = substr('WooCommerce - '.$label, 0, 59);
-
-        try {
-            $token = $client->createToken(
-                array(
-                    'id'          => (string) $sin,
-                    'pairingCode' => $pairing_code,
-                    'label'       => $label,
-                )
-            );
-        } catch (\Exception $e) {
-            wp_send_json_error($e->getMessage());
-            return;
-        }
-
-        update_option('woocommerce_bitpay_key', bitpay_encrypt($key));
-        update_option('woocommerce_bitpay_pub', bitpay_encrypt($pub));
-        update_option('woocommerce_bitpay_sin', (string)$sin);
-        update_option('woocommerce_bitpay_token', bitpay_encrypt($token));
-        update_option('woocommerce_bitpay_label', $label);
-        update_option('woocommerce_bitpay_network', $network);
-
-        wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $network));
+        exit;
     }
 
     function ajax_bitpay_revoke_token()
     {
-        update_option('woocommerce_bitpay_key', null);
-        update_option('woocommerce_bitpay_pub', null);
-        update_option('woocommerce_bitpay_sin', null);
-        update_option('woocommerce_bitpay_token', null);
-        update_option('woocommerce_bitpay_label', null);
-        update_option('woocommerce_bitpay_network', 'testnet');
+        $nonce = $_POST['revokeNonce'];
+        if ( ! wp_verify_nonce( $nonce, 'bitpay-revoke-nonce' ) ) {
+            die ( 'Unauthorized!');
+        }
 
-        wp_send_json(array('success'=>'Token Revoked!'));
+        if ( current_user_can( 'manage_options' ) ) {
+            update_option('woocommerce_bitpay_key', null);
+            update_option('woocommerce_bitpay_pub', null);
+            update_option('woocommerce_bitpay_sin', null);
+            update_option('woocommerce_bitpay_token', null);
+            update_option('woocommerce_bitpay_label', null);
+            update_option('woocommerce_bitpay_network', 'testnet');
+
+            wp_send_json(array('success'=>'Token Revoked!'));
+        }
+        exit;
     }
 
     function bitpay_encrypt($data)

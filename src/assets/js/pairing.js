@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2011-2014 BitPay Inc., MIT License 
+ * @license Copyright 2011-2014 BitPay Inc., MIT License
  * see https://github.com/bitpay/woocommerce-bitpay/blob/master/LICENSE
  */
 
@@ -40,10 +40,11 @@
       $('.bitpay-pairing').after('<div class="bitpay-pairing__loading" style="width: 20em; text-align: center"><img src="'+ajax_loader_url+'"></div>');
 
       // Attempt the pair with BitPay
-      $.post(ajaxurl, {
+      $.post(BitpayAjax.ajaxurl, {
         'action':       'bitpay_pair_code',
         'pairing_code': $('.bitpay-pairing__code').val(),
-        'network':      $('.bitpay-pairing__network').val()
+        'network':      $('.bitpay-pairing__network').val(),
+        'pairNonce':    BitpayAjax.pairNonce
       })
       .done(function (data) {
 
@@ -69,7 +70,7 @@
           $('.bitpay-pairing').show();
           alert('Unable to pair with BitPay.');
         }
-        
+
       });
     });
 
@@ -80,8 +81,9 @@
       e.preventDefault();
 
       if (confirm('Are you sure you want to revoke the token?')) {
-        $.post(ajaxurl, {
-          'action': 'bitpay_revoke_token'
+        $.post(BitpayAjax.ajaxurl, {
+          'action': 'bitpay_revoke_token',
+          'revokeNonce':    BitpayAjax.revokeNonce
         })
         .always(function (data) {
           $('.bitpay-token').fadeOut(500, function () {
