@@ -1,29 +1,29 @@
 WooCommerce BitPay Payment Gateway
 =====================
 
-# Build Status
+## Build Status
 
 [![Build Status](https://travis-ci.org/bitpay/woocommerce-plugin.svg?branch=master)](https://travis-ci.org/bitpay/woocommerce-plugin)
 
-# Brief Description
+## Brief Description
 
 Add the ability to accept bitcoin in WooCommerce via BitPay.
 
-# Detail Description
+## Detail Description
 
 Bitcoin is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the Bitcoin network allows for a highly resilient value transfer infrastructure, and this allows merchants to gain greater profits.
 
 This is because there are little to no fees for transferring Bitcoins from one person to another. Unlike other payment methods, Bitcoin payments cannot be reversed, so once you are paid you can ship! No waiting days for a payment to clear.
 
 
-# Quick Start Guide
+## Quick Start Guide
 
 To get up and running with our plugin quickly, see the GUIDE here: https://github.com/bitpay/woocommerce-plugin/blob/master/GUIDE.md
 
 
-# Development
+## Development
 
-##Setup
+### Setup
 
  * NodeJS & NPM
  * Grunt
@@ -34,13 +34,16 @@ Clone the repo:
 $ git clone https://github.com/bitpay/woocommerce-plugin
 $ cd woocommerce-plugin
 ```
+
 Install the dependencies:
 ```bash
 $ npm install
 $ curl -sS https://getcomposer.org/installer | php
 $ ./composer.phar install
 ```
-##Build
+
+### Build
+
 Perform the [setup](#Setup), then:
 ```bash
 $ ./node_modules/.bin/grunt build
@@ -48,10 +51,9 @@ $ ./node_modules/.bin/grunt build
 # Outputs plugin archive at dist/woocommerce-plugin.zip
 ```
 
+## Support
 
-# Support
-
-## BitPay Support
+### BitPay Support
 
 * [BitPay Labs](https://labs.bitpay.com/c/plugins/woocommerce)
   * Post a question in our discussion forums
@@ -60,13 +62,13 @@ $ ./node_modules/.bin/grunt build
 * [Support](https://support.bitpay.com)
   * BitPay merchant support documentation
 
-## WooCommerce Support
+### WooCommerce Support
 
 * [Homepage](http://www.woothemes.com/woocommerce/)
 * [Documentation](http://docs.woothemes.com)
 * [Support](https://support.woothemes.com)
 
-# Troubleshooting
+## Troubleshooting
 
 1. Ensure a valid SSL certificate is installed on your server. Also ensure your root CA cert is updated. If your CA cert is not current, you will see curl SSL verification errors.
 2. Verify that your web server is not blocking POSTs from servers it may not recognize. Double check this on your firewall as well, if one is being used.
@@ -83,7 +85,7 @@ $ ./node_modules/.bin/grunt build
   * Web server error logs
 * Screen grabs of error message if applicable.
 
-# Contribute
+## Contribute
 
 Would you like to help with this project?  Great!  You don't have to be a developer, either.  If you've found a bug or have an idea for an improvement, please open an [issue](https://github.com/bitpay/woocommerce-plugin/issues) and tell us about it.
 
@@ -91,6 +93,6 @@ If you *are* a developer wanting contribute an enhancement, bugfix or other patc
 
 This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [BitPay Labs](https://labs.bitpay.com).
 
-# License
+## License
 
 Please refer to the [LICENSE](https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE) file that came with this project.
