@@ -199,7 +199,6 @@ function woocommerce_bitpay_init()
 
         public function __destruct()
         {
-            $this->log('BitPay Woocommerce payment plugin object destroyed.');
         }
 
         public function is_valid_for_use()
