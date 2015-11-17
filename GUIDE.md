@@ -6,12 +6,18 @@ You must have a BitPay merchant account to use this plugin.  It's free to [sign-
 
 ## Server Requirements
 
-* [Wordpress](https://wordpress.org/about/requirements/) >= 3.9 (Older versions will work, but we do not test against those)
-* [WooCommerce](http://docs.woothemes.com/document/server-requirements/) >= 2.2
+* [Wordpress](https://wordpress.org/about/requirements/) >= 4.3.1 (Older versions will work, but we do not test against those)
+* [WooCommerce](http://docs.woothemes.com/document/server-requirements/) >= 2.4.10
 * [GMP](http://php.net/manual/en/book.gmp.php) or [BCMath](http://php.net/manual/en/book.bc.php) You may have to install GMP as most servers do not come with it, but generally BCMath is already included.
 * [mcrypt](http://us2.php.net/mcrypt)
 * [OpenSSL](http://us2.php.net/openssl) Must be compiled with PHP
-* PHP >= 5.4
+* [PHP5 Curl](http://php.net/manual/en/curl.installation.php) Must be compiled with PHP
+* PHP >= 5.5 (we tested this on 5.5)
+* Be sure to restart apache after the installation:
+
+```bash
+sudo apachectl restart
+```
 
 ## Installation
 
