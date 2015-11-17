@@ -333,8 +333,8 @@ function woocommerce_bitpay_init()
                 )
             );
 
-            $pairing_form = file_get_contents(plugin_dir_url(__FILE__).'templates/pairing.tpl');
-            $token_format = file_get_contents(plugin_dir_url(__FILE__).'templates/token.tpl');
+            $pairing_form = file_get_contents(plugin_dir_path(__FILE__).'templates/pairing.tpl');
+            $token_format = file_get_contents(plugin_dir_path(__FILE__).'templates/token.tpl');
 
             ?>
             <tr valign="top">
