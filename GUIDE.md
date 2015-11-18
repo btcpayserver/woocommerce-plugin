@@ -1,6 +1,9 @@
 # Using the BitPay plugin for WooCommerce
 
 ## Prerequisites
+
+* Last Version Tested: Wordpress 4.3.1 WooCommerce 2.4.10
+
 You must have a BitPay merchant account to use this plugin.  It's free to [sign-up for a BitPay merchant account](https://bitpay.com/start).
 
 
