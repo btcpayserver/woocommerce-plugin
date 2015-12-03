@@ -1,9 +1,9 @@
 === BitPay for WooCommerce ===
 Contributors: bitpay
 Tags: bitcoin, bitpay, payment gateway, woocommerce, btc, xbt
-Requires at least: 3.9
-Tested up to: 4.0
-Stable tag: trunk
+Requires at least: 4.3.1
+Tested up to: 4.3.1
+Stable tag: 2.2.9
 License: MIT
 License URI: https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/LICENSE
 
@@ -21,8 +21,8 @@ This is because there are little to no fees for transferring Bitcoins from one p
 
 = Minimum Requirements =
 
-* WordPress 3.9 or greater
-* WooCommerce 2.2 or greater
+* WordPress 4.3.1 or greater
+* WooCommerce 2.4.10 or greater
 * PHP version 5.4 or greater
 * GMP *or* BCMath extension for PHP
 * mcrypt
@@ -66,7 +66,11 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 == Changelog ==
 
-= Unreleased =
+= 2.2.9 - 2015-12-02 =
+* Fixed - Small issue with the initialization of the notification url
+
+= 2.2.8 - 2015-11-17 =
+* Fixed - Issues related to API field on BitPay Checkout Settings Page being missing
 
 = 2.2.7 - 2015-05-28 =
 * Fixed - Security issue with ajax calls
