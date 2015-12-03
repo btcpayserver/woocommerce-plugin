@@ -6,7 +6,7 @@
     Author:      bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.7
+    Version:           2.2.8
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -566,7 +566,8 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
-            $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $this->notification_url);
+            $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_Bitpay'));
+            $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
 
             // Mark new order according to user settings (we're awaiting the payment)
             $new_order_states = $this->get_option('order_states');
@@ -581,7 +582,6 @@ function woocommerce_bitpay_init()
             $redirect_url = $this->get_option('redirect_url', $thanks_link);
             $this->log('    [Info] The variable redirect_url = ' . $redirect_url  . '...');
 
-            $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_Bitpay'));
             $this->log('    [Info] Notification URL is now set to: ' . $notification_url . '...');
 
             // Setup the currency
@@ -1393,7 +1393,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.7');
+        update_option('woocommerce_bitpay_version', '2.2.8');
 
     } else {
         // Requirements not met, return an error message
