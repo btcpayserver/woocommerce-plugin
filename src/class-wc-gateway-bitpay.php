@@ -848,11 +848,14 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] Order ID is: ' . $order_id);
             }
 
-            // Creating a new WooCommerce Order object with $order_id
+	    //this is for the basic and advanced woocommerce order numbering plugins
+	    //if we need to apply other filters, just add them in place of the this one
+            $order_id = apply_filters('woocommerce_order_id_from_number', $order_id);
+
             $order = wc_get_order($order_id);
 
-            if (false === isset($order) && true === empty($order)) {
-                $this->log('    [Error] The Bitpay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id);
+            if (false === $order || 'WC_Order' !== get_class($order)) {
+                $this->log('    [Error] The Bitpay payment plugin was called to process an IPN message but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-bitpay.php to apply a search filter.');
                 throw new \Exception('The Bitpay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
                 $this->log('    [Info] Order details retrieved successfully...');
