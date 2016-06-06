@@ -2,8 +2,8 @@
 Contributors: bitpay
 Tags: bitcoin, bitpay, payment gateway, woocommerce, btc, xbt
 Requires at least: 4.3.1
-Tested up to: 4.3.1
-Stable tag: 2.2.9
+Tested up to: 4.5.2
+Stable tag: 2.2.10
 License: MIT
 License URI: https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/LICENSE
 
@@ -52,10 +52,6 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 
 The requirement of the GMP extension for PHP has been removed, but it is still **highly** recommended that you install it for better performance.
 
-= How do I install GMP =
-
-Follow the [directions found on the plugin's GitHub page](https://github.com/bitpay/woocommerce-plugin#gmp-nstallation).
-
 == Screenshots ==
 
 1. When selected, this is how the payment option will appear
@@ -65,6 +61,8 @@ Follow the [directions found on the plugin's GitHub page](https://github.com/bit
 5. The settings screen for this plugin
 
 == Changelog ==
+= 2.2.10 - 2016-06-06 =
+* Added - Support for WooCommerce Basic and Advanced Order Numbering
 
 = 2.2.9 - 2015-12-02 =
 * Fixed - Small issue with the initialization of the notification url
