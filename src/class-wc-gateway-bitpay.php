@@ -669,11 +669,12 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] Item object created successfully...');
             }
 
-            if (true === isset($order->order_total) && false === empty($order->order_total)) {
-                $item->setPrice($order->order_total);
+            $order_total = $order->calculate_totals();
+            if (true === isset($order_total) && false === empty($order_total)) {
+                $item->setPrice($order_total);
             } else {
-                $this->log('    [Error] The Bitpay payment plugin was called to process a payment but could not set item->setPrice to order->order_total. The empty() check failed!');
-                throw new \Exception('The Bitpay payment plugin was called to process a payment but could not set item->setPrice to order->order_total. The empty() check failed!');
+                $this->log('    [Error] The Bitpay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
+                throw new \Exception('The Bitpay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
             }
 
             $invoice->setItem($item);
