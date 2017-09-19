@@ -2,7 +2,30 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased][unreleased]
+## [2.2.12] - 2017-09-17
+### Fixed
+- Removed non-working option to disable BitPay from the BitPay plugin config page
+- Populate buyer email when creating BitPay invoice
+- WC v3 compatibility fixes
+### Added
+- Improve logging around updating order states
+- Present error when mcrypt is not loaded
+
+## [2.2.11-beta] - 2016-06-14
+### Fixed
+- order_total with certain filters
+
+## [2.2.10] - 2016-06-6
+### Fixed
+- Use order numbering system for IPN callbacks
+
+## [2.2.9] - 2015-12-04
+### Fixed
+- Fixed notification URL initialization
+
+## [2.2.8] - 2015-11-19
+### Fixed
+- Fixed missing API field in config page
 
 ## [2.2.7] - 2015-05-28
 ### Fixed
