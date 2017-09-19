@@ -4,9 +4,10 @@
     Plugin URI:  https://bitpay.com
     Description: Enable your WooCommerce store to accept Bitcoin with BitPay.
     Author:      bitpay
+    Text Domain: bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.9
+    Version:           2.2.11-beta
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -240,12 +241,6 @@ function woocommerce_bitpay_init()
             $logs_href = get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-status&tab=logs&log_file=' . $log_file;
 
             $this->form_fields = array(
-                'enabled' => array(
-                    'title'   => __('Enable/Disable', 'bitpay'),
-                    'type'    => 'checkbox',
-                    'label'   => __('Enable Bitcoin Payments via BitPay', 'bitpay'),
-                    'default' => 'yes'
-               ),
                 'title' => array(
                     'title'       => __('Title', 'bitpay'),
                     'type'        => 'text',
@@ -568,12 +563,13 @@ function woocommerce_bitpay_init()
 
             $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_Bitpay'));
             $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
-
+           
             // Mark new order according to user settings (we're awaiting the payment)
             $new_order_states = $this->get_option('order_states');
             $new_order_status = $new_order_states['new'];
-            $order->update_status($new_order_status, 'Awaiting payment notification from BitPay.');
-
+            $this->log('    [Info] Changing order status to: '.$new_order_status);
+            $order_status_change = $order->update_status($new_order_status, 'Awaiting payment notification from BitPay.');
+            $this->log('    [Info] Changing order status result: '.$order_status_change);
             $thanks_link = $this->get_return_url($order);
 
             $this->log('    [Info] The variable thanks_link = ' . $thanks_link . '...');
@@ -676,14 +672,17 @@ function woocommerce_bitpay_init()
                 $this->log('    [Error] The Bitpay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
                 throw new \Exception('The Bitpay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
             }
-
+            // Add buyer's email to the invoice
+            $buyer = new \Bitpay\Buyer();
+            $buyer->setEmail($order->get_billing_email());
+            $invoice->setBuyer($buyer);
             $invoice->setItem($item);
 
             // Add the Redirect and Notification URLs
             $invoice->setRedirectUrl($redirect_url);
             $invoice->setNotificationUrl($notification_url);
             $invoice->setTransactionSpeed($this->transaction_speed);
-
+            
             try {
                 $this->log('    [Info] Attempting to generate invoice for ' . $order->get_order_number() . '...');
 
@@ -706,8 +705,8 @@ function woocommerce_bitpay_init()
             }
 
             // Reduce stock levels
-            $order->reduce_order_stock();
-
+            //$order->reduce_order_stock();
+            wc_reduce_stock_levels($order_id);
             // Remove cart
             WC()->cart->empty_cart();
 
@@ -1047,7 +1046,7 @@ function woocommerce_bitpay_init()
             }
 
             $this->log('    [Info] Entered class level bitpay_decrypt...');
-
+         
             $mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
             $fingerprint = sha1(sha1(__DIR__));
 
@@ -1081,8 +1080,8 @@ function woocommerce_bitpay_init()
                 $this->log('    [Error] Invalid server fingerprint generated in bitpay_decrypt()');
                 wp_die('Invalid server fingerprint generated');
             }
-        }
     }
+}
 
     /**
     * Add BitPay Payment Gateway to WooCommerce
@@ -1327,8 +1326,10 @@ function woocommerce_bitpay_failed_requirements()
     global $wp_version;
     global $woocommerce;
 
-    $errors = array();
-
+    $errors = [];
+    if (extension_loaded('mcrypt')  === false){
+        $errors[] = 'The BitPay payment plugin requires the MCrypt extension for PHP in order to function. Please contact your web server administrator for assistance.';
+    } 
     // PHP 5.4+ required
     if (true === version_compare(PHP_VERSION, '5.4.0', '<')) {
         $errors[] = 'Your PHP version is too old. The BitPay payment plugin requires PHP 5.4 or higher to function. Please contact your web server administrator for assistance.';
