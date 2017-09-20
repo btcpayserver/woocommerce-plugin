@@ -1011,7 +1011,6 @@ function woocommerce_bitpay_init()
 
             $this->log('    [Info] Entered bitpay_encrypt...');
 
-            //$mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
             $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
             $fingerprint = sha1(sha1(__DIR__));
 
@@ -1258,7 +1257,6 @@ function woocommerce_bitpay_init()
             throw new \Exception('The Bitpay payment plugin was called to encrypt data but no data was passed!');
         }
 
-        //$mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
         $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
         $fingerprint = sha1(sha1(__DIR__));
 
@@ -1330,8 +1328,8 @@ function woocommerce_bitpay_failed_requirements()
     global $woocommerce;
 
     $errors = [];
-    if (extension_loaded('mcrypt')  === false){
-        $errors[] = 'The BitPay payment plugin requires the MCrypt extension for PHP in order to function. Please contact your web server administrator for assistance.';
+    if (extension_loaded('openssl')  === false){
+        $errors[] = 'The BitPay payment plugin requires the OpenSSL extension for PHP in order to function. Please contact your web server administrator for assistance.';
     } 
     // PHP 5.4+ required
     if (true === version_compare(PHP_VERSION, '5.4.0', '<')) {
