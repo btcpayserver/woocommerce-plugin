@@ -7,7 +7,7 @@
     Text Domain: bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.13
+    Version:           2.2.12
     License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
@@ -1399,7 +1399,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.9');
+        update_option('woocommerce_bitpay_version', '2.2.12');
 
     } else {
         // Requirements not met, return an error message
