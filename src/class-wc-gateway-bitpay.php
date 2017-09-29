@@ -7,8 +7,8 @@
     Text Domain: bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.12
-    License:           Copyright 2011-2017 BitPay Inc., MIT License
+    Version:           2.2.13
+    License:           Copyright 2011-2014 BitPay Inc., MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
  */
@@ -330,7 +330,6 @@ function woocommerce_bitpay_init()
 
             $pairing_form = file_get_contents(plugin_dir_path(__FILE__).'templates/pairing.tpl');
             $token_format = file_get_contents(plugin_dir_path(__FILE__).'templates/token.tpl');
-
             ?>
             <tr valign="top">
                 <th scope="row" class="titledesc">API Token:</th>
@@ -554,7 +553,7 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a payment but the order_id was missing. Cannot continue!');
             }
 
-            $order = wc_get_order($order_id);
+            $order = wc_get_order( $order_id );
 
             if (false === $order) {
                 $this->log('    [Error] The Bitpay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id);
@@ -568,8 +567,9 @@ function woocommerce_bitpay_init()
             $new_order_states = $this->get_option('order_states');
             $new_order_status = $new_order_states['new'];
             $this->log('    [Info] Changing order status to: '.$new_order_status);
-            $order_status_change = $order->update_status($new_order_status, 'Awaiting payment notification from BitPay.');
-            $this->log('    [Info] Changing order status result: '.$order_status_change);
+            
+            $order->update_status($new_order_status);
+            $this->log('    [Info] Changed order status result');
             $thanks_link = $this->get_return_url($order);
 
             $this->log('    [Info] The variable thanks_link = ' . $thanks_link . '...');
@@ -1011,11 +1011,11 @@ function woocommerce_bitpay_init()
 
             $this->log('    [Info] Entered bitpay_encrypt...');
 
-            $mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
+            $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
             $fingerprint = sha1(sha1(__DIR__));
 
             if (true === isset($fingerprint) &&
-                true === isset($mcrypt_ext)  &&
+                true === isset($openssl_ext)  &&
                 strlen($fingerprint) > 24)
             {
                 $fingerprint = substr($fingerprint, 0, 24);
@@ -1024,7 +1024,7 @@ function woocommerce_bitpay_init()
                     throw new \Exception('The Bitpay payment plugin was called to encrypt data but could not generate a fingerprint parameter!');
                 }
 
-                $encrypted = $mcrypt_ext->encrypt(base64_encode(serialize($data)), $fingerprint, '00000000');
+                $encrypted = $openssl_ext->encrypt(base64_encode(serialize($data)), $fingerprint, '1234567890123456');
 
                 if (true === empty($encrypted)) {
                     throw new \Exception('The Bitpay payment plugin was called to encrypt a serialized object and failed!');
@@ -1047,11 +1047,12 @@ function woocommerce_bitpay_init()
 
             $this->log('    [Info] Entered class level bitpay_decrypt...');
          
-            $mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
+            $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
+
             $fingerprint = sha1(sha1(__DIR__));
 
             if (true === isset($fingerprint) &&
-                true === isset($mcrypt_ext)  &&
+                true === isset($openssl_ext)  &&
                 strlen($fingerprint) > 24)
             {
                 $fingerprint = substr($fingerprint, 0, 24);
@@ -1060,7 +1061,7 @@ function woocommerce_bitpay_init()
                     throw new \Exception('The Bitpay payment plugin was called to decrypt data but could not generate a fingerprint parameter!');
                 }
 
-                $decrypted = base64_decode($mcrypt_ext->decrypt($encrypted, $fingerprint, '00000000'));
+                $decrypted = base64_decode($openssl_ext->decrypt($encrypted, $fingerprint, '1234567890123456'));
 
                 // Strict base64 char check
                 if (false === base64_decode($decrypted, true)) {
@@ -1080,9 +1081,9 @@ function woocommerce_bitpay_init()
                 $this->log('    [Error] Invalid server fingerprint generated in bitpay_decrypt()');
                 wp_die('Invalid server fingerprint generated');
             }
+      
     }
 }
-
     /**
     * Add BitPay Payment Gateway to WooCommerce
     **/
@@ -1256,11 +1257,11 @@ function woocommerce_bitpay_init()
             throw new \Exception('The Bitpay payment plugin was called to encrypt data but no data was passed!');
         }
 
-        $mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
+        $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
         $fingerprint = sha1(sha1(__DIR__));
 
         if (true === isset($fingerprint) &&
-            true === isset($mcrypt_ext)  &&
+            true === isset($openssl_ext)  &&
             strlen($fingerprint) > 24)
         {
             $fingerprint = substr($fingerprint, 0, 24);
@@ -1269,7 +1270,7 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to encrypt data but could not generate a fingerprint parameter!');
             }
 
-            $encrypted = $mcrypt_ext->encrypt(base64_encode(serialize($data)), $fingerprint, '00000000');
+            $encrypted = $openssl_ext->encrypt(base64_encode(serialize($data)), $fingerprint, '1234567890123456');
 
             if (true === empty($encrypted)) {
                 throw new \Exception('The Bitpay payment plugin was called to serialize an encrypted object and failed!');
@@ -1286,12 +1287,12 @@ function woocommerce_bitpay_init()
         if (false === isset($encrypted) || true === empty($encrypted)) {
             throw new \Exception('The Bitpay payment plugin was called to decrypt data but no data was passed!');
         }
-
-        $mcrypt_ext = new \Bitpay\Crypto\McryptExtension();
+        $openssl_ext = new \Bitpay\Crypto\OpenSSLExtension();
+       
         $fingerprint = sha1(sha1(__DIR__));
 
         if (true === isset($fingerprint) &&
-            true === isset($mcrypt_ext)  &&
+            true === isset($openssl_ext)  &&
             strlen($fingerprint) > 24)
         {
             $fingerprint = substr($fingerprint, 0, 24);
@@ -1300,7 +1301,7 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to decrypt data but could not generate a fingerprint parameter!');
             }
 
-            $decrypted = base64_decode($mcrypt_ext->decrypt($encrypted, $fingerprint, '00000000'));
+            $decrypted = base64_decode($openssl_ext->decrypt($encrypted, $fingerprint, '1234567890123456'));
 
             // Strict base64 char check
             if (false === base64_decode($decrypted, true)) {
@@ -1327,8 +1328,8 @@ function woocommerce_bitpay_failed_requirements()
     global $woocommerce;
 
     $errors = [];
-    if (extension_loaded('mcrypt')  === false){
-        $errors[] = 'The BitPay payment plugin requires the MCrypt extension for PHP in order to function. Please contact your web server administrator for assistance.';
+    if (extension_loaded('openssl')  === false){
+        $errors[] = 'The BitPay payment plugin requires the OpenSSL extension for PHP in order to function. Please contact your web server administrator for assistance.';
     } 
     // PHP 5.4+ required
     if (true === version_compare(PHP_VERSION, '5.4.0', '<')) {
