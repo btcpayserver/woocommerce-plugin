@@ -2,11 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.2.12] - 2017-09-17
+## [2.2.12] - 2017-09-29
 ### Fixed
 - Removed non-working option to disable BitPay from the BitPay plugin config page
 - Populate buyer email when creating BitPay invoice
 - WC v3 compatibility fixes
+- Change Mcrypt to OpenSSL (#77)
+
 ### Added
 - Improve logging around updating order states
 - Present error when mcrypt is not loaded

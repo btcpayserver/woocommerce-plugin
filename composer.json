@@ -8,16 +8,16 @@
           "type": "package",
           "package": {
             "name": "wordpress",
-            "version": "4.5.2",
+            "version": "4.8.2",
             "dist": {
               "type": "zip",
-              "url": "https://github.com/WordPress/WordPress/archive/4.5.2.zip"
+              "url": "https://github.com/WordPress/WordPress/archive/4.8.2.zip"
             }
           }
         }
     ],
     "require": {
-        "bitpay/php-client": "dev-master@dev"
+        "bitpay/php-client": "~2.2"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
