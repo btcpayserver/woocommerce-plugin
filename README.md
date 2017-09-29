@@ -61,7 +61,7 @@ $ ./node_modules/.bin/grunt build
 
 ### BitPay Support
 
-* Last Version Tested: Wordpress 4.5.2 WooCommerce 2.5.5
+* Last Version Tested: Wordpress 4.8.1 WooCommerce 3.1.2
 * [GitHub Issues](https://github.com/bitpay/woocommerce-plugin/issues)
   * Open an issue if you are having issues with this plugin.
 * [Support](https://help.bitpay.com)
