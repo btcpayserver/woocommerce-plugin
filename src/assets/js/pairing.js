@@ -13,19 +13,14 @@
      * Update the API Token helper link on Network selection
     */
 
-    $('#bitpay_api_token_form').on('change', '.bitpay-pairing__network', function (e) {
+    var updatePairingLink = function (e) {
+            var url ='https://' + $('.bitpay-host').val() + '/api-tokens';
+            $('.bitpay-pairing__link').attr('href', url).html(url);
+    };
 
-      // Helper urls
-      var livenet = 'https://bitpay.com/api-tokens';
-      var testnet = 'https://test.bitpay.com/api-tokens';
-
-      if ($('.bitpay-pairing__network').val() === 'livenet') {
-        $('.bitpay-pairing__link').attr('href', livenet).html(livenet);
-      } else {
-        $('.bitpay-pairing__link').attr('href', testnet).html(testnet);
-      }
-
-    });
+    updatePairingLink();
+    $('#bitpay_api_token_form').on('change', '.bitpay-pairing__network', updatePairingLink);
+    $('#bitpay_api_token_form').on('change', '.bitpay-host', updatePairingLink);
 
     /**
      * Try to pair with BitPay using an entered pairing code
@@ -44,6 +39,7 @@
         'action':       'bitpay_pair_code',
         'pairing_code': $('.bitpay-pairing__code').val(),
         'network':      $('.bitpay-pairing__network').val(),
+        'host': $('.bitpay-host').val(),
         'pairNonce':    BitpayAjax.pairNonce
       })
       .done(function (data) {
@@ -61,14 +57,14 @@
           // Display the token and success notification
           $('.bitpay-token').hide().removeClass('bitpay-token--hidden').fadeIn(500);
           $('.bitpay-pairing__code').val('');
-          $('.bitpay-pairing__network').val('livenet');
+          $('.bitpay-pairing__network').val(data.network);
           $('#message').remove();
           $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BitPay account!</strong></p></div>');
         }
         // Pairing failed
         else if (data && data.success === false) {
           $('.bitpay-pairing').show();
-          alert('Unable to pair with BitPay.');
+          alert(data.data);
         }
 
       });

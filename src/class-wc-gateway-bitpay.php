@@ -13,6 +13,7 @@
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
  */
 
+
 // Exit if accessed directly
 if (false === defined('ABSPATH')) {
     exit;
@@ -30,6 +31,40 @@ if (true === file_exists($autoloader_param) &&
     throw new \Exception('The BitPay payment plugin was not installed correctly or the files are corrupt. Please reinstall the plugin. If this message persists after a reinstall, contact support@bitpay.com with this message.');
 }
 
+class Customnet2 implements \Bitpay\Network\NetworkInterface
+{
+    protected $host_url;
+
+    protected $inner;
+
+    public function __construct($host, $inner)
+    {
+        $this->inner = $inner;
+        $this->host_url = $host;
+    }
+
+    public function getName()
+    {
+        return $this->inner->getName();
+    }
+
+    public function getAddressVersion()
+    {
+        return $this->inner->getAddressVersion();
+    }
+
+    public function getApiHost()
+    {
+        return $this->host_url;
+    }
+
+    public function getApiPort()
+    {
+        return $this->inner->getApiPort();
+    }
+}
+
+
 // Exist for quirks in object serialization...
 if (false === class_exists('PrivateKey')) {
     include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
@@ -46,6 +81,20 @@ if (false === class_exists('Token')) {
 // Ensures WooCommerce is loaded before initializing the BitPay plugin
 add_action('plugins_loaded', 'woocommerce_bitpay_init', 0);
 register_activation_hook(__FILE__, 'woocommerce_bitpay_activate');
+
+function SetNetwork($client, $host, $network) {
+    if ('livenet' === $network) {
+        $net = new \Bitpay\Network\Livenet();
+    } else {
+        $net = new \Bitpay\Network\Testnet();
+    }
+    if(isset($host) && false === empty($host) ) {
+        $net = new Customnet2($host, $net);
+    }
+    
+    $client->setNetwork($net);
+    return $net;
+}
 
 function woocommerce_bitpay_init()
 {
@@ -104,6 +153,7 @@ function woocommerce_bitpay_init()
             $this->api_token          = get_option('woocommerce_bitpay_token');
             $this->api_token_label    = get_option('woocommerce_bitpay_label');
             $this->api_network        = get_option('woocommerce_bitpay_network');
+            $this->api_host        = get_option('woocommerce_bitpay_host');
 
             // Define debugging & informational settings
             $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
@@ -116,6 +166,7 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] $this->api_token          = ' . $this->api_token);
             $this->log('    [Info] $this->api_token_label    = ' . $this->api_token_label);
             $this->log('    [Info] $this->api_network        = ' . $this->api_network);
+            $this->log('    [Info] $this->api_host        = ' . $this->api_host);
 
             // Process Credentials
             if (false === empty($this->api_key)) {
@@ -600,13 +651,10 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a payment but could not instantiate a client object. Cannot continue!');
             }
 
-            if ('livenet' === $this->api_network) {
-                $client->setNetwork(new \Bitpay\Network\Livenet());
-                $this->log('    [Info] Set network to Livenet...');
-            } else {
-                $client->setNetwork(new \Bitpay\Network\Testnet());
-                $this->log('    [Info] Set network to Testnet...');
-            }
+            $net = SetNetwork($client, $this->api_host, $this->api_network);
+            $this->log('    [Info] Set network to ' + $net->getName());
+            $this->log('    [Info] Set custom host to ' + $net->getApiHost());
+
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
@@ -774,17 +822,9 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] Created new Client object in IPN handler...');
             }
 
-            if (false === strpos($json['url'], 'test')) {
-                $network = new \Bitpay\Network\Livenet();
-                $this->log('    [Info] Set network to Livenet.');
-            } else {
-                $network = new \Bitpay\Network\Testnet();
-                $this->log('    [Info] Set network to Testnet.');
-            }
-
-            $this->log('    [Info] Checking IPN response is valid via ' . $network->getName() . '...');
-
-            $client->setNetwork($network);
+            $net = SetNetwork($client, $this->api_host, $this->api_network);
+            $this->log('    [Info] Set network to ' + $net->getName());
+            $this->log('    [Info] Set custom host to ' + $net->getApiHost());
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
@@ -1147,7 +1187,8 @@ function woocommerce_bitpay_init()
             }
 
             // Validate the Network
-            $network = ($_POST['network'] === 'livenet') ? 'livenet' : 'testnet';
+            $network = $_POST['network'];
+            $host = $_POST['host'];
 
             // Generate Private Key
             $key = new \Bitpay\PrivateKey();
@@ -1185,11 +1226,7 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
             }
 
-            if ($network === 'livenet') {
-                $client->setNetwork(new \Bitpay\Network\Livenet());
-            } else {
-                $client->setNetwork(new \Bitpay\Network\Testnet());
-            }
+            $net = SetNetwork($client, $host, $network);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
@@ -1226,7 +1263,7 @@ function woocommerce_bitpay_init()
             update_option('woocommerce_bitpay_label', $label);
             update_option('woocommerce_bitpay_network', $network);
 
-            wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $network));
+            wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $net->getName()));
         }
         exit;
     }
