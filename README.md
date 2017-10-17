@@ -90,6 +90,22 @@ $ ./node_modules/.bin/grunt build
   * Web server error logs
 * Screen grabs of error message if applicable.
 
+## build with docker
+
+Powershell:
+```
+./docker-build.ps1
+```
+
+Linux:
+```
+rm -rf dist/
+docker build -t woocommerce_bitpay . 
+docker run -ti -v "`pwd`/dist:/app/dist" --rm woocommerce_bitpay
+echo "Output available in `pw`/dist/bitpay-for-woocommerce.zip"
+```
+
+
 ## Contribute
 
 Would you like to help with this project?  Great!  You don't have to be a developer, either.  If you've found a bug or have an idea for an improvement, please open an [issue](https://github.com/bitpay/woocommerce-plugin/issues) and tell us about it.
