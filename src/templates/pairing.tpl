@@ -1,5 +1,5 @@
 <div class="bitpay-pairing bitpay-pairing--%s">
-	<input name="bitpay-host" type="text" placeholder="BTCPay Host (eg. btcpay.com)" class="bitpay-host"> <br />
+	<input name="bitpay-host" type="text" placeholder="BTCPay Host (eg. your-btcpay.com)" class="bitpay-host"> <br />
 	<select name="bitpay-pairing__network" class="bitpay-pairing__network">
 		<option value="livenet">Livenet</option>
 		<option value="testnet">Testnet</option>
