@@ -29,14 +29,17 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer selfupdate
 
 # Install node tools
+RUN npm install -g n && n stable
 RUN npm install -g grunt
 RUN grunt --version
 
-COPY composer.json composer.json
-COPY package.json package.json
-RUN npm install && php /usr/local/bin/composer install
+RUN docker-php-ext-install bcmath
 
-RUN npm cache clean -f &&  npm install -g n && n stable
+COPY composer.json composer.json
+RUN php /usr/local/bin/composer install
+
+COPY package.json package.json
+RUN npm install
 
 COPY . .
 VOLUME ["/app/dist"]
