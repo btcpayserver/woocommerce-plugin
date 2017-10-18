@@ -14,13 +14,20 @@
     */
 
     var updatePairingLink = function (e) {
-            var url ='https://' + $('.bitpay-host').val() + '/api-tokens';
-            $('.bitpay-pairing__link').attr('href', url).html(url);
+            var url = $('.bitpay-url').val().replace(/^(.+?)\/*?$/, "$1");
+            if(url.indexOf("http://") == 0 || url.indexOf("https://") == 0)
+            {
+              url = url  + "/api-tokens";
+              $('.bitpay-pairing__link').attr('href', url).html(url);
+            }
+            else
+            {
+              $('.bitpay-pairing__link').attr('href', '').html('');
+            }
     };
 
     updatePairingLink();
-    $('#bitpay_api_token_form').on('change', '.bitpay-pairing__network', updatePairingLink);
-    $('#bitpay_api_token_form').on('change', '.bitpay-host', updatePairingLink);
+    $('#bitpay_api_token_form').on('change', '.bitpay-url', updatePairingLink);
 
     /**
      * Try to pair with BitPay using an entered pairing code
@@ -38,8 +45,7 @@
       $.post(BitpayAjax.ajaxurl, {
         'action':       'bitpay_pair_code',
         'pairing_code': $('.bitpay-pairing__code').val(),
-        'network':      $('.bitpay-pairing__network').val(),
-        'host': $('.bitpay-host').val(),
+        'url':      $('.bitpay-url').val(),
         'pairNonce':    BitpayAjax.pairNonce
       })
       .done(function (data) {
@@ -50,14 +56,13 @@
         if (data && data.sin && data.label) {
 
           // Set the token values on the template
-          $('.bitpay-token').removeClass('bitpay-token--livenet').removeClass('bitpay-token--testnet').addClass('bitpay-token--'+data.network);
+          $('.bitpay-token').removeClass('bitpay-token--livenet').removeClass('bitpay-token--testnet').addClass('bitpay-token--livenet');
           $('.bitpay-token__token-label').text(data.label);
           $('.bitpay-token__token-sin').text(data.sin);
 
           // Display the token and success notification
           $('.bitpay-token').hide().removeClass('bitpay-token--hidden').fadeIn(500);
           $('.bitpay-pairing__code').val('');
-          $('.bitpay-pairing__network').val(data.network);
           $('#message').remove();
           $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BitPay account!</strong></p></div>');
         }

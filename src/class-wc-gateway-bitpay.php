@@ -31,40 +31,6 @@ if (true === file_exists($autoloader_param) &&
     throw new \Exception('The BitPay payment plugin was not installed correctly or the files are corrupt. Please reinstall the plugin. If this message persists after a reinstall, contact support@bitpay.com with this message.');
 }
 
-class Customnet2 implements \Bitpay\Network\NetworkInterface
-{
-    protected $host_url;
-
-    protected $inner;
-
-    public function __construct($host, $inner)
-    {
-        $this->inner = $inner;
-        $this->host_url = $host;
-    }
-
-    public function getName()
-    {
-        return $this->inner->getName();
-    }
-
-    public function getAddressVersion()
-    {
-        return $this->inner->getAddressVersion();
-    }
-
-    public function getApiHost()
-    {
-        return $this->host_url;
-    }
-
-    public function getApiPort()
-    {
-        return $this->inner->getApiPort();
-    }
-}
-
-
 // Exist for quirks in object serialization...
 if (false === class_exists('PrivateKey')) {
     include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
@@ -81,20 +47,6 @@ if (false === class_exists('Token')) {
 // Ensures WooCommerce is loaded before initializing the BitPay plugin
 add_action('plugins_loaded', 'woocommerce_bitpay_init', 0);
 register_activation_hook(__FILE__, 'woocommerce_bitpay_activate');
-
-function SetNetwork($client, $host, $network) {
-    if ('livenet' === $network) {
-        $net = new \Bitpay\Network\Livenet();
-    } else {
-        $net = new \Bitpay\Network\Testnet();
-    }
-    if(isset($host) && false === empty($host) ) {
-        $net = new Customnet2($host, $net);
-    }
-    
-    $client->setNetwork($net);
-    return $net;
-}
 
 function woocommerce_bitpay_init()
 {
@@ -152,8 +104,7 @@ function woocommerce_bitpay_init()
             $this->api_sin            = get_option('woocommerce_bitpay_sin');
             $this->api_token          = get_option('woocommerce_bitpay_token');
             $this->api_token_label    = get_option('woocommerce_bitpay_label');
-            $this->api_network        = get_option('woocommerce_bitpay_network');
-            $this->api_host        = get_option('woocommerce_bitpay_host');
+            $this->api_url        = get_option('woocommerce_bitpay_url');
 
             // Define debugging & informational settings
             $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
@@ -165,8 +116,7 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] $this->api_sin            = ' . $this->api_sin);
             $this->log('    [Info] $this->api_token          = ' . $this->api_token);
             $this->log('    [Info] $this->api_token_label    = ' . $this->api_token_label);
-            $this->log('    [Info] $this->api_network        = ' . $this->api_network);
-            $this->log('    [Info] $this->api_host        = ' . $this->api_host);
+            $this->log('    [Info] $this->api_url        = ' . $this->api_url);
 
             // Process Credentials
             if (false === empty($this->api_key)) {
@@ -651,9 +601,8 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a payment but could not instantiate a client object. Cannot continue!');
             }
 
-            $net = SetNetwork($client, $this->api_host, $this->api_network);
-            $this->log('    [Info] Set network to ' + $net->getName());
-            $this->log('    [Info] Set custom host to ' + $net->getApiHost());
+            $client->setUri($this->api_url);
+            $this->log('    [Info] Set url to ' + $this->api_url);
 
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
@@ -822,9 +771,8 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] Created new Client object in IPN handler...');
             }
 
-            $net = SetNetwork($client, $this->api_host, $this->api_network);
-            $this->log('    [Info] Set network to ' + $net->getName());
-            $this->log('    [Info] Set custom host to ' + $net->getApiHost());
+            $client->setUri($this->api_url);
+            $this->log('    [Info] Set url to ' + $this->api_url);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
@@ -1186,9 +1134,12 @@ function woocommerce_bitpay_init()
                 return;
             }
 
-            // Validate the Network
-            $network = $_POST['network'];
-            $host = $_POST['host'];
+            $url = $_POST['url'];
+
+            if (!filter_var($url, FILTER_VALIDATE_URL) || (substr( $url, 0, 7 ) !== "http://" && substr( $url, 0, 8 ) !== "https://")) {
+                wp_send_json_error("Invalid url");
+                return;
+            }
 
             // Generate Private Key
             $key = new \Bitpay\PrivateKey();
@@ -1226,7 +1177,7 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The Bitpay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
             }
 
-            $net = SetNetwork($client, $host, $network);
+            $client->setUri($url);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
@@ -1261,9 +1212,9 @@ function woocommerce_bitpay_init()
             update_option('woocommerce_bitpay_sin', (string)$sin);
             update_option('woocommerce_bitpay_token', bitpay_encrypt($token));
             update_option('woocommerce_bitpay_label', $label);
-            update_option('woocommerce_bitpay_network', $network);
+            update_option('woocommerce_bitpay_url', $url);
 
-            wp_send_json(array('sin' => (string) $sin, 'label' => $label, 'network' => $net->getName()));
+            wp_send_json(array('sin' => (string) $sin, 'label' => $label));
         }
         exit;
     }

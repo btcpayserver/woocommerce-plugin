@@ -1,12 +1,12 @@
 {
-  "author": "BitPay",
+  "author": "BTCPay",
   "name": "woocommerce-plugin",
   "license": "MIT",
-  "description": "BitPay payment gateway for WooCommerce",
+  "description": "BTCPay payment gateway for WooCommerce",
   "version": "2.2.12",
   "repository": {
     "type": "git",
-    "url": "git://github.com/bitpay/woocommerce-plugin.git"
+    "url": "git://github.com/btcpayserver/woocommerce-plugin.git"
   },
   "dependencies": {},
   "devDependencies": {

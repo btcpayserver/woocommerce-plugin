@@ -2,7 +2,7 @@
 	"repositories": [
         {
             "type": "git",
-            "url": "https://github.com/bitpay/php-bitpay-client.git"
+            "url": "https://github.com/btcpayserver/php-bitpay-client.git"
         },
         {
           "type": "package",
@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "bitpay/php-client": "2.2.14"
+        "bitpay/php-client": "4.0.0"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",

@@ -36,7 +36,7 @@ RUN grunt --version
 RUN docker-php-ext-install bcmath
 
 COPY composer.json composer.json
-RUN php /usr/local/bin/composer install
+RUN php /usr/local/bin/composer install --no-dev
 
 COPY package.json package.json
 RUN npm install
