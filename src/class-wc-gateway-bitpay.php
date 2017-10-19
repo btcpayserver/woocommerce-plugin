@@ -7,8 +7,8 @@
     Text Domain: bitpay
     Author URI:  https://bitpay.com
 
-    Version:           2.2.12
-    License:           Copyright 2011-2014 BitPay Inc., MIT License
+    Version:           2.2.13
+    License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
  */

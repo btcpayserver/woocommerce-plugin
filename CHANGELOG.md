@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.13] - 2017-10-19
+### Fixed
+- Support BTCPay custom server
+
+### Added
+- Fix bug where placing an order with decimal less currency like yen was impossible
+
 ## [2.2.12] - 2017-09-29
 ### Fixed
 - Removed non-working option to disable BitPay from the BitPay plugin config page
