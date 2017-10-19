@@ -1,4 +1,4 @@
-# Using the BitPay plugin for WooCommerce
+# Using the BTCPay plugin for WooCommerce
 
 ## Prerequisites
 

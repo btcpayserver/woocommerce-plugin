@@ -1,16 +1,16 @@
 <?php
 /*
-    Plugin Name: BitPay for WooCommerce
-    Plugin URI:  https://bitpay.com
-    Description: Enable your WooCommerce store to accept Bitcoin with BitPay.
-    Author:      bitpay
-    Text Domain: bitpay
-    Author URI:  https://bitpay.com
+    Plugin Name: BTCPay for WooCommerce
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.13
+    Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
+    Author:      BTCPay
+    Text Domain: BTCPay
+    Author URI:  https://github.com/btcpayserver
 
     Version:           2.2.13
     License:           Copyright 2011-2014 BTCPay, MIT License
-    License URI:       https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE
-    GitHub Plugin URI: https://github.com/bitpay/woocommerce-plugin
+    License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
+    GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
  */
 
 
@@ -84,9 +84,9 @@ function woocommerce_bitpay_init()
             $this->id                 = 'bitpay';
             $this->icon               = plugin_dir_url(__FILE__).'assets/img/icon.png';
             $this->has_fields         = false;
-            $this->order_button_text  = __('Proceed to BitPay', 'bitpay');
-            $this->method_title       = 'BitPay';
-            $this->method_description = 'BitPay allows you to accept bitcoin payments on your WooCommerce store.';
+            $this->order_button_text  = __('Proceed to BTCPay', 'bitpay');
+            $this->method_title       = 'BTCPay';
+            $this->method_description = 'BTCPay allows you to accept bitcoin payments on your WooCommerce store.';
 
             // Load the settings.
             $this->init_form_fields();
@@ -253,7 +253,7 @@ function woocommerce_bitpay_init()
                     'title'       => __('Customer Message', 'bitpay'),
                     'type'        => 'textarea',
                     'description' => __('Message to explain how the customer will be paying for the purchase.', 'bitpay'),
-                    'default'     => 'You will be redirected to bitpay.com to complete your purchase.',
+                    'default'     => 'You will be redirected to BTCPay to complete your purchase.',
                     'desc_tip'    => true,
                ),
                 'api_token' => array(
@@ -301,7 +301,7 @@ function woocommerce_bitpay_init()
                 'support_details' => array(
 		            'title'       => __( 'Plugin & Support Information', 'bitpay' ),
 		            'type'        => 'title',
-		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please contact support@bitpay.com.  Thank you for using BitPay!', 'bitpay'), get_option('woocommerce_bitpay_version'), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
+		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://13.79.159.103:3000/.  Thank you for using BTCPay!', 'bitpay'), get_option('woocommerce_bitpay_version'), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
 	           ),
            );
 
@@ -1390,7 +1390,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.12');
+        update_option('woocommerce_bitpay_version', '2.2.13');
 
     } else {
         // Requirements not met, return an error message
