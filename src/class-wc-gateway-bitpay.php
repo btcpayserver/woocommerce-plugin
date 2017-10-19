@@ -664,6 +664,9 @@ function woocommerce_bitpay_init()
 
             $order_total = $order->calculate_totals();
             if (true === isset($order_total) && false === empty($order_total)) {
+                $order_total = (float)$order_total;
+                if($order_total == 0)
+                    throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float");
                 $item->setPrice($order_total);
             } else {
                 $this->log('    [Error] The Bitpay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
