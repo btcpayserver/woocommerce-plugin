@@ -1,4 +1,4 @@
-<div class="bitpay-token bitpay-token--%s">
+<div class="bitpay-token bitpay-token--livenet">
 	<header class="bitpay-token__header">
 		<div class="bitpay-token__logo"><img src="%s"></div>
 		<button class="bitpay-token__revoke fa fa-ban"></button>
