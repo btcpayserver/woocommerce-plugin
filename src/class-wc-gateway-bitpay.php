@@ -342,7 +342,7 @@ function woocommerce_bitpay_init()
                                 echo sprintf($token_format, 'hidden', plugins_url('assets/img/logo.png', __FILE__),'','');
                             } else {
                                 echo sprintf($pairing_form, 'hidden');
-                                echo sprintf($token_format, plugins_url('assets/img/logo.png', __FILE__), $this->api_token_label, $this->api_sin);
+                                echo sprintf($token_format, 'hidden', plugins_url('assets/img/logo.png', __FILE__), $this->api_token_label, $this->api_sin);
                             }
 
                         ?>
