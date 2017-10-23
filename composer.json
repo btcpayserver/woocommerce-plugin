@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "bitpay/php-client": "4.0.1"
+        "bitpay/php-client": "4.0.2"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
