@@ -900,7 +900,16 @@ function woocommerce_bitpay_init()
 
                         $order->update_status($paid_status);
                         $order->add_order_note(__('BTCPay invoice paid. Awaiting network confirmation and payment completed status.', 'bitpay'));
-                    }
+                    	
+			// Add Custom Information from BTCPay Invoice
+			$responseData = json_decode($client->getResponse()->getBody());
+			update_post_meta($order_id, 'BTCPay_id', $responseData->data->id);
+			update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
+			update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
+			update_post_meta($order_id, 'BTCPay_rate', $responseData->data->rate);
+			update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
+
+		    }
 
                     break;
 
@@ -922,6 +931,15 @@ function woocommerce_bitpay_init()
 
                         $order->update_status($confirmed_status);
                         $order->add_order_note(__('BTCPay invoice confirmed. Awaiting payment completed status.', 'bitpay'));
+			    
+			// Add Custom Information from BTCPay Invoice
+			$responseData = json_decode($client->getResponse()->getBody());
+			update_post_meta($order_id, 'BTCPay_id', $responseData->data->id);
+			update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
+			update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
+			update_post_meta($order_id, 'BTCPay_rate', $responseData->data->rate);
+			update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
+
                     }
 
                     break;
@@ -945,7 +963,16 @@ function woocommerce_bitpay_init()
                         $order->payment_complete();
                         $order->update_status($complete_status);
                         $order->add_order_note(__('BTCPay invoice payment completed. Payment credited to your merchant account.', 'bitpay'));
-                    }
+                    	
+			// Add Custom Information from BTCPay Invoice
+			$responseData = json_decode($client->getResponse()->getBody());
+			update_post_meta($order_id, 'BTCPay_id', $responseData->data->id);
+			update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
+			update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
+			update_post_meta($order_id, 'BTCPay_rate', $responseData->data->rate);
+			update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
+
+		    }
 
                     break;
 
@@ -967,7 +994,16 @@ function woocommerce_bitpay_init()
                         $this->log('    [Info] This order has a problem so setting "invalid" status...');
 
                         $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within 1 hour. Do not ship the product for this order!', 'bitpay'));
-                    }
+                    	
+			// Add Custom Information from BTCPay Invoice
+			$responseData = json_decode($client->getResponse()->getBody());
+			update_post_meta($order_id, 'BTCPay_id', $responseData->data->id);
+			update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
+			update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
+			update_post_meta($order_id, 'BTCPay_rate', $responseData->data->rate);
+			update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
+
+		    }
 
                     break;
 
