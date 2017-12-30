@@ -534,6 +534,9 @@ function woocommerce_bitpay_init()
         {
             $this->log('    [Info] Entered thankyou_page with order_id =  ' . $order_id);
 
+            // Remove cart
+            WC()->cart->empty_cart();
+            
             // Intentionally blank.
 
             $this->log('    [Info] Leaving thankyou_page with order_id =  ' . $order_id);
@@ -722,8 +725,6 @@ function woocommerce_bitpay_init()
             // Reduce stock levels
             //$order->reduce_order_stock();
             wc_reduce_stock_levels($order_id);
-            // Remove cart
-            WC()->cart->empty_cart();
         
 
             $this->log('    [Info] BTCPay invoice assigned' . $invoice->getId());
