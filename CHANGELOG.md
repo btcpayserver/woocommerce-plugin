@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.13] - 2017-12-30
+### Fixed
+- Clicking on Proceed to checkout should not empty the cart
+
+### Added
+- Add BTCPay custom fields to orders
+
 ## [2.2.13] - 2017-10-19
 ### Fixed
 - Support BTCPay custom server
