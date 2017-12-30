@@ -721,6 +721,9 @@ function woocommerce_bitpay_init()
 
             update_post_meta($order_id, 'BTCPay_redirect', $invoice->getUrl());
             update_post_meta($order_id, 'BTCPay_id', $invoice->getId());
+            update_post_meta($order_id, 'BTCPay_rate', $invoice->getRate());
+            $formattedRate = number_format($invoice->getRate(), wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator()); 
+            update_post_meta($order_id, 'BTCPay_formatted_rate', $formattedRate);
 
             // Reduce stock levels
             //$order->reduce_order_stock();
@@ -1016,7 +1019,6 @@ function woocommerce_bitpay_init()
         {
             update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
             update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
-            update_post_meta($order_id, 'BTCPay_rate', $responseData->data->rate);
             update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
         }
 
