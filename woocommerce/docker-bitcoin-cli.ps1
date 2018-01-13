@@ -1,0 +1,1 @@
+docker exec -ti woocommerce_bitcoind bitcoin-cli -regtest -conf="/data/bitcoin.conf" -datadir="/data" $args
