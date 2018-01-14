@@ -730,7 +730,14 @@ function woocommerce_bitpay_init()
             $this->update_btcpay($order_id, $responseData);
 
             // Reduce stock levels
-            $order->reduce_order_stock();
+            if (function_exists('wc_reduce_stock_levels'))
+            {
+                wc_reduce_stock_levels($order_id);		       
+            }
+            else
+            {
+                $order->reduce_order_stock();
+            }
         
 
             $this->log('    [Info] BTCPay invoice assigned' . $invoice->getId());
@@ -1353,6 +1360,39 @@ function woocommerce_bitpay_init()
         }
     }
 
+    function action_woocommerce_thankyou_bitpay($order_id)
+    {
+        $wc_order = wc_get_order($order_id);
+        
+        if($wc_order === false) {
+            return;
+        }
+        $order_data     = $wc_order->get_data();
+        $status         = $order_data['status'];
+        
+        $payment_status = file_get_contents(plugin_dir_path(__FILE__) . 'templates/paymentStatus.tpl');
+        $payment_status = str_replace('{$statusTitle}', _x('Payment Status', 'woocommerce_bitpay'), $payment_status);
+        switch ($status)
+        {
+            case 'on-hold':
+                $status_desctiption = _x('Waiting for payment', 'woocommerce_bitpay');
+                break;
+            case 'processing':
+                $status_desctiption = _x('Payment processing', 'woocommerce_bitpay');
+                break;
+            case 'completed':
+                $status_desctiption = _x('Payment completed', 'woocommerce_bitpay');
+                break;
+            case 'failed':
+                $status_desctiption = _x('Payment failed', 'woocommerce_bitpay');
+                break;
+            default:
+                $status_desctiption = _x(ucfirst($status), 'woocommerce_bitpay');
+                break;
+        }
+        echo str_replace('{$paymentStatus}', $status_desctiption, $payment_status);
+    }
+    add_action("woocommerce_thankyou_bitpay", 'action_woocommerce_thankyou_bitpay', 10, 1);
 }
 
 function woocommerce_bitpay_failed_requirements()
@@ -1360,7 +1400,7 @@ function woocommerce_bitpay_failed_requirements()
     global $wp_version;
     global $woocommerce;
 
-    $errors = [];
+    $errors = array();
     if (extension_loaded('openssl')  === false){
         $errors[] = 'The BTCPay payment plugin requires the OpenSSL extension for PHP in order to function. Please contact your web server administrator for assistance.';
     } 
