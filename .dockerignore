@@ -1,3 +1,4 @@
 docker-build.ps1
 dist/
+woocommerce/
 Dockerfile
