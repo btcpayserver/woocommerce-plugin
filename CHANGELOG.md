@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.13
+### Fixed
+- wrong function call resulting in undefined wc_reduce_stock_levels() (#84)
+- syntax error in class-wc-gateway-bitpay.php (#80)
+### Added
+- Redirect page displays 'payment successful' even for unpaid invoices (#81)
+
+
 ## [2.2.14] - 2017-12-30
 ### Fixed
 - Clicking on Proceed to checkout should not empty the cart
