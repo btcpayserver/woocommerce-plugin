@@ -592,6 +592,22 @@ function woocommerce_bitpay_init()
 
             // Redirect URL & Notification URL
             $redirect_url = $this->get_option('redirect_url', $thanks_link);
+
+            if($redirect_url !== $thanks_link)
+            {
+                $order_received_len = strlen('order-received');
+                if(substr($redirect_url, -$order_received_len) === 'order-received')
+                {
+                    $this->log('substr($redirect_url, -$order_received_pos) === order-received');
+                    $redirect_url = $redirect_url . '=' . $order->get_id();
+                }
+                else
+                {
+                    $redirect_url = add_query_arg( 'order-received', $order->get_id(), $redirect_url);
+                }
+                $redirect_url = add_query_arg( 'key', $order->get_order_key(), $redirect_url);
+            }
+
             $this->log('    [Info] The variable redirect_url = ' . $redirect_url  . '...');
 
             $this->log('    [Info] Notification URL is now set to: ' . $notification_url . '...');

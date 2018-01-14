@@ -32,9 +32,9 @@ services:
   btcpayserver:
     image: nicolasdorier/btcpayserver:1.0.0.78
     expose:
-      - "49392"
+      - "80"
     ports:
-      - 8081:49392
+      - 8081:80
     environment:
       # BTCPay settings
       BTCPAY_POSTGRES: User ID=postgres;Host=postgres;Port=5432;Database=btcpayserverregtest
@@ -42,7 +42,7 @@ services:
       BTCPAY_CHAINS: "btc,ltc"
       BTCPAY_BTCEXPLORERURL: http://nbxplorer:32838/
       BTCPAY_LTCEXPLORERURL: http://nbxplorer:32838/
-      BTCPAY_BIND: 0.0.0.0:49392
+      BTCPAY_BIND: 0.0.0.0:80
 
       # NGINX settings
       VIRTUAL_NETWORK: nginx-proxy
