@@ -730,8 +730,7 @@ function woocommerce_bitpay_init()
             $this->update_btcpay($order_id, $responseData);
 
             // Reduce stock levels
-            //$order->reduce_order_stock();
-            wc_reduce_stock_levels($order_id);
+            $order->reduce_order_stock();
         
 
             $this->log('    [Info] BTCPay invoice assigned' . $invoice->getId());
