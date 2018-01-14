@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - wrong function call resulting in undefined wc_reduce_stock_levels() (#84)
 - syntax error in class-wc-gateway-bitpay.php (#80)
+- Make sure that if redirect url is redefined, it has order information (#80)
 ### Added
 - Redirect page displays 'payment successful' even for unpaid invoices (#81)
 
