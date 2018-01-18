@@ -369,7 +369,7 @@ function woocommerce_bitpay_init()
             ob_start();
 
             $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid', 'expired'=>'Expired', 'event_invoice_paidAfterExpiration'=>'Paid after expiration');
-            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed');
+            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-processing', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
 
