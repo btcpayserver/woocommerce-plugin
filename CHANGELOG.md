@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.16
+### Fixed
+- Handle 'expired' IPN
+- Handle 'invoice_paidAfterExpiration' IPN event
+
 ## 2.2.15
 ### Fixed
 - wrong function call resulting in undefined wc_reduce_stock_levels() (#84)

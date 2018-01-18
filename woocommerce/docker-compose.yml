@@ -30,7 +30,7 @@ services:
       - "mariadb_datadir:/var/lib/mysql"
 
   btcpayserver:
-    image: nicolasdorier/btcpayserver:1.0.0.82
+    image: nicolasdorier/btcpayserver:1.0.1.8
     expose:
       - "80"
     ports:
@@ -56,7 +56,7 @@ services:
       - "nbxplorer_datadir:/root/.nbxplorer"
 
   nbxplorer:
-    image: nicolasdorier/nbxplorer:1.0.0.70
+    image: nicolasdorier/nbxplorer:1.0.1.4
     expose: 
       - "32838"
     environment:

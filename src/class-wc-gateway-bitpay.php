@@ -368,8 +368,8 @@ function woocommerce_bitpay_init()
 
             ob_start();
 
-            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
-            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
+            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid', 'expired'=>'Expired', 'event_invoice_paidAfterExpiration'=>'Paid after expiration');
+            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
 
@@ -435,6 +435,8 @@ function woocommerce_bitpay_init()
                 'confirmed' => 'Confirmed',
                 'complete'  => 'Complete',
                 'invalid'   => 'Invalid',
+                'expired'   => 'Expired',
+                'event_invoice_paidAfterExpiration' => 'Paid after expiration'
             );
 
             $wc_statuses = wc_get_order_statuses();
@@ -682,6 +684,7 @@ function woocommerce_bitpay_init()
             $invoice->setOrderId((string)$order_number);
             $invoice->setCurrency($currency);
             $invoice->setFullNotifications(true);
+            $invoice->setExtendedNotifications(true);
 
             // Add a priced item to the invoice
             $item = new \Bitpay\Item();
@@ -783,6 +786,18 @@ function woocommerce_bitpay_init()
             }
 
             $json = json_decode($post, true);
+            $event = "";
+
+            if(true === array_key_exists('event', $json) && true === array_key_exists('data', $json)) // extended notification type
+            {
+                $this->log('    [Info] Event IPN received...');
+                $event = $json['event'];
+                $json = $json['data'];
+            }
+            else
+            {
+                $this->log('    [Info] Normal IPN received...');
+            }
 
             if (true === empty($json)) {
                 $this->log('    [Error] Invalid JSON payload sent to IPN handler: ' . $post);
@@ -916,6 +931,8 @@ function woocommerce_bitpay_init()
             $confirmed_status = $order_states['confirmed'];
             $complete_status  = $order_states['complete'];
             $invalid_status   = $order_states['invalid'];
+            $expired_status   = $order_states['expired'];
+            $event_invoice_paidAfterExpiration   = $order_states['event_invoice_paidAfterExpiration'];
 
             $checkStatus = $invoice->getStatus();
 
@@ -926,118 +943,74 @@ function woocommerce_bitpay_init()
                 $this->log('    [Info] The current order status for this invoice is ' . $checkStatus);
             }
 
-            // Based on the payment status parameter for this
-            // IPN, we will update the current order status.
-            switch ($checkStatus) {
+            if($event === "")
+            {
+                switch ($checkStatus) {
 
-                // The "paid" IPN message is received almost
-                // immediately after the BitPay invoice is paid.
-                case 'paid':
-
-                    $this->log('    [Info] IPN response is a "paid" message.');
-
-                    if ($current_status == $complete_status       ||
-                        'wc_'.$current_status == $complete_status ||
-                        $current_status == 'completed')
-                    {
-                        $error_string = 'Paid IPN, but order has status: '.$current_status;
-                        $this->log("    [Warning] $error_string");
-
-                    } else {
+                    // The "paid" IPN message is received almost
+                    // immediately after the BitPay invoice is paid.
+                    case 'paid':
                         $this->log('    [Info] This order has not been updated yet so setting new status...');
 
                         $order->update_status($paid_status);
                         $order->add_order_note(__('BTCPay invoice paid. Awaiting network confirmation and payment completed status.', 'bitpay'));
-                    	
-                        // Add Custom Information from BTCPay Invoice
-                        $this->update_btcpay($order_id, $responseData);
-		            }
+                        break;
 
-                    break;
-
-                // The "confirmed" status is sent when the payment is
-                // confirmed based on your transaction speed setting.
-                case 'confirmed':
-
-                    $this->log('    [Info] IPN response is a "confirmed" message.');
-
-                    if ($current_status == $complete_status       ||
-                        'wc_'.$current_status == $complete_status ||
-                        $current_status == 'completed')
-                    {
-                        $error_string = 'Confirmed IPN, but order has status: '.$current_status;
-                        $this->log("    [Warning] $error_string");
-
-                    } else {
+                    // The "confirmed" status is sent when the payment is
+                    // confirmed based on your transaction speed setting.
+                    case 'confirmed':
                         $this->log('    [Info] This order has not been updated yet so setting confirmed status...');
-
                         $order->update_status($confirmed_status);
                         $order->add_order_note(__('BTCPay invoice confirmed. Awaiting payment completed status.', 'bitpay'));
-			    
-                        $this->update_btcpay($order_id, $responseData);
-                    }
+                        break;
 
-                    break;
+                    // The complete status is when the Bitcoin network
+                    // obtains 6 confirmations for this transaction.
+                    case 'complete':
 
-                // The complete status is when the Bitcoin network
-                // obtains 6 confirmations for this transaction.
-                case 'complete':
-
-                    $this->log('    [Info] IPN response is a "complete" message.');
-
-                    if ($current_status == $complete_status       ||
-                        'wc_'.$current_status == $complete_status ||
-                        $current_status == 'completed')
-                    {
-                        $error_string = 'Complete IPN, but order has status: '.$current_status;
-                        $this->log("    [Warning] $error_string");
-
-                    } else {
                         $this->log('    [Info] This order has not been updated yet so setting complete status...');
 
                         $order->payment_complete();
                         $order->update_status($complete_status);
                         $order->add_order_note(__('BTCPay invoice payment completed. Payment credited to your merchant account.', 'bitpay'));
-                    	
-                        // Add Custom Information from BTCPay Invoice
-                        $this->update_btcpay($order_id, $responseData);
-	        	    }
+                        break;
 
-                    break;
+                    // This order is invalid for some reason.
+                    // Either it's a double spend or some other
+                    // problem occurred.
+                    case 'invalid':
 
-                // This order is invalid for some reason.
-                // Either it's a double spend or some other
-                // problem occurred.
-                case 'invalid':
-
-                    $this->log('    [Info] IPN response is a "invalid" message.');
-
-                    if ($current_status == $complete_status       ||
-                        'wc_'.$current_status == $complete_status ||
-                        $current_status == 'completed')
-                    {
-                        $error_string = 'Paid IPN, but order has status: ' . $current_status;
-                        $this->log("    [Warning] $error_string");
-
-                    } else {
                         $this->log('    [Info] This order has a problem so setting "invalid" status...');
 
-                        $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within 1 hour. Do not ship the product for this order!', 'bitpay'));
-                    	$this->update_btcpay($order_id, $responseData);
-                        // Add Custom Information from BTCPay Invoice
-                        
-		            }
-                    break;
+                        $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!', 'bitpay'));
+                        break;
 
-                // There was an unknown message received.
-                default:
+                    case 'expired':
 
-                    $this->log('    [Info] IPN response is an unknown message type. See error message below:');
+                        $this->log('    [Info] The invoice is in the "expired" status...');
 
-                    $error_string = 'Unhandled invoice status: ' . $invoice->getStatus();
-                    $this->log("    [Warning] $error_string");
+                        $order->update_status($expired_status, __('Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!', 'bitpay'));
+                        break;
+
+                    // There was an unknown message received.
+                    default:
+
+                        $this->log('    [Info] IPN response is an unknown message type. See error message below:');
+                        $error_string = 'Unhandled invoice status: ' . $invoice->getStatus();
+                        $this->log("    [Warning] $error_string");
+                }
+                $this->update_btcpay($order_id, $responseData);
             }
-
+            else //  is an event
+            {
+                $this->log('    [Info] Received event: '. $event['code'] . " " . $event['name']);
+                if ($event['code'] === 1009)
+                {
+                    $this->log('    [Info] The invoice has received a payment after expiration...');
+                    $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'bitpay'));
+                    $order->add_order_note(__('A payment has been received after expiration', 'bitpay'));
+                }
+            }
             $this->log('    [Info] Leaving ipn_callback()...');
         }
 
