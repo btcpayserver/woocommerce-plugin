@@ -260,15 +260,16 @@ function woocommerce_bitpay_init()
                     'type'        => 'api_token'
                ),
                 'transaction_speed' => array(
-                    'title'       => __('Risk/Speed', 'bitpay'),
+                    'title'       => __('Invoice pass to "confirmed" state after', 'bitpay'),
                     'type'        => 'select',
-                    'description' => 'Choose a transaction speed.  For details, see the API documentation at bitpay.com',
+                    'description' => 'An invoice becomes confirmed after the payment has...',
                     'options'     => array(
-                        'high'    => 'High',
-                        'medium'  => 'Medium',
-                        'low'     => 'Low',
+                        'default' => 'Keep store level configuration',
+                        'high'    => '0 confirmation on-chain',
+                        'medium'  => '1 confirmation on-chain',
+                        'low'     => '6 confirmations on-chain',
                     ),
-                    'default' => 'high',
+                    'default' => 'default',
                     'desc_tip'    => true,
                ),
                 'order_states' => array(
@@ -715,7 +716,10 @@ function woocommerce_bitpay_init()
             // Add the Redirect and Notification URLs
             $invoice->setRedirectUrl($redirect_url);
             $invoice->setNotificationUrl($notification_url);
-            $invoice->setTransactionSpeed($this->transaction_speed);
+            if($this->transaction_speed !== 'default')
+            {
+                $invoice->setTransactionSpeed($this->transaction_speed);
+            }
             
             try {
                 $this->log('    [Info] Attempting to generate invoice for ' . $order->get_order_number() . '...');
