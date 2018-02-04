@@ -373,7 +373,7 @@ function woocommerce_bitpay_init()
             $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-processing', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
-
+            $wc_statuses = array('BTCPAY_IGNORE' => '') + $wc_statuses;
             ?>
             <tr valign="top">
                 <th scope="row" class="titledesc">Order States:</th>
@@ -991,8 +991,8 @@ function woocommerce_bitpay_init()
                     // immediately after the BitPay invoice is paid.
                     case 'paid':
                         $this->log('    [Info] This order has not been updated yet so setting new status...');
-
-                        $order->update_status($paid_status);
+                        if($paid_status !== 'BTCPAY_IGNORE')
+                            $order->update_status($paid_status);
                         $order->add_order_note(__('BTCPay invoice paid. Awaiting network confirmation and payment completed status.', 'bitpay'));
                         break;
 
@@ -1000,7 +1000,8 @@ function woocommerce_bitpay_init()
                     // confirmed based on your transaction speed setting.
                     case 'confirmed':
                         $this->log('    [Info] This order has not been updated yet so setting confirmed status...');
-                        $order->update_status($confirmed_status);
+                        if($confirmed_status !== 'BTCPAY_IGNORE')
+                            $order->update_status($confirmed_status);
                         $order->add_order_note(__('BTCPay invoice confirmed. Awaiting payment completed status.', 'bitpay'));
                         break;
 
@@ -1011,7 +1012,8 @@ function woocommerce_bitpay_init()
                         $this->log('    [Info] This order has not been updated yet so setting complete status...');
 
                         $order->payment_complete();
-                        $order->update_status($complete_status);
+                        if($complete_status !== 'BTCPAY_IGNORE')
+                            $order->update_status($complete_status);
                         $order->add_order_note(__('BTCPay invoice payment completed. Payment credited to your merchant account.', 'bitpay'));
                         break;
 
@@ -1021,15 +1023,15 @@ function woocommerce_bitpay_init()
                     case 'invalid':
 
                         $this->log('    [Info] This order has a problem so setting "invalid" status...');
-
-                        $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!', 'bitpay'));
+                        if($invalid_status !== 'BTCPAY_IGNORE')
+                            $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!', 'bitpay'));
                         break;
 
                     case 'expired':
 
                         $this->log('    [Info] The invoice is in the "expired" status...');
-
-                        $order->update_status($expired_status, __('Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!', 'bitpay'));
+                        if($expired_status !== 'BTCPAY_IGNORE')
+                            $order->update_status($expired_status, __('Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!', 'bitpay'));
                         break;
 
                     // There was an unknown message received.
@@ -1047,7 +1049,8 @@ function woocommerce_bitpay_init()
                 if ($event['code'] === 1009)
                 {
                     $this->log('    [Info] The invoice has received a payment after expiration...');
-                    $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'bitpay'));
+                    if($event_invoice_paidAfterExpiration !== 'BTCPAY_IGNORE')
+                        $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'bitpay'));
                     $order->add_order_note(__('A payment has been received after expiration', 'bitpay'));
                 }
             }
