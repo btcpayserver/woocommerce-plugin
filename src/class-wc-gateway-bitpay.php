@@ -545,6 +545,22 @@ function woocommerce_bitpay_init()
             $this->log('    [Info] Leaving thankyou_page with order_id =  ' . $order_id);
         }
 
+        public function get_btcpay_redirect($order_id, $client)
+        {
+            $redirect = get_post_meta($order_id, 'BTCPay_redirect', true);
+            if($redirect)
+            {
+                $invoice_id = get_post_meta($order_id, 'BTCPay_id', true);;
+                $invoice = $client->getInvoice($invoice_id);
+                $status = $invoice->getStatus();
+                if($status === 'invalid' || $status === 'expired')
+                {
+                    $redirect = null;
+                }
+            }
+            return $redirect;
+        }
+
         /**
          * Process the payment and return the result
          *
@@ -565,18 +581,6 @@ function woocommerce_bitpay_init()
             if (false === $order) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id);
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
-            }
-
-            $redirect = get_post_meta($order_id, 'BTCPay_redirect', true);
-
-            if($redirect)
-            {
-                $this->log('    [Info] Existing BTCPay invoice has already been created, redirecting to it...');
-                $this->log('    [Info] Leaving process_payment()...');
-                return array(
-                    'result'   => 'success',
-                    'redirect' => $redirect,
-                );
             }
 
             $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_Bitpay'));
@@ -669,6 +673,18 @@ function woocommerce_bitpay_init()
                 throw new \Exception(' The BTCPay payment plugin was called to process a payment but could not set client->setToken to this->api_token. The empty() check failed!');
             }
 
+            $redirect = $this->get_btcpay_redirect($order_id, $client);
+
+            if($redirect)
+            {
+                $this->log('    [Info] Existing BTCPay invoice has already been created, redirecting to it...');
+                $this->log('    [Info] Leaving process_payment()...');
+                return array(
+                    'result'   => 'success',
+                    'redirect' => $redirect,
+                );
+            }
+
             $this->log('    [Info] Key and token empty checks passed.  Parameters in client set accordingly...');
 
             // Setup the Invoice
@@ -744,6 +760,18 @@ function woocommerce_bitpay_init()
 
             $responseData = json_decode($client->getResponse()->getBody());
 
+            // If another BTCPay invoice was created before, returns the original one
+            $redirect = $this->get_btcpay_redirect($order_id, $client);
+            if($redirect)
+            {
+                $this->log('    [Info] Existing BTCPay invoice has already been created, redirecting to it...');
+                $this->log('    [Info] Leaving process_payment()...');
+                return array(
+                    'result'   => 'success',
+                    'redirect' => $redirect,
+                );
+            }
+
             update_post_meta($order_id, 'BTCPay_redirect', $invoice->getUrl());
             update_post_meta($order_id, 'BTCPay_id', $invoice->getId());
             update_post_meta($order_id, 'BTCPay_rate', $invoice->getRate());
@@ -763,7 +791,7 @@ function woocommerce_bitpay_init()
             }
         
 
-            $this->log('    [Info] BTCPay invoice assigned' . $invoice->getId());
+            $this->log('    [Info] BTCPay invoice assigned ' . $invoice->getId());
             $this->log('    [Info] Leaving process_payment()...');
 
             // Redirect the customer to the BitPay invoice
@@ -912,11 +940,19 @@ function woocommerce_bitpay_init()
 
             $order = wc_get_order($order_id);
 
+
             if (false === $order || 'WC_Order' !== get_class($order)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-bitpay.php to apply a search filter.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
                 $this->log('    [Info] Order details retrieved successfully...');
+            }
+
+            $expected_invoiceId = get_post_meta($order_id, 'BTCPay_id', true);
+            if($expected_invoiceId !== $json['id'])
+            {
+                $this->log('    [Error] Received IPN for order '. $order_id . ' with BTCPay invoice id' . $order_id . ' while expected BTCPay invoice is ' . $expected_invoiceId);
+                throw new \Exception('Received IPN for order '. $order_id . ' with BTCPay invoice id' . $order_id . ' while expected BTCPay invoice is ' . $expected_invoiceId);
             }
 
             $current_status = $order->get_status();
