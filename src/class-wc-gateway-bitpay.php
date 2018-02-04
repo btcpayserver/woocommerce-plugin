@@ -199,6 +199,20 @@ function woocommerce_bitpay_init()
             $this->is_initialized = true;
         }
 
+        public function is_btcpay_payment_method($order)
+        {
+            $actualMethod = '';
+            if(method_exists($order, 'get_payment_method'))
+            {
+                $actualMethod = $order->get_payment_method();
+            }
+            else
+            {
+                $actualMethod = get_post_meta( $order->id, '_payment_method', true );
+            }
+            return $actualMethod === 'bitpay';
+        }
+
         public function __destruct()
         {
         }
@@ -804,7 +818,6 @@ function woocommerce_bitpay_init()
         public function ipn_callback()
         {
             $this->log('    [Info] Entered ipn_callback()...');
-
             // Retrieve the Invoice ID and Network URL from the supposed IPN data
             $post = file_get_contents("php://input");
 
@@ -946,6 +959,13 @@ function woocommerce_bitpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
                 $this->log('    [Info] Order details retrieved successfully...');
+            }
+
+            if(!$this->is_btcpay_payment_method($order))
+            {
+                $this->log('    [Info] Not using btcpay payment method...');
+                $this->log('    [Info] Leaving ipn_callback()...');
+                return;
             }
 
             $expected_invoiceId = get_post_meta($order_id, 'BTCPay_id', true);
