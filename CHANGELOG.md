@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.17
+### Fixed
+- Fix a race condition if process_payment called twice
+- Can decide to ignore a BTCPay event
+
 ## 2.2.16
 ### Fixed
 - Handle 'expired' IPN

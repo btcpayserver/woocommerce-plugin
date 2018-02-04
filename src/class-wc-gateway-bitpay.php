@@ -1,13 +1,13 @@
 <?php
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.16
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.17
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           2.2.16
+    Version:           2.2.17
     License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -1504,7 +1504,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.16');
+        update_option('woocommerce_bitpay_version', '2.2.17');
 
     } else {
         // Requirements not met, return an error message
