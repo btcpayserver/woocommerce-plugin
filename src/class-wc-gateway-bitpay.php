@@ -1259,7 +1259,7 @@ function woocommerce_bitpay_init()
                 $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
                 if(isset($transient->response))
                 {
-                $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+                    $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
                 }
                 else
                 {
