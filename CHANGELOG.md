@@ -2,10 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.2.18
+## 2.2.19
 ### Fixed
 - Ignore IPN if another payment method for the order has been chosen (#2)
 - Can detect new update in plugin page
+
+## 2.2.18
+### Fixed
+- Ignore IPN if another payment method for the order has been chosen (#2)
 
 ## 2.2.17
 ### Fixed
