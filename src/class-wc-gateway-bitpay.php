@@ -19,6 +19,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
+$BTCPAY_VERSION = "2.2.19";
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -108,7 +109,7 @@ function woocommerce_bitpay_init()
 
             // Define debugging & informational settings
             $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
-            $this->debug_plugin_version = get_option('woocommerce_bitpay_version');
+            $this->debug_plugin_version = $BTCPAY_VERSION;
 
             $this->log('BTCPay Woocommerce payment plugin object constructor called. Plugin is v' . $this->debug_plugin_version . ' and server is PHP v' . $this->debug_php_version);
             $this->log('    [Info] $this->api_key            = ' . $this->api_key);
@@ -316,7 +317,7 @@ function woocommerce_bitpay_init()
                 'support_details' => array(
 		            'title'       => __( 'Plugin & Support Information', 'bitpay' ),
 		            'type'        => 'title',
-		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://13.79.159.103:3000/.  Thank you for using BTCPay!', 'bitpay'), get_option('woocommerce_bitpay_version'), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
+		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://13.79.159.103:3000/.  Thank you for using BTCPay!', 'bitpay'), $BTCPAY_VERSION, PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
 	           ),
            );
 
@@ -1540,7 +1541,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', '2.2.19');
+        update_option('woocommerce_bitpay_version', $BTCPAY_VERSION);
 
     } else {
         // Requirements not met, return an error message
