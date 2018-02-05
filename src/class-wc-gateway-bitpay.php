@@ -1187,6 +1187,22 @@ function woocommerce_bitpay_init()
     }
 
     add_filter('woocommerce_payment_gateways', 'wc_add_bitpay');
+    add_filter ('pre_set_site_transient_update_plugins', 'display_transient_update_plugins');
+    function display_transient_update_plugins ($transient)
+    {
+        $url = "https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/package.json";
+        $raw_response = wp_remote_get( $url, $options );
+        $file = wp_remote_retrieve_body( $raw_response );
+        $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
+
+        $obj = new stdClass();
+        $obj->slug = 'btcpay';
+        $obj->new_version = $response['version'];
+        $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
+        $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
+        $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+        return $transient;
+    }
 
     /**
      * Add Settings link to the plugin entry in the plugins menu
