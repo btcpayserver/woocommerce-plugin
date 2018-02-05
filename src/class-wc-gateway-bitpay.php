@@ -1,13 +1,13 @@
 <?php
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.19
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.20
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           2.2.19
+    Version:           2.2.20
     License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -19,7 +19,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-$BTCPAY_VERSION = "2.2.19";
+define("BTCPAY_VERSION", "2.2.20");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -109,7 +109,7 @@ function woocommerce_bitpay_init()
 
             // Define debugging & informational settings
             $this->debug_php_version    = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
-            $this->debug_plugin_version = $BTCPAY_VERSION;
+            $this->debug_plugin_version = constant("BTCPAY_VERSION");
 
             $this->log('BTCPay Woocommerce payment plugin object constructor called. Plugin is v' . $this->debug_plugin_version . ' and server is PHP v' . $this->debug_php_version);
             $this->log('    [Info] $this->api_key            = ' . $this->api_key);
@@ -199,6 +199,46 @@ function woocommerce_bitpay_init()
 
             $this->is_initialized = true;
         }
+
+        function display_transient_update_plugins ($transient)
+        {
+            $this->log('    [Info] Entering display_transient_update_plugins ($transient)...');
+            try
+            {
+                $url = "https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/package.json";
+                $raw_response = wp_remote_get( $url, $options );
+                $file = wp_remote_retrieve_body( $raw_response );
+                $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
+
+                $obj = new stdClass();
+                $obj->slug = 'btcpay';
+                $obj->new_version = $response['version'];
+                if($response['version'] === constant("BTCPAY_VERSION"))
+                {
+                    $this->log('    [Info] BTCPay is up-to-date');
+                }
+                else
+                {
+                    $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
+                    $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
+                    if(isset($transient->response))
+                    {
+                    $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+                    }
+                    else
+                    {
+                        $transient['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;   
+                    }
+                }
+            } 
+            catch (\Exception $e) 
+            {
+                $this->log('    [Error] Error during display_transient_update_plugins ($transient): '. $e->getMessage());
+            }
+            $this->log('    [Info] Leaving display_transient_update_plugins ($transient)...');
+            return $transient;
+        }
+
 
         public function is_btcpay_payment_method($order)
         {
@@ -317,7 +357,7 @@ function woocommerce_bitpay_init()
                 'support_details' => array(
 		            'title'       => __( 'Plugin & Support Information', 'bitpay' ),
 		            'type'        => 'title',
-		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://13.79.159.103:3000/.  Thank you for using BTCPay!', 'bitpay'), $BTCPAY_VERSION, PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
+		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://13.79.159.103:3000/.  Thank you for using BTCPay!', 'bitpay'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
 	           ),
            );
 
@@ -1188,10 +1228,17 @@ function woocommerce_bitpay_init()
     }
 
     add_filter('woocommerce_payment_gateways', 'wc_add_bitpay');
-    add_filter ('pre_set_site_transient_update_plugins', 'display_transient_update_plugins');
+
+    function btcpay_log($message)
+    {
+        $logger = new WC_Logger();
+        $logger->add('bitpay', $message);
+    }
+
+    add_filter('pre_set_site_transient_update_plugins', 'display_transient_update_plugins');
     function display_transient_update_plugins ($transient)
     {
-        $this->log('    [Info] Entering display_transient_update_plugins ($transient)...');
+        btcpay_log('    [Info] Entering display_transient_update_plugins ($transient)...');
         try
         {
             $url = "https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/package.json";
@@ -1202,25 +1249,32 @@ function woocommerce_bitpay_init()
             $obj = new stdClass();
             $obj->slug = 'btcpay';
             $obj->new_version = $response['version'];
-            $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
-            $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
-            if(isset($transient->response))
+            if($response['version'] === constant("BTCPAY_VERSION"))
             {
-               $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+                btcpay_log('    [Info] BTCPay is up-to-date');
             }
             else
             {
-                $transient['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;   
+                $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
+                $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
+                if(isset($transient->response))
+                {
+                $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+                }
+                else
+                {
+                    $transient['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;   
+                }
             }
-            return $transient;
         } 
         catch (\Exception $e) 
         {
-            $this->log('    [Error] Error during display_transient_update_plugins ($transient): '. $e->getMessage());
+            btcpay_log('    [Error] Error during display_transient_update_plugins ($transient): '. $e->getMessage());
         }
-        $this->log('    [Info] Leaving display_transient_update_plugins ($transient)...');
+        btcpay_log('    [Info] Leaving display_transient_update_plugins ($transient)...');
+        return $transient;
     }
-
+    
     /**
      * Add Settings link to the plugin entry in the plugins menu
      **/
@@ -1557,7 +1611,7 @@ function woocommerce_bitpay_activate()
             }
         }
 
-        update_option('woocommerce_bitpay_version', $BTCPAY_VERSION);
+        update_option('woocommerce_bitpay_version', constant("BTCPAY_VERSION"));
 
     } else {
         // Requirements not met, return an error message

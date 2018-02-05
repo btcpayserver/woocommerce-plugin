@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.20
+### Fixed
+- Do not crash plugin page if update detection fails, be more resilient
+
 ## 2.2.19
 ### Fixed
 - Ignore IPN if another payment method for the order has been chosen (#2)
