@@ -211,7 +211,7 @@ function woocommerce_bitpay_init()
                 $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
 
                 $obj = new stdClass();
-                $obj->slug = 'btcpay';
+                $obj->slug = 'btcpay-for-woocommerce';
                 $obj->new_version = $response['version'];
                 if($response['version'] === constant("BTCPAY_VERSION"))
                 {
