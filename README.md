@@ -105,6 +105,22 @@ docker run -ti -v "`pwd`/dist:/app/dist" --rm woocommerce_bitpay
 echo "Output available in `pwd`/dist/btcpay-for-woocommerce.zip"
 ```
 
+## Common errors
+
+### SSL certificate problem: unable to get local issuer certificate
+
+This can come in two conditions:
+
+* Your BTCPayServer is running on a test certificate
+* You have not installed root certificates on the wordpress host
+
+In the first case, please, make sure a valid SSL certificates is installed on your BTCPayServer. You can check this is the case by browsing to the BTCPayServer page, and check there is no browser warnings.
+
+In the second case run,
+
+```
+sudo apt-get install ca-certifcates
+```
 
 ## Contribute
 
