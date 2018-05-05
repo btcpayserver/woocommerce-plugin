@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.21
+### Added
+- Add `event_invoice_expiredPaidPartial` handling
+
 ## 2.2.20
 ### Fixed
 - Do not crash plugin page if update detection fails, be more resilient

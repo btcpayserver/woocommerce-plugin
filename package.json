@@ -3,7 +3,7 @@
   "name": "woocommerce-plugin",
   "license": "MIT",
   "description": "BTCPay payment gateway for WooCommerce",
-  "version": "2.2.20",
+  "version": "2.2.21",
 
   "repository": {
     "type": "git",
