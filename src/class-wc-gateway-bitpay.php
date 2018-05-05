@@ -1035,7 +1035,7 @@ function woocommerce_bitpay_init()
             $invalid_status   = $order_states['invalid'];
             $expired_status   = $order_states['expired'];
             $event_invoice_paidAfterExpiration   = $order_states['event_invoice_paidAfterExpiration'];
-            $event_invoice_expiredPaidPartial    = $order_states['event_invoice_expiredPaidPartial']
+            $event_invoice_expiredPaidPartial    = $order_states['event_invoice_expiredPaidPartial'];
 
             $checkStatus = $invoice->getStatus();
 
