@@ -1,13 +1,13 @@
 <?php
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.20
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.21
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           2.2.20
+    Version:           2.2.21
     License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -19,7 +19,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "2.2.20");
+define("BTCPAY_VERSION", "2.2.21");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -424,8 +424,8 @@ function woocommerce_bitpay_init()
 
             ob_start();
 
-            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid', 'expired'=>'Expired', 'event_invoice_paidAfterExpiration'=>'Paid after expiration');
-            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-processing', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed');
+            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid', 'expired'=>'Expired', 'event_invoice_paidAfterExpiration'=>'Paid after expiration', 'event_invoice_expiredPaidPartial' => 'Expired with partial payment');
+            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-processing', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed', 'event_invoice_expiredPaidPartial' => 'BTCPAY_IGNORE');
 
             $wc_statuses = wc_get_order_statuses();
             $wc_statuses = array('BTCPAY_IGNORE' => '') + $wc_statuses;
@@ -492,7 +492,8 @@ function woocommerce_bitpay_init()
                 'complete'  => 'Complete',
                 'invalid'   => 'Invalid',
                 'expired'   => 'Expired',
-                'event_invoice_paidAfterExpiration' => 'Paid after expiration'
+                'event_invoice_paidAfterExpiration' => 'Paid after expiration',
+                'event_invoice_expiredPaidPartial' => 'Expired with partial payment'
             );
 
             $wc_statuses = wc_get_order_statuses();
@@ -1034,6 +1035,7 @@ function woocommerce_bitpay_init()
             $invalid_status   = $order_states['invalid'];
             $expired_status   = $order_states['expired'];
             $event_invoice_paidAfterExpiration   = $order_states['event_invoice_paidAfterExpiration'];
+            $event_invoice_expiredPaidPartial    = $order_states['event_invoice_expiredPaidPartial']
 
             $checkStatus = $invoice->getStatus();
 
@@ -1113,6 +1115,13 @@ function woocommerce_bitpay_init()
                     if($event_invoice_paidAfterExpiration !== 'BTCPAY_IGNORE')
                         $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'bitpay'));
                     $order->add_order_note(__('A payment has been received after expiration', 'bitpay'));
+                }
+                if ($event['code'] === 2000)
+                {
+                    $this->log('    [Info] The invoice has expired while a partial payment has been sent...');
+                    if($event_invoice_expiredPaidPartial !== 'BTCPAY_IGNORE')
+                        $order->update_status($event_invoice_expiredPaidPartial , __('The invoice has expired while a partial payment has been sent'));
+                    $order->add_order_note(__('The invoice has expired while a partial payment has been sent', 'bitpay'));
                 }
             }
             $this->log('    [Info] Leaving ipn_callback()...');
