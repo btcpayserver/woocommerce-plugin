@@ -200,46 +200,6 @@ function woocommerce_bitpay_init()
             $this->is_initialized = true;
         }
 
-        function display_transient_update_plugins ($transient)
-        {
-            $this->log('    [Info] Entering display_transient_update_plugins ($transient)...');
-            try
-            {
-                $url = "https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/package.json";
-                $raw_response = wp_remote_get( $url, $options );
-                $file = wp_remote_retrieve_body( $raw_response );
-                $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
-
-                $obj = new stdClass();
-                $obj->slug = 'btcpay-for-woocommerce';
-                $obj->new_version = $response['version'];
-                if($response['version'] === constant("BTCPAY_VERSION"))
-                {
-                    $this->log('    [Info] BTCPay is up-to-date');
-                }
-                else
-                {
-                    $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
-                    $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
-                    if(isset($transient->response))
-                    {
-                    $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
-                    }
-                    else
-                    {
-                        $transient['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;   
-                    }
-                }
-            } 
-            catch (\Exception $e) 
-            {
-                $this->log('    [Error] Error during display_transient_update_plugins ($transient): '. $e->getMessage());
-            }
-            $this->log('    [Info] Leaving display_transient_update_plugins ($transient)...');
-            return $transient;
-        }
-
-
         public function is_btcpay_payment_method($order)
         {
             $actualMethod = '';
@@ -1251,7 +1211,7 @@ function woocommerce_bitpay_init()
         try
         {
             $url = "https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/package.json";
-            $raw_response = wp_remote_get( $url, $options );
+            $raw_response = wp_remote_get( $url );
             $file = wp_remote_retrieve_body( $raw_response );
             $response = json_decode( wp_remote_retrieve_body( $raw_response ), true );
 
