@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.22
+### Fixed
+- Fix crash on some stores `Cannot use object of type stdClass as array in...` on the dashboard
+
 ## 2.2.21
 ### Added
 - Add `event_invoice_expiredPaidPartial` handling
