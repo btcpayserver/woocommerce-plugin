@@ -1,13 +1,13 @@
 <?php
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.22
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.23
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           2.2.22
+    Version:           2.2.23
     License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -19,7 +19,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "2.2.22");
+define("BTCPAY_VERSION", "2.2.23");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -282,6 +282,7 @@ function woocommerce_bitpay_init()
                         'default' => 'Keep store level configuration',
                         'high'    => '0 confirmation on-chain',
                         'medium'  => '1 confirmation on-chain',
+                        'low-medium'  => '2 confirmations on-chain',
                         'low'     => '6 confirmations on-chain',
                     ),
                     'default' => 'default',
@@ -748,10 +749,7 @@ function woocommerce_bitpay_init()
             // Add the Redirect and Notification URLs
             $invoice->setRedirectUrl($redirect_url);
             $invoice->setNotificationUrl($notification_url);
-            if($this->transaction_speed !== 'default')
-            {
-                $invoice->setTransactionSpeed($this->transaction_speed);
-            }
+            $invoice->setTransactionSpeed($this->transaction_speed);  
             
             try {
                 $this->log('    [Info] Attempting to generate invoice for ' . $order->get_order_number() . '...');

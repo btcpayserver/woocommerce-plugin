@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.23
+### Fixed
+- Setting `Keep store level settings` to `transaction speed` would still override store's setting
+### Added
+- Add `low-medium` transaction speed
+
 ## 2.2.22
 ### Fixed
 - Fix crash on some stores `Cannot use object of type stdClass as array in...` on the dashboard
