@@ -1,13 +1,13 @@
 <?php
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.23
+    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.24
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           2.2.23
+    Version:           2.2.24
     License:           Copyright 2011-2014 BTCPay, MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -19,7 +19,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "2.2.23");
+define("BTCPAY_VERSION", "2.2.24");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -1224,14 +1224,12 @@ function woocommerce_bitpay_init()
             {
                 $obj->url = 'https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v'.$response['version'];
                 $obj->package = 'https://github.com/btcpayserver/woocommerce-plugin/releases/download/v'.$response['version'].'/btcpay-for-woocommerce.zip';
-                if(isset($transient->response))
+
+                if(!isset( $transient->response ) || !is_array( $transient->response ))
                 {
-                    $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
+                    $transient->response = array();
                 }
-                else
-                {
-                    $transient['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;   
-                }
+                $transient->response['btcpay-for-woocommerce/class-wc-gateway-bitpay.php'] = $obj;
             }
         } 
         catch (\Exception $e) 

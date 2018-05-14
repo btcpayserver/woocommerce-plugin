@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.24
+### Fixed
+- Bug: In some circumstances the auto update might crash the wordpress dashboard
+
 ## 2.2.23
 ### Fixed
 - Setting `Keep store level settings` to `transaction speed` would still override store's setting
