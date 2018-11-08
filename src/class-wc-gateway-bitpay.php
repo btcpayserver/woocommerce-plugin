@@ -1,4 +1,5 @@
 <?php
+
 /*
     Plugin Name: BTCPay for WooCommerce
     Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.24
