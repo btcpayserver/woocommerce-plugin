@@ -1,6 +1,6 @@
-<div class="bitpay-pairing bitpay-pairing--%s">
-	<input name="bitpay-url" type="text" placeholder="BTCPay Url (eg. https://your-btcpay.com/)" class="bitpay-url"> <br />
-	<input type="text" placeholder="Pairing Code" name="bitpay-pairing__code" class="bitpay-pairing__code">
-	<button class="bitpay-pairing__find ui-button-text button">Pair</button>
-	<div class="bitpay-pairing__help">Get a pairing code: <a href="https://bitpay.com/api-tokens" class="bitpay-pairing__link" target="_blank">https://bitpay.com/api-tokens</a></div>
+<div class="btcpay-pairing btcpay-pairing--%s">
+	<input name="btcpay-url" type="text" placeholder="BTCPay Url (eg. https://your-btcpay.com/)" class="btcpay-url"> <br />
+	<input type="text" placeholder="Pairing Code" name="btcpay-pairing__code" class="btcpay-pairing__code">
+	<button class="btcpay-pairing__find ui-button-text button">Pair</button>
+	<div class="btcpay-pairing__help">Get a pairing code: <a href="https://#/api-tokens" class="btcpay-pairing__link" target="_blank">Please enter BTCPay Url first</a></div>
 </div>

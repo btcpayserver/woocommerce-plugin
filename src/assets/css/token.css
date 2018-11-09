@@ -1,5 +1,5 @@
 @import url("//fonts.googleapis.com/css?family=Ubuntu:400");
-.bitpay-token {
+.btcpay-token {
 	background: #0F3723;
 	font-family: 'Ubuntu', sans-serif;
 	color: #fff;
@@ -9,45 +9,45 @@
 	padding-bottom: 1em;
 	border-radius: 4px;
 }
-.bitpay-token--hidden {
+.btcpay-token--hidden {
 	display: none;
 }
-.bitpay-token--testnet {
+.btcpay-token--testnet {
 	border-color: #cc0;
 }
-.bitpay-token__prop {
+.btcpay-token__prop {
 	padding: 0 1em;
 	font-size: 0.85em;
 	color: #ccddff;
 }
-.bitpay-token__label {
+.btcpay-token__label {
 	color: #fff;
 	display: inline-block;
 	min-width: 4em;
 }
-.bitpay-token__header {
+.btcpay-token__header {
 	margin-bottom: 1em;
 	margin-top: 0.3em;
 	white-space: nowrap;
 }
-.bitpay-token__logo {
+.btcpay-token__logo {
 	width: 5em;
 	display: inline-block;
 	box-sizing: border-box;
 	text-align: center;
 	margin-right: 3em;
 }
-.bitpay-token__logo img {
+.btcpay-token__logo img {
 	margin-bottom: -13px;
 }
-.bitpay-token__logo:after {
+.btcpay-token__logo:after {
 	display: inline;
 	color: #0f0;
 }
-.bitpay-token--testnet .bitpay-token__logo:after {
+.btcpay-token--testnet .btcpay-token__logo:after {
 	color: #cc0;
 }
-.bitpay-token__revoke {
+.btcpay-token__revoke {
 	display: block;
 	float: right;
 	padding: 0.5em 0.75em;
