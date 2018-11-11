@@ -64,7 +64,7 @@
           $('.btcpay-token').hide().removeClass('btcpay-token--hidden').fadeIn(500);
           $('.btcpay-pairing__code').val('');
           $('#message').remove();
-          $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BitPay account!</strong></p></div>');
+          $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BtcPay store!</strong></p></div>');
         }
         // Pairing failed
         else if (data && data.success === false) {
