@@ -18,16 +18,16 @@
             if(url.indexOf("http://") == 0 || url.indexOf("https://") == 0)
             {
               url = url  + "/api-tokens";
-              $('.btcpay-pairing__link').attr('href', url).html(url);
+              $('.btcpay-pairing__link').attr('href', url).html(url).show().next("span").hide();
             }
             else
             {
-              $('.btcpay-pairing__link').attr('href', '').html('');
+              $('.btcpay-pairing__link').hide().next("span").show().text('Please enter BTCPay Url first');
             }
     };
 
     updatePairingLink();
-    $('#btcpay_api_token_form').on('change', '.btcpay-url', updatePairingLink);
+    $('#btcpay_api_token_form').on('input', '.btcpay-url', updatePairingLink);
 
     /**
      * Try to pair with BtcPay using an entered pairing code
