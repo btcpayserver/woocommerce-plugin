@@ -508,8 +508,9 @@ function woocommerce_btcpay_init()
         {
             $order_states = $this->get_option('order_states');
 
-            if ( isset( $_POST[ $this->plugin_id . $this->id . '_order_states' ] ) ) {
-                $order_states = $_POST[ $this->plugin_id . $this->id . '_order_states' ];
+            $order_states_key = $this->plugin_id . $this->id . '_order_states';
+            if ( isset( $_POST[ $order_states_key ] ) ) {
+                $order_states = $_POST[ $order_states_key ];
             }
             return $order_states;
         }
@@ -656,8 +657,8 @@ function woocommerce_btcpay_init()
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not instantiate a client object.');
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not instantiate a client object. Cannot continue!');
             }
-
-            $network = new Customnet($this->api_url, 443);
+            $url = $this->api_url;
+            $network = extractCustomnetFromUrl($url);
 
             $client->setNetwork($network);
             $this->log('    [Info] Set url to ' + $this->api_url);
@@ -883,8 +884,10 @@ function woocommerce_btcpay_init()
             } else {
                 $this->log('    [Info] Created new Client object in IPN handler...');
             }
-
-            $client->setUri($this->api_url);
+            
+            $url = $this->api_url;
+            $network = extractCustomnetFromUrl($url);
+            $client->setNetwork($network);
             $this->log('    [Info] Set url to ' + $this->api_url);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
@@ -1255,7 +1258,7 @@ function woocommerce_btcpay_init()
                 return;
             }
 
-            $url = $_POST['url'];
+            $url = esc_url_raw($_POST['url']);
 
             if (!filter_var($url, FILTER_VALIDATE_URL) || (substr( $url, 0, 7 ) !== "http://" && substr( $url, 0, 8 ) !== "https://")) {
                 wp_send_json_error("Invalid url");
@@ -1298,8 +1301,9 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
             }
 
-            $client->setUri($url);
+            $network = extractCustomnetFromUrl($url);
 
+            $client->setNetwork($network);
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
             if (true === empty($curlAdapter)) {
@@ -1508,6 +1512,24 @@ function woocommerce_btcpay_failed_requirements()
 
 }
 
+function extractCustomnetFromUrl($url)
+{
+    $component = parse_url($url);
+    if(!$component){
+        throw new \Exception('Url was invalid');
+    }
+    if(array_key_exists("port",$component) && isset($component["port"])){
+        $port = $component["port"];
+    }else  if($component["scheme"] === "http"){
+        $port = 80;
+
+    }else if($component["scheme"] === "https"){
+        $port = 443; 
+    }
+    $host = $component["host"];
+    return new \Bitpay\Network\Customnet($host, $port);
+}
+
 // Activating the plugin
 function woocommerce_btcpay_activate()
 {
@@ -1525,22 +1547,10 @@ function woocommerce_btcpay_activate()
         foreach ($plugins as $file => $plugin) {
             if ('Bitpay Woocommerce' === $plugin['Name'] && true === is_plugin_active($file)) {
                 deactivate_plugins(plugin_basename(__FILE__));
-                wp_die('BitPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
+                wp_die('BtcPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
 
             }
         }
-
-        // Fix transaction_speed from older versions
-        $settings = get_option('woocommerce_btcpay');
-        if (true === isset($settings) && true === is_string($settings)) {
-            $settings_array = @unserialize($settings);
-            if (false !== $settings_array && true === isset($settings_array['transactionSpeed'])) {
-                $settings_array['transaction_speed'] = $settings_array['transactionSpeed'];
-                unset($settings_array['transactionSpeed']);
-                update_option('woocommerce_btcpay', serialize($settings));
-            }
-        }
-
         update_option('woocommerce_btcpay_version', constant("BTCPAY_VERSION"));
 
     } else {
