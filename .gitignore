@@ -17,3 +17,6 @@ npm_debug.log
 wp-cli.yml
 wp-tests-config.php
 woocommerce/html
+\.idea/\.idea\.woocommerce-plugin/\.idea/
+
+\.idea/\.idea\.woocommerce-plugin/
