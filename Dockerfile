@@ -1,8 +1,13 @@
 FROM php:5.6-cli
 
+RUN apt-get update && apt-get install -my wget gnupg
+
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+
 RUN apt-get update \
     && apt-get install -y \
         nodejs \
+		build-essential \
         npm \
         git \
         libmcrypt-dev \
@@ -19,7 +24,7 @@ RUN apt-get update \
 ENV DEBIAN_FRONTEND noninteractive
 ENV COMPOSER_NO_INTERACTION 1
 
-RUN ln -s "$(which nodejs)" /usr/bin/node
+# RUN ln -s "$(which nodejs)" /usr/bin/node
 # Show versions
 RUN php -v && node -v && npm -v
 

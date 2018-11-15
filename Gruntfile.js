@@ -68,7 +68,7 @@ module.exports = function(grunt) {
     cssmin: {
       build: {
         options: {
-          banner: '/**\n * @license Copyright 2011-2014 BitPay Inc., MIT License\n * see https://github.com/bitpay/woocommerce-plugin/blob/master/LICENSE\n */'
+          banner: '/**\n * @license Copyright 2011-2018 BitPay Inc. & BtcPay Inc., MIT License\n * see https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE\n */'
         },
         files: {
           'dist/btcpay-for-woocommerce/assets/css/style.css': ['src/assets/css/**.css']
