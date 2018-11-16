@@ -20,3 +20,5 @@ woocommerce/html
 \.idea/\.idea\.woocommerce-plugin/\.idea/
 
 \.idea/\.idea\.woocommerce-plugin/
+
+dist2/

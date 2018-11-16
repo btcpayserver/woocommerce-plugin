@@ -47,7 +47,7 @@ module.exports = function(grunt) {
             dest: 'dist/btcpay-for-woocommerce/lib'
           },
           {
-            src: 'readme.txt',
+            src: 'Wordpress-README.md',
             dest: 'dist/btcpay-for-woocommerce/readme.txt'
           },
           {
