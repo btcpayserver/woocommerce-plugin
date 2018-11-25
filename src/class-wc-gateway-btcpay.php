@@ -9,7 +9,7 @@
     Author URI:  https://github.com/btcpayserver
 
     Version:           3.0.0
-    License:           Copyright 2011-2014 BTCPay, MIT License
+    License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
  */

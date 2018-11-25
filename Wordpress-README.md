@@ -9,6 +9,7 @@ License: MIT
 License URI: https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
 
 BTCPay Server is a free and open-source cryptocurrency payment processor which allows you to receive payments in Bitcoin and altcoins directly, with no fees, transaction cost or a middleman.
+This plugin is a fork of  https://github.com/bitpay/woocommerce-plugin which in turn is a fork of https://github.com/jaafit/bitpayWoocommerce
 
 == Description ==
 BTCPay Server is a free and open-source cryptocurrency payment processor which allows you to receive payments in Bitcoin and altcoins directly, with no fees, transaction cost or a middleman.
@@ -20,6 +21,8 @@ The software is built in C# and conforms to the invoice API of BitPay. It allows
 You can run BTCPay as a self-hosted solution on your own server, or use a third-party host.
 
 The self-hosted solution allows you not only to attach an unlimited number of stores and use the Lightning Network but also become the payment processor for others.
+
+This plugin is a fork of https://github.com/bitpay/woocommerce-plugin which in turn is a fork of https://github.com/jaafit/bitpayWoocommerce. We have modified the plugin in order to support alternative bitpay compliant servers and enhance usability and functionality. This plugin should be able to run alongside the original bitpay plugin. 
 
 == Installation ==
 This plugin requires Woocommerce. Please make sure you have Woocommerce installed.
