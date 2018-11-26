@@ -27,22 +27,24 @@ $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 if (true === file_exists($autoloader_param) &&
     true === is_readable($autoloader_param))
 {
+  if(false === class_exists("Bitpay\Autoloader")){
     require_once $autoloader_param;
     \Bitpay\Autoloader::register();
+  }
 } else {
     throw new \Exception('The BTCPay payment plugin was not installed correctly or the files are corrupt. Please reinstall the plugin. If this message persists after a reinstall, contact the BTCPay team through http://slack.btcpayserver.org with this message.');
 }
 
 // Exist for quirks in object serialization...
-if (false === class_exists('PrivateKey')) {
+if (false === class_exists('Bitpay\PrivateKey')) {
     include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
 }
 
-if (false === class_exists('PublicKey')) {
+if (false === class_exists('Bitpay\PublicKey')) {
     include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
 }
 
-if (false === class_exists('Token')) {
+if (false === class_exists('Bitpay\Token')) {
     include_once(__DIR__ . '/lib/Bitpay/Token.php');
 }
 
@@ -60,18 +62,18 @@ function woocommerce_btcpay_init()
         return;
     }
 
-    // Exist for quirks in object serialization...
-    if (false === class_exists('PrivateKey')) {
-        include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
-    }
+// Exist for quirks in object serialization...
+if (false === class_exists('Bitpay\PrivateKey')) {
+    include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
+}
 
-    if (false === class_exists('PublicKey')) {
-        include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
-    }
+if (false === class_exists('Bitpay\PublicKey')) {
+    include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
+}
 
-    if (false === class_exists('Token')) {
-        include_once(__DIR__ . '/lib/Bitpay/Token.php');
-    }
+if (false === class_exists('Bitpay\Token')) {
+    include_once(__DIR__ . '/lib/Bitpay/Token.php');
+}
 
     class WC_Gateway_BtcPay extends WC_Payment_Gateway
     {
