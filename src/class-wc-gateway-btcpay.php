@@ -62,18 +62,18 @@ function woocommerce_btcpay_init()
         return;
     }
 
-// Exist for quirks in object serialization...
-if (false === class_exists('Bitpay\PrivateKey')) {
-    include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
-}
+	// Exist for quirks in object serialization...
+	if (false === class_exists('Bitpay\PrivateKey')) {
+		include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
+	}
 
-if (false === class_exists('Bitpay\PublicKey')) {
-    include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
-}
+	if (false === class_exists('Bitpay\PublicKey')) {
+		include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
+	}
 
-if (false === class_exists('Bitpay\Token')) {
-    include_once(__DIR__ . '/lib/Bitpay/Token.php');
-}
+	if (false === class_exists('Bitpay\Token')) {
+		include_once(__DIR__ . '/lib/Bitpay/Token.php');
+	}
 
     class WC_Gateway_BtcPay extends WC_Payment_Gateway
     {
@@ -197,7 +197,7 @@ if (false === class_exists('Bitpay\Token')) {
             } else {
                 $this->enabled = 'yes';
                 $this->log('    [Info] The plugin is ok to use.');
-                add_action('woocommerce_api_WC_Gateway_BtcPay', array($this, 'ipn_callback'));
+                add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
             }
 
             $this->is_initialized = true;
@@ -305,7 +305,7 @@ if (false === class_exists('Bitpay\Token')) {
                 'notification_url' => array(
                     'title'       => __('Notification URL', 'btcpay'),
                     'type'        => 'url',
-                    'description' => __('BTCPay will send IPNs for orders to this URL with the BitPay invoice data', 'btcpay'),
+                    'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
                     'default'     => '',
                     'placeholder' => WC()->api_request_url('WC_Gateway_BtcPay'),
                     'desc_tip'    => true,
@@ -1226,7 +1226,7 @@ if (false === class_exists('Bitpay\Token')) {
 
         if ($file == $this_plugin) {
             $log_file = 'btcpay-' . sanitize_file_name( wp_hash( 'btcpay' ) ) . '-log';
-            $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=WC_Gateway_BtcPay">Settings</a>';
+            $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_btcpay">Settings</a>';
             $logs_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-status&tab=logs&log_file=' . $log_file . '">Logs</a>';
             array_unshift($links, $settings_link, $logs_link);
         }
