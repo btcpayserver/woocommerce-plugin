@@ -388,8 +388,24 @@ function woocommerce_btcpay_init()
 
             ob_start();
 
-            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid', 'expired'=>'Expired', 'event_invoice_paidAfterExpiration'=>'Paid after expiration', 'event_invoice_expiredPaidPartial' => 'Expired with partial payment');
-            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-processing', 'invalid'=>'wc-failed', 'expired'=>'wc-failed', 'event_invoice_paidAfterExpiration' => 'wc-failed', 'event_invoice_expiredPaidPartial' => 'BTCPAY_IGNORE');
+            $bp_statuses = array(
+			'new'=>'New Order', 
+			'paid'=>'Paid', 
+			'confirmed'=>'Confirmed', 
+			'complete'=>'Complete', 
+			'invalid'=>'Invalid', 
+			'expired'=>'Expired', 
+			'event_invoice_paidAfterExpiration'=>'Paid after expiration', 
+			'event_invoice_expiredPaidPartial' => 'Expired with partial payment');
+            $df_statuses = array(
+			'new'=>'wc-pending', 
+			'paid'=>'wc-on-hold', 
+			'confirmed'=>'wc-processing', 
+			'complete'=>'wc-processing', 
+			'invalid'=>'wc-failed', 
+			'expired'=>'wc-cancelled', 
+			'event_invoice_paidAfterExpiration' => 'wc-failed', 
+			'event_invoice_expiredPaidPartial' => 'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
             $wc_statuses = array('BTCPAY_IGNORE' => '') + $wc_statuses;

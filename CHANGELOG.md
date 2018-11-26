@@ -6,7 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Rebrand to be properly BTCPay labelled
 - Revert to using original Bitpay php lib and used Customnet for btcpay host urls
-
+- Update default order states to more reasonable values
+- Prepare plugin for Wordpress Plugin Repository
 
 ## 2.2.24
 ### Fixed
