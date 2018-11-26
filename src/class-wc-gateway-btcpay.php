@@ -1204,12 +1204,13 @@ if (false === class_exists('Bitpay\Token')) {
 
     add_filter('woocommerce_payment_gateways', 'wc_add_btcpay');
 
-    function btcpay_log($message)
-    {
-        $logger = new WC_Logger();
-        $logger->add('btcpay', $message);
-    }
-
+	if (!function_exists('btcpay_log'))  {
+		function btcpay_log($message)
+		{
+			$logger = new WC_Logger();
+			$logger->add('btcpay', $message);
+		}
+	}
     /**
      * Add Settings link to the plugin entry in the plugins menu
      **/
