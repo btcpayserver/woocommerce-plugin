@@ -1551,7 +1551,10 @@ function woocommerce_btcpay_activate()
             if ('Bitpay Woocommerce' === $plugin['Name'] && true === is_plugin_active($file)) {
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('BtcPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
-
+            }
+			if ('BTCPay for WooCommerce' === $plugin['Name'] && true === is_plugin_active($file) && (0 > version_compare( $plugin['Version'], '3.0' ))) {
+                deactivate_plugins(plugin_basename(__FILE__));
+                wp_die('BtcPay for WooCommerce requires that the 2.x version of this plugin is deactivated. <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
         }
         update_option('woocommerce_btcpay_version', constant("BTCPAY_VERSION"));
