@@ -20,7 +20,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.0");
+define("BTCPAY_VERSION", "3.0.1");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -1576,6 +1576,8 @@ function woocommerce_btcpay_activate()
             if ('BTCPay for WooCommerce' === $plugin['Name']
              && (0 > version_compare( $plugin['Version'], '3.1' ))) { 
 
+               
+
                 update_option('woocommerce_btcpay_key',  
                     get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) );
                 update_option('woocommerce_btcpay_pub', 
@@ -1590,6 +1592,16 @@ function woocommerce_btcpay_activate()
                 get_option( 'woocommerce_btcpay_network', get_option('woocommerce_bitpay_network', null) ) );
                 update_option('woocommerce_btcpay_settings', 
                 get_option( 'woocommerce_btcpay_settings', get_option('woocommerce_bitpay_settings', null) ) );
+                update_option('woocommerce_btcpay_url', 
+                get_option( 'woocommerce_btcpay_url', get_option('woocommerce_bitpay_url', null) ) );
+                update_option('woocommerce_btcpay_notification_url', 
+                get_option( 'woocommerce_btcpay_notification_url', get_option('woocommerce_bitpay_notification_url', null) ) );
+                update_option('woocommerce_btcpay_redirect_url', 
+                get_option( 'woocommerce_btcpay_redirect_url', get_option('woocommerce_bitpay_redirect_url', null) ) );
+                update_option('woocommerce_btcpay_transaction_speed', 
+                get_option( 'woocommerce_btcpay_transaction_speed', get_option('woocommerce_bitpay_transaction_speed', null) ) );
+                update_option('woocommerce_btcpay_order_states', 
+                get_option( 'woocommerce_btcpay_order_states', get_option('woocommerce_bitpay_order_states', null) ) );
 
                 set_transient( 'fx_admin_notice_show_migration_message', true, 5 );
             }
@@ -1611,7 +1623,7 @@ function fx_admin_notice_show_migration_message(){
             <p>The BTCPay Plugin for Woocoomerce has been updated from a 2.x version! 
             <strong>We have attempted to migrate your settings. Please double check them 
             <?php echo '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_btcpay">here</a>'?>.
-            </strong></p>
+            If you don't see pairing data in your setting, make sure to pair your store again. </strong></p>
         </div>
         <?php
         /* Delete transient, only display this notice once. */
