@@ -13,4 +13,4 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 global $wpdb;
 
 // Delete options
-$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'woocommerce_bitpay%';");
+$wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE 'woocommerce_btcpay%';");

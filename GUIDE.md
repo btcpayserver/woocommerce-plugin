@@ -40,18 +40,18 @@ Visit the [Releases](https://github.com/bitpay/woocommerce-plugin/releases) page
 ## Configuration
 
 Configuration can be done using the Administrator section of Wordpress.
-Once Logged in, you will find the configuration settings under **WooCommerce > Settings > Checkout > BitPay**.
+Once Logged in, you will find the configuration settings under **WooCommerce > Settings > Checkout > BtcPay**.
 Alternatively, you can also get to the configuration settings via Plugins and clicking the Settings link for this plugin.
 
-![BitPay Settings](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/admin.png "BitPay Settings")
+![BitPay Settings](https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/docs/img/admin.png "BtcPay Settings")
 
 Here your will need to create a [pairing code](https://bitpay.com/api-tokens) using
-your BitPay merchant account. Once you have a Pairing Code, put the code in the
+your BtcPay store ^ account. Once you have a Pairing Code, put the code in the
 Pairing Code field:
-![Pairing Code field](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/pairingcode.png "Pairing Code field")
+![Pairing Code field](https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/docs/img/pairingcode.png "Pairing Code field")
 
 On success, you'll receive a token:
-![BitPay Token](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/token.png "Bitpay Token")
+![BitPay Token](https://raw.githubusercontent.com/btcpayserver/woocommerce-plugin/master/docs/img/token.png "Bitpay Token")
 
 **NOTE:** Pairing Codes are only valid for a short period of time. If it expires
 before you get to use it, you can always create a new one and pair with it.
