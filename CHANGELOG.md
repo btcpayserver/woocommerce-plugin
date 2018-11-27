@@ -4,8 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.0.1
 ### Fixed
-- Grab old settings if found and if new settings ahve not been set.
-
+- Grab old settings from 2.x if present and if the 3.x version has not yet been set.
 ## 3.0.0
 ### Changed
 - Rebrand to be properly BTCPay labelled

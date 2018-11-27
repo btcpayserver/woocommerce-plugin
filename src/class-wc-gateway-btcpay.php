@@ -8,7 +8,7 @@
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.0
+    Version:           3.0.1
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -50,6 +50,7 @@ if (false === class_exists('Bitpay\Token')) {
 
 // Ensures WooCommerce is loaded before initializing the BitPay plugin
 add_action('plugins_loaded', 'woocommerce_btcpay_init', 0);
+add_action( 'admin_notices', 'fx_admin_notice_show_migration_message' );
 register_activation_hook(__FILE__, 'woocommerce_btcpay_activate');
 
 function woocommerce_btcpay_init()
@@ -1573,28 +1574,8 @@ function woocommerce_btcpay_activate()
                 wp_die('BtcPay for WooCommerce requires that the 2.x version of this plugin is deactivated. <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
             if ('BTCPay for WooCommerce' === $plugin['Name']
-             && (0 > version_compare( $plugin['Version'], '3.0' ))) { 
-                deactivate_plugins(plugin_basename(__FILE__));
+             && (0 > version_compare( $plugin['Version'], '3.1' ))) { 
 
-                
-
-                wp_die(
-                    'woocommerce_btcpay_key'.  
-                get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) .  '<br/>'.
-                'woocommerce_btcpay_pub'. 
-                get_option( 'woocommerce_btcpay_pub', get_option('woocommerce_bitpay_pub', null) ) .  '<br/>'.
-                'woocommerce_btcpay_sin'.
-                get_option( 'woocommerce_btcpay_sin', get_option('woocommerce_bitpay_sin', null) ) .  '<br/>'.
-                'woocommerce_btcpay_token'.
-                get_option( 'woocommerce_btcpay_token', get_option('woocommerce_bitpay_token', null) ) .  '<br/>'.
-                'woocommerce_btcpay_label'.
-                get_option( 'woocommerce_btcpay_label', get_option('woocommerce_bitpay_label', null) ).  '<br/>'.
-                'woocommerce_btcpay_network'.
-                get_option( 'woocommerce_btcpay_network', get_option('woocommerce_bitpay_network', null) ).  '<br/>'.
-                'woocommerce_btcpay_settings'.
-                get_option( 'woocommerce_btcpay_settings', get_option('woocommerce_bitpay_settings', null) ).  '<br/>'.
-                'testing out migrator for 2.x to 3.x <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
-           
                 update_option('woocommerce_btcpay_key',  
                     get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) );
                 update_option('woocommerce_btcpay_pub', 
@@ -1609,6 +1590,8 @@ function woocommerce_btcpay_activate()
                 get_option( 'woocommerce_btcpay_network', get_option('woocommerce_bitpay_network', null) ) );
                 update_option('woocommerce_btcpay_settings', 
                 get_option( 'woocommerce_btcpay_settings', get_option('woocommerce_bitpay_settings', null) ) );
+
+                set_transient( 'fx_admin_notice_show_migration_message', true, 5 );
             }
         }
         update_option('woocommerce_btcpay_version', constant("BTCPAY_VERSION"));
@@ -1616,5 +1599,22 @@ function woocommerce_btcpay_activate()
     } else {
         // Requirements not met, return an error message
         wp_die($failed . '<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
+    }
+}
+
+function fx_admin_notice_show_migration_message(){
+           
+    /* Check transient, if available display notice */
+    if( get_transient( 'fx_admin_notice_show_migration_message' ) ){
+        ?>
+        <div class="notice notice-warning notice-alt is-dismissible">
+            <p>The BTCPay Plugin for Woocoomerce has been updated from a 2.x version! 
+            <strong>We have attempted to migrate your settings. Please double check them 
+            <?php echo '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-settings&tab=checkout&section=wc_gateway_btcpay">here</a>'?>.
+            </strong></p>
+        </div>
+        <?php
+        /* Delete transient, only display this notice once. */
+        delete_transient( 'fx_admin_notice_show_migration_message' );
     }
 }

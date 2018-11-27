@@ -89,7 +89,7 @@ Depending on your business model and store settings, you may want to [configure 
 == Changelog ==
 ## 3.0.1
 ### Fixed
-- Grab old settings if found and if new settings ahve not been set.
+- Grab old settings from 2.x if present and if the 3.x version has not yet been set. 
 
 ## 3.0.0
 ### Changed
