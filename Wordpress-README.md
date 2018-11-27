@@ -87,8 +87,11 @@ Making a small test-purchase from your own store, will give you a piece of mind.
 Depending on your business model and store settings, you may want to [configure your order statuses](https://nbitstack.com/t/how-to-set-up-order-statuses-in-woocommerce-and-btcpay/67).
 
 == Changelog ==
+## 3.0.1
+### Fixed
+- Grab old settings if found and if new settings ahve not been set.
 
-## 3.0
+## 3.0.0
 ### Changed
 - Rebrand to be properly BTCPay labelled
 - Revert to using original Bitpay php lib and used Customnet for btcpay host urls

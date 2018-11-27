@@ -1572,6 +1572,44 @@ function woocommerce_btcpay_activate()
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('BtcPay for WooCommerce requires that the 2.x version of this plugin is deactivated. <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
+            if ('BTCPay for WooCommerce' === $plugin['Name']
+             && (0 > version_compare( $plugin['Version'], '3.0' ))) { 
+                deactivate_plugins(plugin_basename(__FILE__));
+
+                
+
+                wp_die(
+                    'woocommerce_btcpay_key'.  
+                get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) .  '<br/>'.
+                'woocommerce_btcpay_pub'. 
+                get_option( 'woocommerce_btcpay_pub', get_option('woocommerce_bitpay_pub', null) ) .  '<br/>'.
+                'woocommerce_btcpay_sin'.
+                get_option( 'woocommerce_btcpay_sin', get_option('woocommerce_bitpay_sin', null) ) .  '<br/>'.
+                'woocommerce_btcpay_token'.
+                get_option( 'woocommerce_btcpay_token', get_option('woocommerce_bitpay_token', null) ) .  '<br/>'.
+                'woocommerce_btcpay_label'.
+                get_option( 'woocommerce_btcpay_label', get_option('woocommerce_bitpay_label', null) ).  '<br/>'.
+                'woocommerce_btcpay_network'.
+                get_option( 'woocommerce_btcpay_network', get_option('woocommerce_bitpay_network', null) ).  '<br/>'.
+                'woocommerce_btcpay_settings'.
+                get_option( 'woocommerce_btcpay_settings', get_option('woocommerce_bitpay_settings', null) ).  '<br/>'.
+                'testing out migrator for 2.x to 3.x <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
+           
+                update_option('woocommerce_btcpay_key',  
+                    get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) );
+                update_option('woocommerce_btcpay_pub', 
+                get_option( 'woocommerce_btcpay_pub', get_option('woocommerce_bitpay_pub', null) ) );
+                update_option('woocommerce_btcpay_sin', 
+                get_option( 'woocommerce_btcpay_sin', get_option('woocommerce_bitpay_sin', null) ) );
+                update_option('woocommerce_btcpay_token', 
+                get_option( 'woocommerce_btcpay_token', get_option('woocommerce_bitpay_token', null) ) );
+                update_option('woocommerce_btcpay_label',
+                get_option( 'woocommerce_btcpay_label', get_option('woocommerce_bitpay_label', null) ) );
+                update_option('woocommerce_btcpay_network', 
+                get_option( 'woocommerce_btcpay_network', get_option('woocommerce_bitpay_network', null) ) );
+                update_option('woocommerce_btcpay_settings', 
+                get_option( 'woocommerce_btcpay_settings', get_option('woocommerce_bitpay_settings', null) ) );
+            }
         }
         update_option('woocommerce_btcpay_version', constant("BTCPAY_VERSION"));
 
