@@ -2,9 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.2
+### Fixed
+- Fix float decimal issue
+- Make migrator pull from versions before 3.0.1 not 3.1
 ## 3.0.1
 ### Fixed
-- Grab old settings from 2.x if present and if the 3.x version has not yet been set.
+-  When upgrading from any version smaller than 3.1 and settings are not set, attempt to load older version. Also display a warning prompt in plugins page after it has been activated to double check settings.
+
 ## 3.0.0
 ### Changed
 - Rebrand to be properly BTCPay labelled

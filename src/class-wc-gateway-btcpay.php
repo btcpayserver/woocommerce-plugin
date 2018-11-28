@@ -8,7 +8,7 @@
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.1
+    Version:           3.0.2
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -20,7 +20,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.1");
+define("BTCPAY_VERSION", "3.0.2");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -756,8 +756,9 @@ function woocommerce_btcpay_init()
             $order_total = $order->calculate_totals();
             if (true === isset($order_total) && false === empty($order_total)) {
                 $order_total = (float)$order_total;
-                if($order_total == 0)
-                    throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float");
+                if($order_total == 0 || $order_total === '0')
+                    throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float ". $order_total);
+
                 $item->setPrice($order_total);
             } else {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
@@ -1574,7 +1575,7 @@ function woocommerce_btcpay_activate()
                 wp_die('BtcPay for WooCommerce requires that the 2.x version of this plugin is deactivated. <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
             if ('BTCPay for WooCommerce' === $plugin['Name']
-             && (0 > version_compare( $plugin['Version'], '3.1' ))) { 
+             && (0 > version_compare( $plugin['Version'], '3.0.1' ))) { 
 
                
 

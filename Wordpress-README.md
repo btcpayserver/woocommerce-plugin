@@ -100,6 +100,10 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+## 3.0.2
+### Fixed
+- Fix float decimal issue
+- Make migrator pull from versions before 3.0.1 not 3.1
 
 ## 3.0.1
 ### Changed
