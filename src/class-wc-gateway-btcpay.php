@@ -8,7 +8,7 @@
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.2
+    Version:           3.0.3
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -20,7 +20,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.2");
+define("BTCPAY_VERSION", "3.0.3");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -670,7 +670,7 @@ function woocommerce_btcpay_init()
             }
 
             // Get a BitPay Client to prepare for invoice creation
-            $client = new \Bitpay\Client\Client();
+            $client = new WooCommerceBitPayClient();
 
             if (false === isset($client) && true === empty($client)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not instantiate a client object.');

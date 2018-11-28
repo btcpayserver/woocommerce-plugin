@@ -119,6 +119,9 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+= 3.0.3 =
+Fixed:
+- Remove legacy currency decimal precision checks
 
 = 3.0.2 =
 Fixed:
