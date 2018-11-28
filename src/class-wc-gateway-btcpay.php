@@ -2,7 +2,7 @@
 
 /*
     Plugin Name: BTCPay for WooCommerce
-    Plugin URI:  https://github.com/btcpayserver/woocommerce-plugin/releases/tag/v2.2.24
+    Plugin URI:  https://wordpress.org/plugins/btcpay-for-woocommerce
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
     Text Domain: BTCPay
