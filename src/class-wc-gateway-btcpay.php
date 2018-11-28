@@ -896,7 +896,7 @@ function woocommerce_btcpay_init()
             }
 
             // Get a BitPay Client to prepare for invoice fetching
-            $client = new \Bitpay\Client\Client();
+            $client = new WooCommerceBitPayClient();
 
             if (false === isset($client) && true === empty($client)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to handle an IPN but could not instantiate a client object.');
@@ -1316,7 +1316,7 @@ function woocommerce_btcpay_init()
             $sin->generate();
 
             // Create an API Client
-            $client = new \Bitpay\Client\Client();
+            $client = new WooCommerceBitPayClient();
 
             if (true === empty($client)) {
                 throw new \Exception('The BTCPay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
@@ -1629,5 +1629,12 @@ function fx_admin_notice_show_migration_message(){
         <?php
         /* Delete transient, only display this notice once. */
         delete_transient( 'fx_admin_notice_show_migration_message' );
+    }
+}
+
+class WooCommerceBitPayClient extends \Bitpay\Client\Client{
+	  protected function checkPriceAndCurrency($price, $currency)
+    {
+       
     }
 }
