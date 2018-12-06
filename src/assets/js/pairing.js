@@ -13,16 +13,46 @@
      * Update the API Token helper link on Network selection
     */
 
+    var isValidUrl = function(url){
+      if(typeof url === "string" && (url.indexOf("http://") == 0 || url.indexOf("https://") == 0)){
+        return true;
+      }
+      return false;
+    }
+
+    var formatUrl = function(url){
+      if(typeof url === "string"){
+        return url.replace(/^(.+?)\/*?$/, "$1");
+      }
+      return null;
+    }
+    
+
     var updatePairingLink = function (e) {
-            var url = $('.btcpay-url').val().replace(/^(.+?)\/*?$/, "$1");
-            if(url.indexOf("http://") == 0 || url.indexOf("https://") == 0)
+            var txtPairingUrl = $('.btcpay-url');
+            var pairingLinkElement = $('.btcpay-pairing__link');
+            if(txtPairingUrl.length == 0 ){
+              return;
+            }
+
+            var url = formatUrl(txtPairingUrl.val());
+            if(isValidUrl(url))
             {
               url = url  + "/api-tokens";
-              $('.btcpay-pairing__link').attr('href', url).html(url).show().next("span").hide();
+              pairingLinkElement
+                .attr('href', url)
+                .html(url)
+                .show()
+                .next("span")
+                .hide();
             }
             else
             {
-              $('.btcpay-pairing__link').hide().next("span").show().text('Please enter BTCPay Url first');
+              pairingLinkElement
+                .hide()
+                .next("span")
+                .show()
+                .text('Please enter BTCPay Url first');
             }
     };
 
