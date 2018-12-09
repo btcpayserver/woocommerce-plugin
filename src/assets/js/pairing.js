@@ -31,6 +31,9 @@
     var updatePairingLink = function (e) {
             var txtPairingUrl = $('.btcpay-url');
             var pairingLinkElement = $('.btcpay-pairing__link');
+            // var requestpairingButton = $('.btcpay-pairing__request_pairing');
+            
+            var pairingLinkMessage = $(".btcpay-pairing__link_message")
             if(txtPairingUrl.length == 0 ){
               return;
             }
@@ -42,19 +45,49 @@
               pairingLinkElement
                 .attr('href', url)
                 .html(url)
-                .show()
-                .next("span")
-                .hide();
+                .show();
+              // requestpairingButton.show();
+              pairingLinkMessage.hide();
             }
             else
             {
-              pairingLinkElement
-                .hide()
-                .next("span")
-                .show()
-                .text('Please enter BTCPay Url first');
+              // requestpairingButton.hide();
+              pairingLinkElement.hide();
+              pairingLinkMessage.show().text('Please enter BTCPay Url first');
             }
     };
+
+     
+    // var requestPairing = function(){
+      
+    //   var pairingLinkElement = $('.btcpay-pairing__link');
+    //   if(pairingLinkElement.is(":hidden")){
+    //     return;
+    //   }
+    //   var url = pairingLinkElement.attr("href");
+    //   var btcpayWindow = window.open(url, "_blank");
+    //   btcpayWindow.focus();
+
+    //   $(btcpayWindow).on("message", function(e){
+    //       if(url.indexOf(e.origin) > 0){
+    //         try{
+    //           var data = JSON.stringify(e.data);
+    //           if(data && data.event == 'btcpay-pairing-sin' && data.pairingCode){
+    //             if(pairingCode){
+    //                   btcpayWindow.close();
+    //                   $(".btcpay-pairing__code").val(data.pairingCode);
+    //                   $(".btcpay-pairing__find").click();
+    //             }
+    //           }
+    //         }catch{
+              
+    //         }
+    //       }
+    //   });
+    // }
+
+    // $('.btcpay-pairing__request_pairing').on('click', requestPairing);
+   
 
     updatePairingLink();
     $('#btcpay_api_token_form').on('input', '.btcpay-url', updatePairingLink);

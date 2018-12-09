@@ -37,7 +37,7 @@ module.exports = function(grunt) {
           {
             expand: true,
             cwd: 'src/',
-            src: ['**/**.php', 'assets/js/**/**.*', 'assets/img/**/**.*', 'templates/**/**.*'],
+            src: ['**/**'],
             dest: 'dist/btcpay-for-woocommerce'
           },
           {
@@ -45,10 +45,6 @@ module.exports = function(grunt) {
             cwd: 'vendor/bitpay/php-client/src/',
             src: ['**/**.*'],
             dest: 'dist/btcpay-for-woocommerce/lib'
-          },
-          {
-            src: 'Wordpress-README.md',
-            dest: 'dist/btcpay-for-woocommerce/readme.txt'
           },
           {
             src: 'LICENSE',

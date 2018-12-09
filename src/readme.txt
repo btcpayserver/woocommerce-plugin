@@ -1,8 +1,8 @@
 === BTCPay for WooCommerce ===
-Contributors: Kukks
-Tags: bitcoin,cryptocurrency,bitpay,btcpay,btcpayservice,litecoin,changelly,payments,accept bitcoin,bitcoin accepted,bitcoin plugin, bitcoin payment processor,accept bitcoin in store
+Contributors: Kukks,NicolasDorier,bitcoinshirt
+Tags: bitcoin,cryptocurrency,btcpay,BTCPay Server,btcpayserver, accept bitcoin,bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, Litecoin
 Requires at least: 3.9
-Tested up to: 4.9.8
+Tested up to: 5.0
 Requires PHP: 5.4
 Stable tag: master
 License: MIT
@@ -50,13 +50,13 @@ This plugin requires Woocommerce. Please make sure you have Woocommerce installe
 
 To integrate BTCPay Server into an existing WooCommerce store, follow the steps below.
 
-=== 1. Install BTCPay WooCommerce Plugin ===
+### 1. Install BTCPay WooCommerce Plugin ###
 
-=== 2. Deploy BTCPay Server ===
+### 2. Deploy BTCPay Server ###
 
 To launch your BTCPay server, you can self-host it, or use a third party host.
 
-==== 2.1 Self-hosted BTCPay ====
+#### 2.1 Self-hosted BTCPay ####
 
 There are various ways to [launch a self-hosted BTCPay](https://github.com/btcpayserver/btcpayserver-doc#deployment). If you do not have technical knowledge, use the [web-wizard method](https://launchbtcpay.lunanode.com) and follow the video below.
 
@@ -64,7 +64,7 @@ https://www.youtube.com/watch?v=NjslXYvp8bk
 
 For the self-hosted solutions, you\'ll have to wait for your node to sync fully before proceeding to step 3.
 
-==== 2.2 Third-party host ====
+#### 2.2 Third-party host ####
 
 Those who want to test BTCPay out, or are okay with the limitations of a third-party hosting (dependency and privacy, as well as lack of some features) can use a one of many [third-party hosts](ThirdPartyHosting.md).
 
@@ -72,7 +72,7 @@ The video below shows you how to connect your store to such host.
 
 https://www.youtube.com/watch?v=IT2K8It3S3o
 
-=== 3. Pairing the store ===
+### 3. Pairing the store ###
 
 BTCPay WooCommerce plugin is a bridge between your server (payment processor) and your e-commerce store. No matter if you\'re using a self-hosted or third-party solution from step 2, the pairing process is identical.
 
@@ -91,13 +91,13 @@ The process of pairing a store with BTCPay is explained in a video below, starti
 
 https://youtu.be/IT2K8It3S3o?t=119
 
-===  4. Connecting your wallet ===
+###  4. Connecting your wallet ###
 
 No matter if you're using self-hosted or server hosted by a third-party, the process of configuring your wallet is the same. 
 
 https://www.youtube.com/watch?v=xX6LyQej0NQ
 
-=== 5. Testing the checkout ===
+### 5. Testing the checkout ###
 
 Making a small test-purchase from your own store, will give you a piece of mind. Always make sure that everything is set up correctly before going live. The final video, guides you through the steps of setting a gap limit in your Electrum wallet and testing the checkout process.
 
@@ -119,6 +119,12 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+= 3.0.4 =
+Fixed:
+- Fix JS Error on pairing mechanism
+Added:
+- Ensure compatibility with Wordpress 5
+
 = 3.0.3 =
 Fixed:
 - Remove legacy currency decimal precision checks

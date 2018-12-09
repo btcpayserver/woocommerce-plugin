@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.4
+### Fixed
+- Fix JS Error on pairing mechanism
+### Added
+- Ensure compatibility with Wordpress 5
+
 ## 3.0.3
 ### Fixed
 - Remove legacy currency decimal precision checks
