@@ -1,13 +1,20 @@
 param (
     [string]$distfolder= "./dist/btcpay-for-woocommerce",
-    [Parameter(Mandatory=$true)] [string]$version,
     [string]$svndir = "./../../Svn/btcpay-for-woocommerce",
     [string]$svnrepo = "https://plugins.svn.wordpress.org/btcpay-for-woocommerce",    
     [string]$svnuser,
     [string]$svnpassword
  )
 
+$match = ([regex] 'Version:\W+(([0-9]+\.?)+)').Match((Get-Content ".\src\class-wc-gateway-btcpay.php"))
+if (-not $match.Success) {
+    Write-Host "Impossible to detect the version"
+    Exit
+}
 
+$version = $match.Groups[1].Value
+
+Write-Host "Deploying version $version"
 
 if (-not (Test-Path $distfolder)) { 
     Write-Host "You need to build the dist package first using docker-build.ps1" -foreground Red
