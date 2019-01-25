@@ -21,8 +21,7 @@
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
-        "fabpot/php-cs-fixer": "@stable",
-        "phpunit/phpunit": "~3.7"
+        "fabpot/php-cs-fixer": "@stable"
 	},
   "minimum-stability": "stable",
   "config": {
