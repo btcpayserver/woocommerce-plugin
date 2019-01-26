@@ -5,6 +5,7 @@ To get up and running with our plugin quickly, see the GUIDE here: https://docs.
 ## Brief Description
 
 Add the ability to accept bitcoin in WooCommerce via BTCPayServer.
+This plugin is also available through the [wordpress store](https://wordpress.org/plugins/btcpay-for-woocommerce/).
 
 ## Detail Description
 
