@@ -5,7 +5,7 @@ param (
     [string]$svnuser,
     [string]$svnpassword
  )
-
+pushd
 $match = ([regex] 'Version:\W+(([0-9]+\.?)+)').Match((Get-Content ".\src\class-wc-gateway-btcpay.php"))
 if (-not $match.Success) {
     Write-Host "Impossible to detect the version"
@@ -43,6 +43,10 @@ if (-not (Test-Path "$svndir\tags\$version")){
     Write-Host "Creating version dir at $svndir\tags\$version " -foreground Yellow
     New-Item -ItemType Directory -Path "$svndir\tags\$version" -Force | Out-Null
 }
+else {
+    Write-Host "Dir at $svndir\tags\$version already exists, did you forget to bump the version?" -foreground Red
+    Exit
+}
 
 Write-Host "Copying to trunk " -foreground Yellow
 Copy-Item "$distfolder\*" "$svndir\trunk" -Force -Recurse
@@ -67,3 +71,4 @@ if(-not($svnuser) -or -not($svnpassword)){
 
 svn update --username $svnuser --password $svnpassword
 
+popd
