@@ -670,16 +670,14 @@ function woocommerce_btcpay_init()
             }
 
             // Get a BitPay Client to prepare for invoice creation
-            $client = new WooCommerceBitPayClient();
+            $client = new \Bitpay\Client\Client();
 
             if (false === isset($client) && true === empty($client)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not instantiate a client object.');
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not instantiate a client object. Cannot continue!');
             }
             $url = $this->api_url;
-            $network = extractCustomnetFromUrl($url);
-
-            $client->setNetwork($network);
+            $client->setUri($url);
             $this->log('    [Info] Set url to ' + $this->api_url);
 
 
@@ -758,8 +756,9 @@ function woocommerce_btcpay_init()
                 $order_total = (float)$order_total;
                 if($order_total == 0 || $order_total === '0')
                     throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float ". $order_total);
-
                 $item->setPrice($order_total);
+                $taxIncluded = $order->get_cart_tax();
+                $item->setTaxIncluded($taxIncluded);
             } else {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
@@ -896,7 +895,7 @@ function woocommerce_btcpay_init()
             }
 
             // Get a BitPay Client to prepare for invoice fetching
-            $client = new WooCommerceBitPayClient();
+            $client = new \Bitpay\Client\Client();
 
             if (false === isset($client) && true === empty($client)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to handle an IPN but could not instantiate a client object.');
@@ -906,8 +905,7 @@ function woocommerce_btcpay_init()
             }
             
             $url = $this->api_url;
-            $network = extractCustomnetFromUrl($url);
-            $client->setNetwork($network);
+            $client->setUri($url);
             $this->log('    [Info] Set url to ' + $this->api_url);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
@@ -1316,15 +1314,12 @@ function woocommerce_btcpay_init()
             $sin->generate();
 
             // Create an API Client
-            $client = new WooCommerceBitPayClient();
+            $client = new \Bitpay\Client\Client();
 
             if (true === empty($client)) {
                 throw new \Exception('The BTCPay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!');
             }
-
-            $network = extractCustomnetFromUrl($url);
-
-            $client->setNetwork($network);
+            $client->setUri($url);
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
             if (true === empty($curlAdapter)) {
@@ -1629,12 +1624,5 @@ function fx_admin_notice_show_migration_message(){
         <?php
         /* Delete transient, only display this notice once. */
         delete_transient( 'fx_admin_notice_show_migration_message' );
-    }
-}
-
-class WooCommerceBitPayClient extends \Bitpay\Client\Client{
-	  protected function checkPriceAndCurrency($price, $currency)
-    {
-       
     }
 }
