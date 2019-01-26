@@ -8,7 +8,7 @@
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.4
+    Version:           3.0.5
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -20,7 +20,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.4");
+define("BTCPAY_VERSION", "3.0.5");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library

@@ -119,6 +119,11 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+
+= 3.0.5 =
+Added:
+- Pass tax information to BTCPay Server
+
 = 3.0.4 =
 Fixed:
 - Fix JS Error on pairing mechanism
