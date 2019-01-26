@@ -30,7 +30,7 @@ services:
       - "mariadb_datadir:/var/lib/mysql"
 
   btcpayserver:
-    image: btcpayserver/btcpayserver:1.0.3.45
+    image: btcpayserver/btcpayserver:1.0.3.47
     expose:
       - "80"
     ports:
