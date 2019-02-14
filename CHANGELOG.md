@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.6
+### Fixed
+- Fix: Invalid code 0 during pairing on some install
+
 ## 3.0.5
 ### Added
 - Pass tax information to BTCPay Server

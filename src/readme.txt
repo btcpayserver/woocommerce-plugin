@@ -120,6 +120,10 @@ You'll find extensive documentation and answers to many of your questions on [do
 
 == Changelog ==
 
+= 3.0.6 =
+Fixed
+- Fix: Invalid code 0 during pairing on some install
+
 = 3.0.5 =
 Added:
 - Pass tax information to BTCPay Server
