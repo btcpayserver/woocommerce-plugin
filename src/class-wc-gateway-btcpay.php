@@ -993,6 +993,12 @@ function woocommerce_btcpay_init()
             }
 
             $expected_invoiceId = get_post_meta($order_id, 'BTCPay_id', true);
+
+            if (false !== isset($expected_invoiceId) || true === empty($expected_invoiceId)) {
+                $this->log('    [Info] Receiving IPN for an order which has no expected invoice ID, ignoring the IPN...');
+                return;
+            }
+
             if($expected_invoiceId !== $json['id'])
             {
                 $this->log('    [Error] Received IPN for order '. $order_id . ' with BTCPay invoice id ' . $json['id'] . ' while expected BTCPay invoice is ' . $expected_invoiceId);
