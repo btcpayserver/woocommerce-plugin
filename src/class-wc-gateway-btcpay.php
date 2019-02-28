@@ -1031,7 +1031,7 @@ function woocommerce_btcpay_init()
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not obtain the current status from the invoice.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not obtain the current status from the invoice. Cannot continue!');
             } else {
-                $this->log('    [Info] The current order status for this invoice is ' . $checkStatus);
+                $this->log('    [Info] The current status for this invoice is ' . $checkStatus);
             }
 
             if($event === "")
