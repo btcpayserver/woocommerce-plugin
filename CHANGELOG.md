@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.7
+### Fixed
+- Update php-bitpay-lib
+- Fix misleading error messages
+- Fix bug on some format of orderId
+
 ## 3.0.6
 ### Fixed
 - Fix: Invalid code 0 during pairing on some install
