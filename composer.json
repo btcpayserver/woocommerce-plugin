@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "bitpay/php-client": "dev-master#btcpay-v2.2.21"
+        "bitpay/php-client": "dev-master#btcpay-v2.2.22"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
