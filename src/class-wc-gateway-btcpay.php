@@ -906,7 +906,7 @@ function woocommerce_btcpay_init()
             
             $url = $this->api_url;
             $client->setUri($url);
-            $this->log('    [Info] Set url to ' + $this->api_url);
+            $this->log('    [Info] Set url to ' . $this->api_url);
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
 
