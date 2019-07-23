@@ -120,6 +120,10 @@ You'll find extensive documentation and answers to many of your questions on [do
 
 == Changelog ==
 
+## 3.0.8
+Fixed
+- Fix bug with Woocommerce Admin plugin
+
 ## 3.0.7
 Fixed
 - Update php-bitpay-lib
