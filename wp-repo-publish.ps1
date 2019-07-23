@@ -16,10 +16,7 @@ $version = $match.Groups[1].Value
 
 Write-Host "Deploying version $version"
 
-if (-not (Test-Path $distfolder)) { 
-    Write-Host "You need to build the dist package first using docker-build.ps1" -foreground Red
-    Exit
-}
+.\docker-build.ps1
 
 if ((-not (Test-Path $svndir) -or (-not (Test-Path ($svndir+ "/.svn")))) -and (-not($svnrepo) -or -not($svnuser) -or -not($svnpassword)) ) { 
     Write-Host "You need to either have a valid svn dir already authenticated or provide svn credentials" -foreground Red
