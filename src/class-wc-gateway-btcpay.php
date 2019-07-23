@@ -994,7 +994,7 @@ function woocommerce_btcpay_init()
 
             $expected_invoiceId = get_post_meta($order_id, 'BTCPay_id', true);
 
-            if (false !== isset($expected_invoiceId) || true === empty($expected_invoiceId)) {
+            if (false === isset($expected_invoiceId) || true === empty($expected_invoiceId)) {
                 $this->log('    [Info] Receiving IPN for an order which has no expected invoice ID, ignoring the IPN...');
                 return;
             }
@@ -1007,7 +1007,7 @@ function woocommerce_btcpay_init()
 
             $current_status = $order->get_status();
 
-            if (false === isset($current_status) && true === empty($current_status)) {
+            if (false === isset($current_status) || true === empty($current_status)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not obtain the current status from the order.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not obtain the current status from the order. Cannot continue!');
             } else {
