@@ -978,7 +978,7 @@ function woocommerce_btcpay_init()
             $order = wc_get_order($order_id);
 
 
-            if (false === $order || 'WC_Order' !== get_class($order)) {
+            if (false === $order || ('WC_Order' !== get_class($order) && 'WC_Admin_Order' !== get_class($order))) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-btcpay.php to apply a search filter.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
