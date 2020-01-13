@@ -855,13 +855,7 @@ function woocommerce_btcpay_init()
         function btcpay_checkout_ipn(WP_REST_Request $request)
         {
             $this->log('    [Info] Entered ipn_callback()...');
-            
-            //global $woocommerce;
-            //WC()->frontend_includes();
-            //WC()->cart = new WC_Cart();
-            //WC()->session = new WC_Session_Handler();
-            //WC()->session->init();
-            
+                        
             $data = $request->get_body();
             if (true === empty($data)) {
                 $this->log('    [Error] No post data sent to IPN handler!');
