@@ -685,7 +685,7 @@ function woocommerce_btcpay_init()
             }
             $url = $this->api_url;
             $client->setUri($url);
-            $this->log('    [Info] Set url to ' + $this->api_url);
+            $this->log('    [Info] Set url to ' . $this->api_url);
 
 
             $curlAdapter = new \Bitpay\Client\Adapter\CurlAdapter();
@@ -856,11 +856,11 @@ function woocommerce_btcpay_init()
         {
             $this->log('    [Info] Entered ipn_callback()...');
             
-            global $woocommerce;
-            WC()->frontend_includes();
-            WC()->cart = new WC_Cart();
-            WC()->session = new WC_Session_Handler();
-            WC()->session->init();
+            //global $woocommerce;
+            //WC()->frontend_includes();
+            //WC()->cart = new WC_Cart();
+            //WC()->session = new WC_Session_Handler();
+            //WC()->session->init();
             
             $data = $request->get_body();
             if (true === empty($data)) {
