@@ -8,7 +8,7 @@
     Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.8
+    Version:           3.0.9
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -20,7 +20,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.8");
+define("BTCPAY_VERSION", "3.0.9");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -63,18 +63,18 @@ function woocommerce_btcpay_init()
         return;
     }
 
-	// Exist for quirks in object serialization...
-	if (false === class_exists('Bitpay\PrivateKey')) {
-		include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
-	}
+    // Exist for quirks in object serialization...
+    if (false === class_exists('Bitpay\PrivateKey')) {
+        include_once(__DIR__ . '/lib/Bitpay/PrivateKey.php');
+    }
 
-	if (false === class_exists('Bitpay\PublicKey')) {
-		include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
-	}
+    if (false === class_exists('Bitpay\PublicKey')) {
+        include_once(__DIR__ . '/lib/Bitpay/PublicKey.php');
+    }
 
-	if (false === class_exists('Bitpay\Token')) {
-		include_once(__DIR__ . '/lib/Bitpay/Token.php');
-	}
+    if (false === class_exists('Bitpay\Token')) {
+        include_once(__DIR__ . '/lib/Bitpay/Token.php');
+    }
 
     class WC_Gateway_BtcPay extends WC_Payment_Gateway
     {
@@ -198,7 +198,13 @@ function woocommerce_btcpay_init()
             } else {
                 $this->enabled = 'yes';
                 $this->log('    [Info] The plugin is ok to use.');
-                add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
+                //add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
+                add_action('rest_api_init', function () {
+                  register_rest_route('btcpay/ipn', '/status', array(
+                      'methods' => 'POST,GET',
+                      'callback' => 'btcpay_checkout_ipn',
+                  ));
+              });
             }
 
             $this->is_initialized = true;
@@ -213,7 +219,7 @@ function woocommerce_btcpay_init()
             }
             else
             {
-                $actualMethod = get_post_meta( $order->id, '_payment_method', true );
+                $actualMethod = get_post_meta( $order->get_id(), '_payment_method', true );
             }
             return $actualMethod === 'btcpay';
         }
@@ -295,20 +301,20 @@ function woocommerce_btcpay_init()
                 'order_states' => array(
                     'type' => 'order_states'
                ),
+                'send_country' => array(
+                    'title'       => __('Send country', 'btcpay'),
+                    'type'        => 'checkbox',
+                    'label'       => __('Include customer country in Btcpay invoice</a>', 'btcpay'),
+                    'default'     => 'no',
+                    'description' => __('When enabled the customer country is included in the Btcpay invoice', 'btcpay'),
+                    'desc_tip'    => true,
+               ),
                 'debug' => array(
                     'title'       => __('Debug Log', 'btcpay'),
                     'type'        => 'checkbox',
                     'label'       => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'btcpay'), $logs_href),
                     'default'     => 'no',
                     'description' => sprintf(__('Log BTCPay events, such as IPN requests, inside <code>%s</code>', 'btcpay'), wc_get_log_file_path('btcpay')),
-                    'desc_tip'    => true,
-               ),
-                'notification_url' => array(
-                    'title'       => __('Notification URL', 'btcpay'),
-                    'type'        => 'url',
-                    'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
-                    'default'     => '',
-                    'placeholder' => WC()->api_request_url('WC_Gateway_BtcPay'),
                     'desc_tip'    => true,
                ),
                 'redirect_url' => array(
@@ -320,10 +326,10 @@ function woocommerce_btcpay_init()
                     'desc_tip'    => true,
                ),
                 'support_details' => array(
-		            'title'       => __( 'Plugin & Support Information', 'btcpay' ),
-		            'type'        => 'title',
-		            'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://slack.btcpayserver.org.  Thank you for using BTCPay!', 'btcpay'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
-	           ),
+                    'title'       => __( 'Plugin & Support Information', 'btcpay' ),
+                    'type'        => 'title',
+                    'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our slack http://slack.btcpayserver.org.  Thank you for using BTCPay!', 'btcpay'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
+               ),
            );
 
             $this->log('    [Info] Initialized form fields: ' . var_export($this->form_fields, true));
@@ -390,23 +396,23 @@ function woocommerce_btcpay_init()
             ob_start();
 
             $bp_statuses = array(
-			'new'=>'New Order', 
-			'paid'=>'Paid', 
-			'confirmed'=>'Confirmed', 
-			'complete'=>'Complete', 
-			'invalid'=>'Invalid', 
-			'expired'=>'Expired', 
-			'event_invoice_paidAfterExpiration'=>'Paid after expiration', 
-			'event_invoice_expiredPaidPartial' => 'Expired with partial payment');
+            'new'=>'New Order', 
+            'paid'=>'Paid', 
+            'confirmed'=>'Confirmed', 
+            'complete'=>'Complete', 
+            'invalid'=>'Invalid', 
+            'expired'=>'Expired', 
+            'event_invoice_paidAfterExpiration'=>'Paid after expiration', 
+            'event_invoice_expiredPaidPartial' => 'Expired with partial payment');
             $df_statuses = array(
-			'new'=>'wc-pending', 
-			'paid'=>'wc-on-hold', 
-			'confirmed'=>'wc-processing', 
-			'complete'=>'wc-processing', 
-			'invalid'=>'wc-failed', 
-			'expired'=>'wc-cancelled', 
-			'event_invoice_paidAfterExpiration' => 'wc-failed', 
-			'event_invoice_expiredPaidPartial' => 'wc-failed');
+            'new'=>'wc-pending', 
+            'paid'=>'wc-on-hold', 
+            'confirmed'=>'wc-processing', 
+            'complete'=>'wc-processing', 
+            'invalid'=>'wc-failed', 
+            'expired'=>'wc-cancelled', 
+            'event_invoice_paidAfterExpiration' => 'wc-failed', 
+            'event_invoice_expiredPaidPartial' => 'wc-failed');
 
             $wc_statuses = wc_get_order_statuses();
             $wc_statuses = array('BTCPAY_IGNORE' => '') + $wc_statuses;
@@ -621,7 +627,8 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
-            $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
+            //$notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
+            $notification_url = get_home_url() . '/wp-json/btcpay/ipn/status';
             $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
            
             // Mark new order according to user settings (we're awaiting the payment)
@@ -766,6 +773,12 @@ function woocommerce_btcpay_init()
             // Add buyer's email to the invoice
             $buyer = new \Bitpay\Buyer();
             $buyer->setEmail($order->get_billing_email());
+            
+            $send_country = $this->get_option('send_country', 'no');
+            if ($send_country == 'yes') {
+              $this->log('Include country in the invoice');
+              $buyer->setCountry($order->get_shipping_country());
+            }
             $invoice->setBuyer($buyer);
             $invoice->setItem($item);
 
@@ -820,7 +833,7 @@ function woocommerce_btcpay_init()
             // Reduce stock levels
             if (function_exists('wc_reduce_stock_levels'))
             {
-                wc_reduce_stock_levels($order_id);		       
+                wc_reduce_stock_levels($order_id);             
             }
             else
             {
@@ -838,22 +851,27 @@ function woocommerce_btcpay_init()
             );
         }
 
-        public function ipn_callback()
+        //https://<host>/wp-json/btcpay/ipn/status
+        function btcpay_checkout_ipn(WP_REST_Request $request)
         {
             $this->log('    [Info] Entered ipn_callback()...');
-            // Retrieve the Invoice ID and Network URL from the supposed IPN data
-            $post = file_get_contents("php://input");
-
-            if (true === empty($post)) {
+            
+            global $woocommerce;
+            WC()->frontend_includes();
+            WC()->cart = new WC_Cart();
+            WC()->session = new WC_Session_Handler();
+            WC()->session->init();
+            
+            $data = $request->get_body();
+            if (true === empty($data)) {
                 $this->log('    [Error] No post data sent to IPN handler!');
                 error_log('[Error] BTCPay plugin received empty POST data for an IPN message.');
-
                 wp_die('No post data');
             } else {
                 $this->log('    [Info] The post data sent to IPN handler is present...');
             }
-
-            $json = json_decode($post, true);
+        
+            $json = json_decode($data, true);
             $event = "";
 
             if(true === array_key_exists('event', $json) && true === array_key_exists('data', $json)) // extended notification type
@@ -971,8 +989,8 @@ function woocommerce_btcpay_init()
                 $this->log('    [Info] Order ID is: ' . $order_id);
             }
 
-	    //this is for the basic and advanced woocommerce order numbering plugins
-	    //if we need to apply other filters, just add them in place of the this one
+        //this is for the basic and advanced woocommerce order numbering plugins
+        //if we need to apply other filters, just add them in place of the this one
             $order_id = apply_filters('woocommerce_order_id_from_number', $order_id);
 
             $order = wc_get_order($order_id);
@@ -1119,7 +1137,7 @@ function woocommerce_btcpay_init()
         {
             update_post_meta($order_id, 'BTCPay_btcPrice', $responseData->data->btcPrice);
             update_post_meta($order_id, 'BTCPay_btcPaid', $responseData->data->btcPaid);
-            update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);		
+            update_post_meta($order_id, 'BTCPay_BTCaddress', $responseData->data->bitcoinAddress);      
         }
 
         public function log($message)
@@ -1226,13 +1244,13 @@ function woocommerce_btcpay_init()
 
     add_filter('woocommerce_payment_gateways', 'wc_add_btcpay');
 
-	if (!function_exists('btcpay_log'))  {
-		function btcpay_log($message)
-		{
-			$logger = new WC_Logger();
-			$logger->add('btcpay', $message);
-		}
-	}
+    if (!function_exists('btcpay_log'))  {
+        function btcpay_log($message)
+        {
+            $logger = new WC_Logger();
+            $logger->add('btcpay', $message);
+        }
+    }
     /**
      * Add Settings link to the plugin entry in the plugins menu
      **/
@@ -1571,7 +1589,7 @@ function woocommerce_btcpay_activate()
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('BtcPay for WooCommerce requires that the old plugin, <b>Bitpay Woocommerce</b>, is deactivated and deleted.<br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
-			if ('BTCPay for WooCommerce' === $plugin['Name'] && true === is_plugin_active($file) && (0 > version_compare( $plugin['Version'], '3.0' ))) {
+            if ('BTCPay for WooCommerce' === $plugin['Name'] && true === is_plugin_active($file) && (0 > version_compare( $plugin['Version'], '3.0' ))) {
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('BtcPay for WooCommerce requires that the 2.x version of this plugin is deactivated. <br><a href="'.$plugins_url.'">Return to plugins screen</a>');
             }
