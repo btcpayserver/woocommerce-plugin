@@ -198,13 +198,7 @@ function woocommerce_btcpay_init()
             } else {
                 $this->enabled = 'yes';
                 $this->log('    [Info] The plugin is ok to use.');
-                //add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
-                add_action('rest_api_init', function () {
-                  register_rest_route('btcpay/ipn', '/status', array(
-                      'methods' => 'POST,GET',
-                      'callback' => 'btcpay_checkout_ipn',
-                  ));
-              });
+                add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
             }
 
             $this->is_initialized = true;
@@ -314,9 +308,9 @@ function woocommerce_btcpay_init()
                     'type'        => 'url',
                     'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
                     'default'     => '',
-                    'placeholder' => get_home_url() . '/wp-json/btcpay/ipn/status',
+                    'placeholder' => WC()->api_request_url('WC_Gateway_BtcPay'),
                     'desc_tip'    => true,
-                ),
+               ),
                 'redirect_url' => array(
                     'title'       => __('Redirect URL', 'btcpay'),
                     'type'        => 'url',
@@ -620,14 +614,14 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but the order_id was missing. Cannot continue!');
             }
 
-            $order = wc_get_order( $order_id );
+            $order = wc_get_order( $order_id);
 
             if (false === $order) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id);
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
-            $notification_url = $this->get_option('notification_url', get_home_url() . '/wp-json/btcpay/ipn/status');
+            $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
             $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
            
             // Mark new order according to user settings (we're awaiting the payment)
@@ -846,21 +840,22 @@ function woocommerce_btcpay_init()
             );
         }
 
-        //https://<host>/wp-json/btcpay/ipn/status
-        function btcpay_checkout_ipn(WP_REST_Request $request)
+        public function ipn_callback()
         {
             $this->log('    [Info] Entered ipn_callback()...');
-                        
-            $data = $request->get_body();
-            if (true === empty($data)) {
+            // Retrieve the Invoice ID and Network URL from the supposed IPN data
+            $post = file_get_contents("php://input");
+
+            if (true === empty($post)) {
                 $this->log('    [Error] No post data sent to IPN handler!');
                 error_log('[Error] BTCPay plugin received empty POST data for an IPN message.');
+
                 wp_die('No post data');
             } else {
                 $this->log('    [Info] The post data sent to IPN handler is present...');
             }
-        
-            $json = json_decode($data, true);
+
+            $json = json_decode($post, true);
             $event = "";
 
             if(true === array_key_exists('event', $json) && true === array_key_exists('data', $json)) // extended notification type
@@ -983,9 +978,10 @@ function woocommerce_btcpay_init()
             $order_id = apply_filters('woocommerce_order_id_from_number', $order_id);
 
             $order = wc_get_order($order_id);
+            $this->log('$order = ' . $order. 'and order class = ' . get_class($order));
 
 
-            if (false === $order || ('WC_Order' !== get_class($order) && 'WC_Admin_Order' !== get_class($order))) {
+            if (false === $order) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-btcpay.php to apply a search filter.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
