@@ -301,14 +301,6 @@ function woocommerce_btcpay_init()
                 'order_states' => array(
                     'type' => 'order_states'
                ),
-                'send_country' => array(
-                    'title'       => __('Send country', 'btcpay'),
-                    'type'        => 'checkbox',
-                    'label'       => __('Include customer country in Btcpay invoice</a>', 'btcpay'),
-                    'default'     => 'no',
-                    'description' => __('When enabled the customer country is included in the Btcpay invoice', 'btcpay'),
-                    'desc_tip'    => true,
-               ),
                 'debug' => array(
                     'title'       => __('Debug Log', 'btcpay'),
                     'type'        => 'checkbox',
@@ -317,6 +309,14 @@ function woocommerce_btcpay_init()
                     'description' => sprintf(__('Log BTCPay events, such as IPN requests, inside <code>%s</code>', 'btcpay'), wc_get_log_file_path('btcpay')),
                     'desc_tip'    => true,
                ),
+                'notification_url' => array(
+                    'title'       => __('Notification URL', 'btcpay'),
+                    'type'        => 'url',
+                    'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
+                    'default'     => '',
+                    'placeholder' => get_home_url() . '/wp-json/btcpay/ipn/status',
+                    'desc_tip'    => true,
+                ),
                 'redirect_url' => array(
                     'title'       => __('Redirect URL', 'btcpay'),
                     'type'        => 'url',
@@ -627,8 +627,7 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
-            //$notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
-            $notification_url = get_home_url() . '/wp-json/btcpay/ipn/status';
+            $notification_url = $this->get_option('notification_url', get_home_url() . '/wp-json/btcpay/ipn/status');
             $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
            
             // Mark new order according to user settings (we're awaiting the payment)
@@ -770,15 +769,11 @@ function woocommerce_btcpay_init()
                 $this->log('    [Error] The BTCPay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not set item->setPrice to $order->calculate_totals(). The empty() check failed!');
             }
-            // Add buyer's email to the invoice
+            // Add buyer's email & country code to the invoice
             $buyer = new \Bitpay\Buyer();
             $buyer->setEmail($order->get_billing_email());
+            $buyer->setCountry($order->get_shipping_country());
             
-            $send_country = $this->get_option('send_country', 'no');
-            if ($send_country == 'yes') {
-              $this->log('Include country in the invoice');
-              $buyer->setCountry($order->get_shipping_country());
-            }
             $invoice->setBuyer($buyer);
             $invoice->setItem($item);
 
