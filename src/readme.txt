@@ -120,6 +120,11 @@ You'll find extensive documentation and answers to many of your questions on [do
 
 == Changelog ==
 
+## 3.0.9
+Fixed
+- Fix woocommerce admin compatibility
+- Add country code in btcpay invoice
+
 ## 3.0.8
 Fixed
 - Fix bug with Woocommerce Admin plugin

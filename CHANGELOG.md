@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.9
+### Fixed
+- Fix woocommerce admin compatibility
+- Add country code in btcpay invoice
+
 ## 3.0.8
 ### Fixed
 - Fix bug with Woocommerce Admin plugin
