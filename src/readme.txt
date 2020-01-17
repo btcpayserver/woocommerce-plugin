@@ -120,7 +120,7 @@ You'll find extensive documentation and answers to many of your questions on [do
 
 == Changelog ==
 
-## 3.0.9
+## 3.0.10
 Fixed
 - Fix woocommerce admin compatibility
 - Add country code in btcpay invoice
