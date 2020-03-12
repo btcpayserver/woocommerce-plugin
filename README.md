@@ -105,7 +105,7 @@ In the first case, please, make sure a valid SSL certificates is installed on yo
 In the second case run,
 
 ```
-sudo apt-get install ca-certifcates
+sudo apt-get install ca-certificates
 ```
 
 ## Contribute
