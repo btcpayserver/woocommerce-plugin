@@ -1,7 +1,6 @@
 FROM wordpress:latest
-MAINTAINER Kristian Østergaard Martensen <km@shipbeat.com>
 
-ENV WOOCOMMERCE_VERSION 3.5.1
+ENV WOOCOMMERCE_VERSION 4.4.1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends unzip wget \
