@@ -2,8 +2,8 @@
 Contributors: Kukks,NicolasDorier,bitcoinshirt
 Tags: bitcoin,cryptocurrency,btcpay,BTCPay Server,btcpayserver, accept bitcoin,bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, Litecoin
 Requires at least: 3.9
-Tested up to: 5.0
-Requires PHP: 5.4
+Tested up to: 5.5
+Requires PHP: 5.6
 Stable tag: master
 License: MIT
 License URI: https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
@@ -119,6 +119,9 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+
+## 3.0.11
+Empty release to make wordpress plugin store know we are still alive
 
 ## 3.0.10
 Fixed
