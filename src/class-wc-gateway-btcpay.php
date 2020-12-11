@@ -621,8 +621,9 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
+            $order_number = $order->get_order_number();
             $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
-            $this->log('    [Info] Generating payment form for order ' . $order->get_order_number() . '. Notify URL: ' . $notification_url);
+            $this->log('    [Info] Generating payment form for order ' . $order_id . ' (Order number ' . $order_number . '). Notify URL: ' . $notification_url);
 
             // Mark new order according to user settings (we're awaiting the payment)
             $new_order_states = $this->get_option('order_states');
@@ -735,8 +736,18 @@ function woocommerce_btcpay_init()
                 $this->log('    [Info] Invoice object created successfully...');
             }
 
-            $order_number = $order->get_order_number();
-            $invoice->setOrderId((string)$order_number);
+            $order_url = $order->get_edit_order_url();
+
+            $pos_data = array(
+              'Woocommerce Order ID' => $order_id,
+              'Woocommerce Order Number' => $order_number,
+              'Woocommerce Order URL' => $order_url,
+              'Woocommerce Thanks URL' => $thanks_link,
+              'Woocommerce Redirect URL' => $redirect_url
+            );
+
+            $invoice->setOrderId((string)$order_id);
+            $invoice->setPosData(json_encode($pos_data));
             $invoice->setCurrency($currency);
             $invoice->setFullNotifications(true);
             $invoice->setExtendedNotifications(true);
@@ -777,7 +788,7 @@ function woocommerce_btcpay_init()
             $invoice->setTransactionSpeed($this->transaction_speed);
 
             try {
-                $this->log('    [Info] Attempting to generate invoice for ' . $order->get_order_number() . '...');
+                $this->log('    [Info] Attempting to generate invoice for ' . $order_id . ' (Order number ' . $order_number . ') ...');
 
                 $invoice = $client->createInvoice($invoice);
 
@@ -788,7 +799,7 @@ function woocommerce_btcpay_init()
                     $this->log('    [Info] Call to generate invoice was successful: ' . $client->getResponse()->getBody());
                 }
             } catch (\Exception $e) {
-                $this->log('    [Error] Error generating invoice for ' . $order->get_order_number() . ', "' . $e->getMessage() . '"');
+                $this->log('    [Error] Error generating invoice for ' . $order_id . ' (Order number ' . $order_number . '), "' . $e->getMessage() . '"');
                 error_log($e->getMessage());
 
                 return array(
@@ -956,7 +967,7 @@ function woocommerce_btcpay_init()
                     wp_die('Invalid IPN');
                 }
             } catch (\Exception $e) {
-                $error_string = 'IPN Check: Can\'t find invoice ' . $json['id'];
+                $error_string = 'IPN Check: Can\'t find invoice ' . $json['id'] . ' (Order ID: ' . $json['orderId'] . ')';
                 $this->log("    [Error] $error_string");
                 $this->log("    [Error] " . $e->getMessage());
 
@@ -973,13 +984,8 @@ function woocommerce_btcpay_init()
                 $this->log('    [Info] Order ID is: ' . $order_id);
             }
 
-        //this is for the basic and advanced woocommerce order numbering plugins
-        //if we need to apply other filters, just add them in place of the this one
-            $order_id = apply_filters('woocommerce_order_id_from_number', $order_id);
-
             $order = wc_get_order($order_id);
             $this->log('$order = ' . $order. 'and order class = ' . get_class($order));
-
 
             if (false === $order) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-btcpay.php to apply a search filter.');
