@@ -621,6 +621,8 @@ function woocommerce_btcpay_init()
                 throw new \Exception('The BTCPay payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
+            // The order number can differ from the internal $order_id, when a custom
+            // order number plugin is used. It is added as a reference for the user.
             $order_number = $order->get_order_number();
             $notification_url = $this->get_option('notification_url', WC()->api_request_url('WC_Gateway_BtcPay'));
             $this->log('    [Info] Generating payment form for order ' . $order_id . ' (Order number ' . $order_number . '). Notify URL: ' . $notification_url);
@@ -739,11 +741,11 @@ function woocommerce_btcpay_init()
             $order_url = $order->get_edit_order_url();
 
             $pos_data = array(
-              'Woocommerce Order ID' => $order_id,
-              'Woocommerce Order Number' => $order_number,
-              'Woocommerce Order URL' => $order_url,
-              'Woocommerce Thanks URL' => $thanks_link,
-              'Woocommerce Redirect URL' => $redirect_url
+                'Woocommerce' => array(
+                    'Order ID' => $order_id,
+                    'Order Number' => $order_number,
+                    'Order URL' => $order_url
+                )
             );
 
             $invoice->setOrderId((string)$order_id);
