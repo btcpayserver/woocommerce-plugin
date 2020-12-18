@@ -741,10 +741,11 @@ function woocommerce_btcpay_init()
             $order_url = $order->get_edit_order_url();
 
             $pos_data = array(
-                'Woocommerce' => array(
+                'WooCommerce' => array(
                     'Order ID' => $order_id,
                     'Order Number' => $order_number,
-                    'Order URL' => $order_url
+                    'Order URL' => $order_url,
+                    'Plugin Version' => constant("BTCPAY_VERSION")
                 )
             );
 
@@ -979,7 +980,7 @@ function woocommerce_btcpay_init()
             // The BTCPay order id is the WooCommerce order number, see $invoice->setOrderId in process_payment()
             $order_number = $invoice->getOrderId();
             // We get the actual WooCommerce ID from the pos data, see $invoice->setPosData in process_payment()
-            $order_id = $json['posData']['Woocommerce']['Order ID'];
+            $order_id = $json['posData']['WooCommerce']['Order ID'];
 
             $responseData = json_decode($client->getResponse()->getBody());
 
