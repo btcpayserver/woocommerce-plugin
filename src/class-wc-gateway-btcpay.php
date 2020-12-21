@@ -826,6 +826,7 @@ function woocommerce_btcpay_init()
                 );
             }
 
+            // Store BTCPay meta data
             update_post_meta($order_id, 'BTCPay_redirect', $invoice->getUrl());
             update_post_meta($order_id, 'BTCPay_id', $invoice->getId());
             update_post_meta($order_id, 'BTCPay_rate', $invoice->getRate());
@@ -980,10 +981,21 @@ function woocommerce_btcpay_init()
             // The BTCPay order id is the WooCommerce order number, see $invoice->setOrderId in process_payment()
             $order_number = $invoice->getOrderId();
 
-            // We get the actual WooCommerce ID from the pos data, see $invoice->setPosData in process_payment()
-            // The posData is a string and needs to be JSON decoded separately.
-            $posData = json_decode($json['posData'], true);
-            $order_id = $posData['WooCommerce']['Order ID'];
+            // Get the actual WooCommerce ID from the meta data, via the BTCPay invoice id.
+            $order_query = wc_get_orders(array(
+                'meta_key' => 'BTCPay_id',
+                'meta_value' => $invoice->getId()
+            ));
+            if (count($order_query) === 1) {
+                $order_id = $order_query[0]->get_id();
+            } else {
+                // Use the pos data as fallback, see $invoice->setPosData in process_payment()
+                // The posData is a string and needs to be JSON decoded separately.
+                $posData = json_decode($json['posData'], true);
+                $order_id = $posData['WooCommerce']['Order ID'];
+
+                $this->log('    [Error] Can\'t find order by BTCPay meta data. Using order ID fallback from posData.');
+            }
 
             $responseData = json_decode($client->getResponse()->getBody());
 
@@ -1596,9 +1608,6 @@ function woocommerce_btcpay_activate()
             }
             if ('BTCPay for WooCommerce' === $plugin['Name']
              && (0 > version_compare( $plugin['Version'], '3.0.1' ))) {
-
-
-
                 update_option('woocommerce_btcpay_key',
                     get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) );
                 update_option('woocommerce_btcpay_pub',
