@@ -741,14 +741,16 @@ function woocommerce_btcpay_init()
             $order_url = $order->get_edit_order_url();
 
             $pos_data = array(
-                'Woocommerce' => array(
+                'WooCommerce' => array(
                     'Order ID' => $order_id,
                     'Order Number' => $order_number,
-                    'Order URL' => $order_url
+                    'Order URL' => $order_url,
+                    'Plugin Version' => constant("BTCPAY_VERSION")
                 )
             );
 
-            $invoice->setOrderId((string)$order_id);
+            // Use the order number as BTCPay order id, because the ID shows up as a reference in the invoices list
+            $invoice->setOrderId((string)$order_number);
             $invoice->setPosData(json_encode($pos_data));
             $invoice->setCurrency($currency);
             $invoice->setFullNotifications(true);
@@ -824,6 +826,7 @@ function woocommerce_btcpay_init()
                 );
             }
 
+            // Store BTCPay meta data
             update_post_meta($order_id, 'BTCPay_redirect', $invoice->getUrl());
             update_post_meta($order_id, 'BTCPay_id', $invoice->getId());
             update_post_meta($order_id, 'BTCPay_rate', $invoice->getRate());
@@ -841,7 +844,6 @@ function woocommerce_btcpay_init()
             {
                 $order->reduce_order_stock();
             }
-
 
             $this->log('    [Info] BTCPay invoice assigned ' . $invoice->getId());
             $this->log('    [Info] Leaving process_payment()...');
@@ -958,7 +960,7 @@ function woocommerce_btcpay_init()
 
             $this->log('    [Info] Key and token empty checks passed.  Parameters in client set accordingly...');
 
-            // Fetch the invoice from BitPay's server to update the order
+            // Fetch the invoice from BTCPay Server to update the order
             try {
                 $invoice = $client->getInvoice($json['id']);
 
@@ -969,21 +971,39 @@ function woocommerce_btcpay_init()
                     wp_die('Invalid IPN');
                 }
             } catch (\Exception $e) {
-                $error_string = 'IPN Check: Can\'t find invoice ' . $json['id'] . ' (Order ID: ' . $json['orderId'] . ')';
+                $error_string = 'IPN Check: Can\'t find invoice ' . $json['id'] . ' (Order Number: ' . $json['orderId'] . ')';
                 $this->log("    [Error] $error_string");
                 $this->log("    [Error] " . $e->getMessage());
 
                 wp_die($e->getMessage());
             }
 
-            $order_id = $invoice->getOrderId();
+            // The BTCPay order id is the WooCommerce order number, see $invoice->setOrderId in process_payment()
+            $order_number = $invoice->getOrderId();
+
+            // Get the actual WooCommerce ID from the meta data, via the BTCPay invoice id.
+            $order_query = wc_get_orders(array(
+                'meta_key' => 'BTCPay_id',
+                'meta_value' => $invoice->getId()
+            ));
+            if (count($order_query) === 1) {
+                $order_id = $order_query[0]->get_id();
+            } else {
+                // Use the pos data as fallback, see $invoice->setPosData in process_payment()
+                // The posData is a string and needs to be JSON decoded separately.
+                $posData = json_decode($json['posData'], true);
+                $order_id = $posData['WooCommerce']['Order ID'];
+
+                $this->log('    [Error] Can\'t find order by BTCPay meta data. Using order ID fallback from posData.');
+            }
+
             $responseData = json_decode($client->getResponse()->getBody());
 
             if (false === isset($order_id) && true === empty($order_id)) {
                 $this->log('    [Error] The BTCPay payment plugin was called to process an IPN message but could not obtain the order ID from the invoice.');
                 throw new \Exception('The BTCPay payment plugin was called to process an IPN message but could not obtain the order ID from the invoice. Cannot continue!');
             } else {
-                $this->log('    [Info] Order ID is: ' . $order_id);
+                $this->log('    [Info] Order ID is: ' . $order_id. ' (Order Number: ' . $order_number . ')');
             }
 
             $order = wc_get_order($order_id);
@@ -1588,9 +1608,6 @@ function woocommerce_btcpay_activate()
             }
             if ('BTCPay for WooCommerce' === $plugin['Name']
              && (0 > version_compare( $plugin['Version'], '3.0.1' ))) {
-
-
-
                 update_option('woocommerce_btcpay_key',
                     get_option( 'woocommerce_btcpay_key', get_option('woocommerce_bitpay_key', null) ) );
                 update_option('woocommerce_btcpay_pub',
