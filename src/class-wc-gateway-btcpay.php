@@ -266,23 +266,6 @@ function woocommerce_btcpay_init()
             return false;
         }
 
-      /**
-       * Check upload directory for a custom icon and return the full url if
-       * it exists.
-       *
-       * @param $filename
-       *   The filename to search for. e.g. bitcoin.png
-       * @return string|null
-       */
-        public function load_custom_icon($filename)
-        {
-            $uploads_storage = wp_get_upload_dir();
-            if (file_exists($uploads_storage['basedir'] . "/{$filename}")) {
-                return $uploads_storage['baseurl'] . "/{$filename}";
-            }
-            return null;
-        }
-
         public function __destruct()
         {
         }
