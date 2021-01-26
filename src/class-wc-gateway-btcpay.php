@@ -253,19 +253,6 @@ function woocommerce_btcpay_init()
             return (false !== strpos($actualMethod, 'btcpay'));
         }
 
-      /**
-       * Determine if an additional token payment method is used.
-       *
-       * @return bool
-       */
-        public function is_additional_token_method()
-        {
-            if (false !== strpos($this->id, 'btcpay_')) {
-                return true;
-            }
-            return false;
-        }
-
         public function __destruct()
         {
         }
@@ -812,7 +799,7 @@ function woocommerce_btcpay_init()
             $invoice->setExtendedNotifications(true);
 
             // Handle additional tokens and enforce them for invoice payment.
-            if ($this->is_additional_token_method()) {
+            if (!empty($this->token_symbol)) {
                 $invoice->setPaymentCurrencies(array($this->token_symbol));
             }
 
@@ -835,7 +822,7 @@ function woocommerce_btcpay_init()
 
                 // For promotion tokens we need to set the price to 1 (per item quantity).
                 // The idea is that 1 token is like a voucher.
-                if ($this->is_additional_token_method() && $this->token_mode === 'promotion') {
+                if (!empty($this->token_symbol) && $this->token_mode === 'promotion') {
                     // Set the invoice currency to the promotion token.
                     $invoice->setCurrency(new \Bitpay\CurrencyUnrestricted($this->token_symbol));
                     // For each of the purchased items quantity we charge 1 token.
