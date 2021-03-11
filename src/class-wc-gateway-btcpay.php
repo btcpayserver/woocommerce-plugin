@@ -360,7 +360,16 @@ function woocommerce_btcpay_init()
                   'description' => __('You can configure additional tokens here, one per line. e.g. "HAT;Hat Token;promotion" See documentation for details. Each one will be available as their own payment method.', 'btcpay'),
                   'default'     => '',
                   'desc_tip'    => true,
-                ),
+               ),
+			   'additional_tokens_limit_payment' => array(
+					'title'       => __('Additional tokens: Enforce payment tokens', 'btcpay'),
+					'type'        => 'checkbox',
+					'label'       => __('Limit default payment methods to listed "payment" tokens.', 'btcpay'),
+					'default'     => 'no',
+					'value'       => 'yes',
+					'description' => __('This will override the default btcpay payment method (defaults to all supported by BTCPay Server) and enforce to tokens of type "payment". This is useful if you want full control on what is available on BTCPay Server payment page.', 'btcpay'),
+					'desc_tip'    => true,
+			   ),
                'support_details' => array(
                     'title'       => __( 'Plugin & Support Information', 'btcpay' ),
                     'type'        => 'title',
@@ -802,6 +811,15 @@ function woocommerce_btcpay_init()
             if (!empty($this->token_symbol)) {
                 $invoice->setPaymentCurrencies(array($this->token_symbol));
             }
+
+			// For the default BTCPay payment method we enforce payment tokens (if enabled).
+			if ($this->id === 'btcpay') {
+				$limit_payment_methods = $this->get_option('additional_tokens_limit_payment');
+				$payment_tokens = btcpay_get_additional_tokens('payment');
+				if ($payment_tokens && $limit_payment_methods === 'yes') {
+					$invoice->setPaymentCurrencies(array_column($payment_tokens, 'symbol'));
+				}
+			}
 
             // Add a priced item to the invoice
             $item = new \Bitpay\Item();
@@ -1326,7 +1344,7 @@ function woocommerce_btcpay_init()
         // Add main BTCPay payment method class.
         $methods[] = 'WC_Gateway_BtcPay';
 
-        // Add additional tokens as speparate payment methods.
+        // Add additional tokens as separate payment methods.
         if ($additional_tokens = btcpay_get_additional_tokens()) {
             foreach ($additional_tokens as $token) {
               $methods[] = $token['classname'];
@@ -1339,24 +1357,32 @@ function woocommerce_btcpay_init()
   /**
    * Check and return any configured additional tokens.
    *
+   * @param string $mode
+   *   Can be 'payment' or 'promotion'.
+   *
    * @return array|null
    */
-    function btcpay_get_additional_tokens()
+    function btcpay_get_additional_tokens($mode = null)
     {
-        $btcpay_settings = get_option('woocommerce_btcpay_settings', NULL);
+        $btcpay_settings = get_option('woocommerce_btcpay_settings', null);
 
         if (!empty($btcpay_settings['additional_tokens'])) {
             $tokens = [];
             $tokens_data = str_getcsv($btcpay_settings['additional_tokens'], "\n");
             foreach ($tokens_data as $row) {
-              $token_config = str_getcsv($row, ";");
-              // Todo: check/make sure token config is complete.
-              $token['symbol'] = sanitize_text_field($token_config[0]);
-              $token['name'] = sanitize_text_field($token_config[1]);
-              $token['mode'] = sanitize_text_field($token_config[2]);
-              $token['icon'] = sanitize_text_field($token_config[3]);
-              $token['classname'] = "WC_Gateway_BtcPay_{$token['symbol']}";
-              $tokens[] = $token;
+			    $token_config = str_getcsv($row, ";");
+			    // If mode is set, only return matching tokens.
+			    if (isset($mode) && $mode !== $token_config[2]) {
+				    continue;
+			    }
+
+			    // Todo: check/make sure token config is complete.
+			    $token['symbol'] = sanitize_text_field($token_config[0]);
+			    $token['name'] = sanitize_text_field($token_config[1]);
+			    $token['mode'] = sanitize_text_field($token_config[2]);
+			    $token['icon'] = sanitize_text_field($token_config[3]);
+			    $token['classname'] = "WC_Gateway_BtcPay_{$token['symbol']}";
+			    $tokens[] = $token;
             }
 
             return !empty($tokens) ? $tokens : null;
