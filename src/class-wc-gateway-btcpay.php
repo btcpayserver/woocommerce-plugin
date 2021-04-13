@@ -232,6 +232,9 @@ function woocommerce_btcpay_init()
                   $classcode .=   "\$this->icon = '{$token['icon']}';";
                   $classcode .=   "\$this->init_settings();";
                   $classcode .=  "}";
+				  $classcode .=  "public function ipn_callback() { ";
+				  $classcode .=    "return;";
+				  $classcode .=  "}";
                   $classcode .= "}";
 
                   // Initialize it on the fly.
