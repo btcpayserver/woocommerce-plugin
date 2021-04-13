@@ -208,41 +208,40 @@ function woocommerce_btcpay_init()
             $this->is_initialized = true;
         }
 
-      /**
-       * Initializes additional tokens if any configured.
-       */
-        public function initialize_additional_tokens()
-        {
-          if ($additional_tokens = btcpay_get_additional_tokens()) {
-              foreach ($additional_tokens as $token) {
+		/**
+		 * Initializes additional tokens if any configured.
+		 */
+		public function initialize_additional_tokens() {
+			if ( $additional_tokens = btcpay_get_additional_tokens() ) {
+				foreach ( $additional_tokens as $token ) {
 
-                if (!class_exists($token['classname'])) {
-                  // Build the class structure.
-                  $classcode = "class {$token['classname']} extends WC_Gateway_BtcPay { ";
-                  $classcode .= "public \$token_mode;";
-                  $classcode .= "public \$token_symbol;";
-                  $classcode .= "public function __construct() { ";
-                  $classcode .=   "parent::__construct();";
-                  $classcode .=   "\$this->id = 'btcpay_{$token['symbol']}';";
-                  $classcode .=   "\$this->method_title = 'BTCPay Asset: {$token['symbol']}';";
-                  $classcode .=   "\$this->method_description = 'This is an additional asset managed by BTCPay.';";
-                  $classcode .=   "\$this->title = '{$token['name']}';";
-                  $classcode .=   "\$this->token_mode = '{$token['mode']}';";
-                  $classcode .=   "\$this->token_symbol = '{$token['symbol']}';";
-                  $classcode .=   "\$this->icon = '{$token['icon']}';";
-                  $classcode .=   "\$this->init_settings();";
-                  $classcode .=  "}";
-				  $classcode .=  "public function ipn_callback() { ";
-				  $classcode .=    "return;";
-				  $classcode .=  "}";
-                  $classcode .= "}";
+					if ( ! class_exists( $token['classname'] ) ) {
+						// Build the class structure.
+						$classcode = "class {$token['classname']} extends WC_Gateway_BtcPay { ";
+						$classcode .= "public \$token_mode;";
+						$classcode .= "public \$token_symbol;";
+						$classcode .= "public function __construct() { ";
+						$classcode .= "parent::__construct();";
+						$classcode .= "\$this->id = 'btcpay_{$token['symbol']}';";
+						$classcode .= "\$this->method_title = 'BTCPay Asset: {$token['symbol']}';";
+						$classcode .= "\$this->method_description = 'This is an additional asset managed by BTCPay.';";
+						$classcode .= "\$this->title = '{$token['name']}';";
+						$classcode .= "\$this->token_mode = '{$token['mode']}';";
+						$classcode .= "\$this->token_symbol = '{$token['symbol']}';";
+						$classcode .= "\$this->icon = '{$token['icon']}';";
+						$classcode .= "\$this->init_settings();";
+						$classcode .= "}";
+						$classcode .= "public function ipn_callback() { ";
+						$classcode .= "return;";
+						$classcode .= "}";
+						$classcode .= "}";
 
-                  // Initialize it on the fly.
-                  eval($classcode);
-                }
-              }
-          }
-        }
+						// Initialize it on the fly.
+						eval( $classcode );
+					}
+				}
+			}
+		}
 
         public function is_btcpay_payment_method($order)
         {
