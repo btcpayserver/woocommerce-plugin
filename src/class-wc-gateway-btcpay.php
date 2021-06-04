@@ -201,21 +201,58 @@ function woocommerce_btcpay_init()
                 add_action('woocommerce_api_wc_gateway_btcpay', array($this, 'ipn_callback'));
             }
 
+            // Additional token initialization.
+            if (btcpay_get_additional_tokens()) {
+              $this->initialize_additional_tokens();
+            }
             $this->is_initialized = true;
         }
+
+		/**
+		 * Initializes additional tokens if any configured.
+		 */
+		public function initialize_additional_tokens() {
+			if ( $additional_tokens = btcpay_get_additional_tokens() ) {
+				foreach ( $additional_tokens as $token ) {
+
+					if ( ! class_exists( $token['classname'] ) ) {
+						// Build the class structure.
+						$classcode = "class {$token['classname']} extends WC_Gateway_BtcPay { ";
+						$classcode .= "public \$token_mode;";
+						$classcode .= "public \$token_symbol;";
+						$classcode .= "public function __construct() { ";
+						$classcode .= "parent::__construct();";
+						$classcode .= "\$this->id = 'btcpay_{$token['symbol']}';";
+						$classcode .= "\$this->method_title = 'BTCPay Asset: {$token['symbol']}';";
+						$classcode .= "\$this->method_description = 'This is an additional asset managed by BTCPay.';";
+						$classcode .= "\$this->title = '{$token['name']}';";
+						$classcode .= "\$this->token_mode = '{$token['mode']}';";
+						$classcode .= "\$this->token_symbol = '{$token['symbol']}';";
+						$classcode .= "\$this->icon = '{$token['icon']}';";
+						$classcode .= "\$this->init_settings();";
+						$classcode .= "}";
+						$classcode .= "public function ipn_callback() { ";
+						$classcode .= "return;";
+						$classcode .= "}";
+						$classcode .= "}";
+
+						// Initialize it on the fly.
+						eval( $classcode );
+					}
+				}
+			}
+		}
 
         public function is_btcpay_payment_method($order)
         {
             $actualMethod = '';
-            if(method_exists($order, 'get_payment_method'))
-            {
+            if (method_exists($order, 'get_payment_method')) {
                 $actualMethod = $order->get_payment_method();
-            }
-            else
-            {
+            } else {
                 $actualMethod = get_post_meta( $order->get_id(), '_payment_method', true );
             }
-            return $actualMethod === 'btcpay';
+
+            return (false !== strpos($actualMethod, 'btcpay'));
         }
 
         public function __destruct()
@@ -268,17 +305,17 @@ function woocommerce_btcpay_init()
                     'default'     => __('Bitcoin', 'btcpay'),
                     'desc_tip'    => true,
                ),
-                'description' => array(
+               'description' => array(
                     'title'       => __('Customer Message', 'btcpay'),
                     'type'        => 'textarea',
                     'description' => __('Message to explain how the customer will be paying for the purchase.', 'btcpay'),
                     'default'     => 'You will be redirected to BTCPay to complete your purchase.',
                     'desc_tip'    => true,
                ),
-                'api_token' => array(
+               'api_token' => array(
                     'type'        => 'api_token'
                ),
-                'transaction_speed' => array(
+               'transaction_speed' => array(
                     'title'       => __('Invoice pass to "confirmed" state after', 'btcpay'),
                     'type'        => 'select',
                     'description' => 'An invoice becomes confirmed after the payment has...',
@@ -292,10 +329,10 @@ function woocommerce_btcpay_init()
                     'default' => 'default',
                     'desc_tip'    => true,
                ),
-                'order_states' => array(
+               'order_states' => array(
                     'type' => 'order_states'
                ),
-                'debug' => array(
+               'debug' => array(
                     'title'       => __('Debug Log', 'btcpay'),
                     'type'        => 'checkbox',
                     'label'       => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'btcpay'), $logs_href),
@@ -303,7 +340,7 @@ function woocommerce_btcpay_init()
                     'description' => sprintf(__('Log BTCPay events, such as IPN requests, inside <code>%s</code>', 'btcpay'), wc_get_log_file_path('btcpay')),
                     'desc_tip'    => true,
                ),
-                'notification_url' => array(
+               'notification_url' => array(
                     'title'       => __('Notification URL', 'btcpay'),
                     'type'        => 'url',
                     'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
@@ -311,7 +348,7 @@ function woocommerce_btcpay_init()
                     'placeholder' => WC()->api_request_url('WC_Gateway_BtcPay'),
                     'desc_tip'    => true,
                ),
-                'redirect_url' => array(
+               'redirect_url' => array(
                     'title'       => __('Redirect URL', 'btcpay'),
                     'type'        => 'url',
                     'description' => __('After paying the BTCPay invoice, users will be redirected back to this URL', 'btcpay'),
@@ -319,7 +356,23 @@ function woocommerce_btcpay_init()
                     'placeholder' => $this->get_return_url(),
                     'desc_tip'    => true,
                ),
-                'support_details' => array(
+               'additional_tokens' => array(
+                  'title'       => __('Additional token configuration', 'btcpay'),
+                  'type'        => 'textarea',
+                  'description' => __('You can configure additional tokens here, one per line. e.g. "HAT;Hat Token;promotion" See documentation for details. Each one will be available as their own payment method.', 'btcpay'),
+                  'default'     => '',
+                  'desc_tip'    => true,
+               ),
+			   'additional_tokens_limit_payment' => array(
+					'title'       => __('Additional tokens: Enforce payment tokens', 'btcpay'),
+					'type'        => 'checkbox',
+					'label'       => __('Limit default payment methods to listed "payment" tokens.', 'btcpay'),
+					'default'     => 'no',
+					'value'       => 'yes',
+					'description' => __('This will override the default btcpay payment method (defaults to all supported by BTCPay Server) and enforce to tokens of type "payment". This is useful if you want full control on what is available on BTCPay Server payment page.', 'btcpay'),
+					'desc_tip'    => true,
+			   ),
+               'support_details' => array(
                     'title'       => __( 'Plugin & Support Information', 'btcpay' ),
                     'type'        => 'title',
                     'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our chat https://chat.btcpayserver.org. Thank you for using BTCPay!', 'btcpay'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
@@ -756,6 +809,20 @@ function woocommerce_btcpay_init()
             $invoice->setFullNotifications(true);
             $invoice->setExtendedNotifications(true);
 
+            // Handle additional tokens and enforce them for invoice payment.
+            if (!empty($this->token_symbol)) {
+                $invoice->setPaymentCurrencies(array($this->token_symbol));
+            }
+
+			// For the default BTCPay payment method we enforce payment tokens (if enabled).
+			if ($this->id === 'btcpay') {
+				$limit_payment_methods = $this->get_option('additional_tokens_limit_payment');
+				$payment_tokens = btcpay_get_additional_tokens('payment');
+				if ($payment_tokens && $limit_payment_methods === 'yes') {
+					$invoice->setPaymentCurrencies(array_column($payment_tokens, 'symbol'));
+				}
+			}
+
             // Add a priced item to the invoice
             $item = new \Bitpay\Item();
 
@@ -767,11 +834,24 @@ function woocommerce_btcpay_init()
             }
 
             $order_total = $order->calculate_totals();
-            if (true === isset($order_total) && false === empty($order_total)) {
+            if (!empty($order_total)) {
                 $order_total = (float)$order_total;
-                if($order_total == 0 || $order_total === '0')
-                    throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float ". $order_total);
-                $item->setPrice($order_total);
+                if (!is_float($order_total)) {
+                  throw new \Bitpay\Client\ArgumentException("Price must be formatted as a float ". $order_total);
+                }
+
+                // For promotion tokens we need to set the price to 1 (per item quantity).
+                // The idea is that 1 token is like a voucher.
+                if (!empty($this->token_symbol) && $this->token_mode === 'promotion') {
+                    // Set the invoice currency to the promotion token.
+                    $invoice->setCurrency(new \Bitpay\CurrencyUnrestricted($this->token_symbol));
+                    // For each of the purchased items quantity we charge 1 token.
+                    $total_quantity = (float) $this->get_order_total_item_quantity($order);
+                    $item->setPrice($total_quantity);
+                } else {
+                    $item->setPrice($order_total);
+                }
+
                 $taxIncluded = $order->get_cart_tax();
                 $item->setTaxIncluded($taxIncluded);
             } else {
@@ -1243,16 +1323,74 @@ function woocommerce_btcpay_init()
                 wp_die('Invalid server fingerprint generated');
             }
 
+        }
+
+      /**
+       * Return the total quantity of the whole order for all line items.
+       */
+        public function get_order_total_item_quantity(WC_Order $order)
+        {
+            $total = 0;
+            foreach ($order->get_items() as $item_id => $item ) {
+                $total += $item->get_quantity();
+            }
+
+          return $total;
+        }
     }
-}
     /**
-    * Add BitPay Payment Gateway to WooCommerce
+    * Add BTCPay Payment Gateways to WooCommerce
     **/
     function wc_add_btcpay($methods)
     {
+        // Add main BTCPay payment method class.
         $methods[] = 'WC_Gateway_BtcPay';
 
+        // Add additional tokens as separate payment methods.
+        if ($additional_tokens = btcpay_get_additional_tokens()) {
+            foreach ($additional_tokens as $token) {
+              $methods[] = $token['classname'];
+            }
+        }
+
         return $methods;
+    }
+
+  /**
+   * Check and return any configured additional tokens.
+   *
+   * @param string $mode
+   *   Can be 'payment' or 'promotion'.
+   *
+   * @return array|null
+   */
+    function btcpay_get_additional_tokens($mode = null)
+    {
+        $btcpay_settings = get_option('woocommerce_btcpay_settings', null);
+
+        if (!empty($btcpay_settings['additional_tokens'])) {
+            $tokens = [];
+            $tokens_data = str_getcsv($btcpay_settings['additional_tokens'], "\n");
+            foreach ($tokens_data as $row) {
+			    $token_config = str_getcsv($row, ";");
+			    // If mode is set, only return matching tokens.
+			    if (isset($mode) && $mode !== $token_config[2]) {
+				    continue;
+			    }
+
+			    // Todo: check/make sure token config is complete.
+			    $token['symbol'] = sanitize_text_field($token_config[0]);
+			    $token['name'] = sanitize_text_field($token_config[1]);
+			    $token['mode'] = sanitize_text_field($token_config[2]);
+			    $token['icon'] = sanitize_text_field($token_config[3]);
+			    $token['classname'] = "WC_Gateway_BtcPay_{$token['symbol']}";
+			    $tokens[] = $token;
+            }
+
+            return !empty($tokens) ? $tokens : null;
+        }
+
+        return null;
     }
 
     add_filter('woocommerce_payment_gateways', 'wc_add_btcpay');
