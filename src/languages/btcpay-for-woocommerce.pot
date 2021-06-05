@@ -1,0 +1,147 @@
+# Copyright (C) 2021 BTCPay
+# This file is distributed under the Copyright 2011-2018 BTCPay & BitPay Inc., MIT License.
+msgid ""
+msgstr ""
+"Project-Id-Version: BTCPay for WooCommerce 3.0.12\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/src\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-06-05T16:53:37+02:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.5.0\n"
+"X-Domain: btcpay-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+msgid "BTCPay for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/plugins/btcpay-for-woocommerce"
+msgstr ""
+
+#. Description of the plugin
+msgid "Enable your WooCommerce store to accept Bitcoin with BTCPay."
+msgstr ""
+
+#. Author of the plugin
+msgid "BTCPay"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://github.com/btcpayserver"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:107
+msgid "Proceed to BTCPay"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:317
+msgid "Title"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:319
+msgid "Controls the name of this payment method as displayed to the customer during checkout."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:320
+msgid "Bitcoin"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:324
+msgid "Customer Message"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:326
+msgid "Message to explain how the customer will be paying for the purchase."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:334
+msgid "Invoice pass to \"confirmed\" state after"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:351
+msgid "Debug Log"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:353
+msgid "Enable logging <a href=\"%s\" class=\"button\">View Logs</a>"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:355
+msgid "Log BTCPay events, such as IPN requests, inside <code>%s</code>"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:359
+msgid "Notification URL"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:361
+msgid "BTCPay will send IPNs for orders to this URL with the BTCPay invoice data"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:367
+msgid "Redirect URL"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:369
+msgid "After paying the BTCPay invoice, users will be redirected back to this URL"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:375
+msgid "Additional token configuration"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:377
+msgid "You can configure additional tokens here, one per line. e.g. \"HAT;Hat Token;promotion\" See documentation for details. Each one will be available as their own payment method."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:382
+msgid "Additional tokens: Enforce payment tokens"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:384
+msgid "Limit default payment methods to listed \"payment\" tokens."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:387
+msgid "This will override the default btcpay payment method (defaults to all supported by BTCPay Server) and enforce to tokens of type \"payment\". This is useful if you want full control on what is available on BTCPay Server payment page."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:393
+msgid "This plugin version is %s and your PHP version is %s. If you need assistance, please come on our chat https://chat.btcpayserver.org. Thank you for using BTCPay!"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1173
+msgid "BTCPay invoice paid. Awaiting network confirmation and payment completed status."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1182
+msgid "BTCPay invoice confirmed. Awaiting payment completed status."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1194
+msgid "BTCPay invoice payment completed. Payment credited to your merchant account."
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1204
+msgid "Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1211
+msgid "Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1230
+msgid "A payment has arrived late for this order!"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1231
+msgid "A payment has been received after expiration"
+msgstr ""
+
+#: class-wc-gateway-btcpay.php:1238
+msgid "The invoice has expired while a partial payment has been sent"
+msgstr ""
