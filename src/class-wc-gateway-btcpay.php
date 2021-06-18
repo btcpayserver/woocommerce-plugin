@@ -5,13 +5,16 @@
     Plugin URI:  https://wordpress.org/plugins/btcpay-for-woocommerce
     Description: Enable your WooCommerce store to accept Bitcoin with BTCPay.
     Author:      BTCPay
-    Text Domain: BTCPay
     Author URI:  https://github.com/btcpayserver
 
     Version:           3.0.12
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
+
+    Text Domain: btcpay-for-woocommerce
+    Domain Path: languages
+
  */
 
 
@@ -48,8 +51,20 @@ if (false === class_exists('Bitpay\Token')) {
     include_once(__DIR__ . '/lib/Bitpay/Token.php');
 }
 
+/**
+ * Load translations
+ */
+function btcpay_load_textdomain() {
+    $slug = 'btcpay-for-woocommerce';
+    $locale = get_locale();
+    $locale = apply_filters('plugin_locale', $locale, $slug);
+    load_textdomain($slug, WP_LANG_DIR . '/plugins/' . $slug . '-' . $locale . '.mo' );
+    load_plugin_textdomain($slug, false, dirname(plugin_basename( __FILE__ )) . '/languages/');
+}
+
 // Ensures WooCommerce is loaded before initializing the BitPay plugin
 add_action('plugins_loaded', 'woocommerce_btcpay_init', 0);
+add_action('plugins_loaded', 'btcpay_load_textdomain');
 add_action( 'admin_notices', 'fx_admin_notice_show_migration_message' );
 register_activation_hook(__FILE__, 'woocommerce_btcpay_activate');
 
@@ -89,7 +104,7 @@ function woocommerce_btcpay_init()
             $this->id                 = 'btcpay';
             $this->icon               = plugin_dir_url(__FILE__).'assets/img/icon.png';
             $this->has_fields         = false;
-            $this->order_button_text  = __('Proceed to BTCPay', 'btcpay');
+            $this->order_button_text  = __('Proceed to BTCPay', 'btcpay-for-woocommerce');
             $this->method_title       = 'BTCPay';
             $this->method_description = 'BTCPay allows you to accept bitcoin payments on your WooCommerce store.';
 
@@ -299,16 +314,16 @@ function woocommerce_btcpay_init()
 
             $this->form_fields = array(
                 'title' => array(
-                    'title'       => __('Title', 'btcpay'),
+                    'title'       => __('Title', 'btcpay-for-woocommerce'),
                     'type'        => 'text',
-                    'description' => __('Controls the name of this payment method as displayed to the customer during checkout.', 'btcpay'),
-                    'default'     => __('Bitcoin', 'btcpay'),
+                    'description' => __('Controls the name of this payment method as displayed to the customer during checkout.', 'btcpay-for-woocommerce'),
+                    'default'     => __('Bitcoin', 'btcpay-for-woocommerce'),
                     'desc_tip'    => true,
                ),
                'description' => array(
-                    'title'       => __('Customer Message', 'btcpay'),
+                    'title'       => __('Customer Message', 'btcpay-for-woocommerce'),
                     'type'        => 'textarea',
-                    'description' => __('Message to explain how the customer will be paying for the purchase.', 'btcpay'),
+                    'description' => __('Message to explain how the customer will be paying for the purchase.', 'btcpay-for-woocommerce'),
                     'default'     => 'You will be redirected to BTCPay to complete your purchase.',
                     'desc_tip'    => true,
                ),
@@ -316,7 +331,7 @@ function woocommerce_btcpay_init()
                     'type'        => 'api_token'
                ),
                'transaction_speed' => array(
-                    'title'       => __('Invoice pass to "confirmed" state after', 'btcpay'),
+                    'title'       => __('Invoice pass to "confirmed" state after', 'btcpay-for-woocommerce'),
                     'type'        => 'select',
                     'description' => 'An invoice becomes confirmed after the payment has...',
                     'options'     => array(
@@ -333,49 +348,49 @@ function woocommerce_btcpay_init()
                     'type' => 'order_states'
                ),
                'debug' => array(
-                    'title'       => __('Debug Log', 'btcpay'),
+                    'title'       => __('Debug Log', 'btcpay-for-woocommerce'),
                     'type'        => 'checkbox',
-                    'label'       => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'btcpay'), $logs_href),
+                    'label'       => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'btcpay-for-woocommerce'), $logs_href),
                     'default'     => 'no',
-                    'description' => sprintf(__('Log BTCPay events, such as IPN requests, inside <code>%s</code>', 'btcpay'), wc_get_log_file_path('btcpay')),
+                    'description' => sprintf(__('Log BTCPay events, such as IPN requests, inside <code>%s</code>', 'btcpay-for-woocommerce'), wc_get_log_file_path('btcpay')),
                     'desc_tip'    => true,
                ),
                'notification_url' => array(
-                    'title'       => __('Notification URL', 'btcpay'),
+                    'title'       => __('Notification URL', 'btcpay-for-woocommerce'),
                     'type'        => 'url',
-                    'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay'),
+                    'description' => __('BTCPay will send IPNs for orders to this URL with the BTCPay invoice data', 'btcpay-for-woocommerce'),
                     'default'     => '',
                     'placeholder' => WC()->api_request_url('WC_Gateway_BtcPay'),
                     'desc_tip'    => true,
                ),
                'redirect_url' => array(
-                    'title'       => __('Redirect URL', 'btcpay'),
+                    'title'       => __('Redirect URL', 'btcpay-for-woocommerce'),
                     'type'        => 'url',
-                    'description' => __('After paying the BTCPay invoice, users will be redirected back to this URL', 'btcpay'),
+                    'description' => __('After paying the BTCPay invoice, users will be redirected back to this URL', 'btcpay-for-woocommerce'),
                     'default'     => '',
                     'placeholder' => $this->get_return_url(),
                     'desc_tip'    => true,
                ),
                'additional_tokens' => array(
-                  'title'       => __('Additional token configuration', 'btcpay'),
+                  'title'       => __('Additional token configuration', 'btcpay-for-woocommerce'),
                   'type'        => 'textarea',
-                  'description' => __('You can configure additional tokens here, one per line. e.g. "HAT;Hat Token;promotion" See documentation for details. Each one will be available as their own payment method.', 'btcpay'),
+                  'description' => __('You can configure additional tokens here, one per line. e.g. "HAT;Hat Token;promotion" See documentation for details. Each one will be available as their own payment method.', 'btcpay-for-woocommerce'),
                   'default'     => '',
                   'desc_tip'    => true,
                ),
 			   'additional_tokens_limit_payment' => array(
-					'title'       => __('Additional tokens: Enforce payment tokens', 'btcpay'),
+					'title'       => __('Additional tokens: Enforce payment tokens', 'btcpay-for-woocommerce'),
 					'type'        => 'checkbox',
-					'label'       => __('Limit default payment methods to listed "payment" tokens.', 'btcpay'),
+					'label'       => __('Limit default payment methods to listed "payment" tokens.', 'btcpay-for-woocommerce'),
 					'default'     => 'no',
 					'value'       => 'yes',
-					'description' => __('This will override the default btcpay payment method (defaults to all supported by BTCPay Server) and enforce to tokens of type "payment". This is useful if you want full control on what is available on BTCPay Server payment page.', 'btcpay'),
+					'description' => __('This will override the default btcpay payment method (defaults to all supported by BTCPay Server) and enforce to tokens of type "payment". This is useful if you want full control on what is available on BTCPay Server payment page.', 'btcpay-for-woocommerce'),
 					'desc_tip'    => true,
 			   ),
                'support_details' => array(
                     'title'       => __( 'Plugin & Support Information', 'btcpay' ),
                     'type'        => 'title',
-                    'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our chat https://chat.btcpayserver.org. Thank you for using BTCPay!', 'btcpay'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
+                    'description' => sprintf(__('This plugin version is %s and your PHP version is %s. If you need assistance, please come on our chat https://chat.btcpayserver.org. Thank you for using BTCPay!', 'btcpay-for-woocommerce'), constant("BTCPAY_VERSION"), PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION),
                ),
            );
 
@@ -1155,7 +1170,7 @@ function woocommerce_btcpay_init()
                         $this->log('    [Info] This order has not been updated yet so setting new status...');
                         if($paid_status !== 'BTCPAY_IGNORE')
                             $order->update_status($paid_status);
-                        $order->add_order_note(__('BTCPay invoice paid. Awaiting network confirmation and payment completed status.', 'btcpay'));
+                        $order->add_order_note(__('BTCPay invoice paid. Awaiting network confirmation and payment completed status.', 'btcpay-for-woocommerce'));
                         break;
 
                     // The "confirmed" status is sent when the payment is
@@ -1164,7 +1179,7 @@ function woocommerce_btcpay_init()
                         $this->log('    [Info] This order has not been updated yet so setting confirmed status...');
                         if($confirmed_status !== 'BTCPAY_IGNORE')
                             $order->update_status($confirmed_status);
-                        $order->add_order_note(__('BTCPay invoice confirmed. Awaiting payment completed status.', 'btcpay'));
+                        $order->add_order_note(__('BTCPay invoice confirmed. Awaiting payment completed status.', 'btcpay-for-woocommerce'));
                         break;
 
                     // The complete status is when the Bitcoin network
@@ -1176,7 +1191,7 @@ function woocommerce_btcpay_init()
                         $order->payment_complete();
                         if($complete_status !== 'BTCPAY_IGNORE')
                             $order->update_status($complete_status);
-                        $order->add_order_note(__('BTCPay invoice payment completed. Payment credited to your merchant account.', 'btcpay'));
+                        $order->add_order_note(__('BTCPay invoice payment completed. Payment credited to your merchant account.', 'btcpay-for-woocommerce'));
                         break;
 
                     // This order is invalid for some reason.
@@ -1186,14 +1201,14 @@ function woocommerce_btcpay_init()
 
                         $this->log('    [Info] This order has a problem so setting "invalid" status...');
                         if($invalid_status !== 'BTCPAY_IGNORE')
-                            $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!', 'btcpay'));
+                            $order->update_status($invalid_status, __('Bitcoin payment is invalid for this order! The payment was not confirmed by the network within on time. Do not ship the product for this order!', 'btcpay-for-woocommerce'));
                         break;
 
                     case 'expired':
 
                         $this->log('    [Info] The invoice is in the "expired" status...');
                         if($expired_status !== 'BTCPAY_IGNORE')
-                            $order->update_status($expired_status, __('Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!', 'btcpay'));
+                            $order->update_status($expired_status, __('Bitcoin payment has expired for this order! The payment was not broadcasted before its expiration. Do not ship the product for this order!', 'btcpay-for-woocommerce'));
                         break;
 
                     // There was an unknown message received.
@@ -1212,15 +1227,15 @@ function woocommerce_btcpay_init()
                 {
                     $this->log('    [Info] The invoice has received a payment after expiration...');
                     if($event_invoice_paidAfterExpiration !== 'BTCPAY_IGNORE')
-                        $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'btcpay'));
-                    $order->add_order_note(__('A payment has been received after expiration', 'btcpay'));
+                        $order->update_status($event_invoice_paidAfterExpiration , __('A payment has arrived late for this order!', 'btcpay-for-woocommerce'));
+                    $order->add_order_note(__('A payment has been received after expiration', 'btcpay-for-woocommerce'));
                 }
                 if ($event['code'] === 2000)
                 {
                     $this->log('    [Info] The invoice has expired while a partial payment has been sent...');
                     if($event_invoice_expiredPaidPartial !== 'BTCPAY_IGNORE')
                         $order->update_status($event_invoice_expiredPaidPartial , __('The invoice has expired while a partial payment has been sent'));
-                    $order->add_order_note(__('The invoice has expired while a partial payment has been sent', 'btcpay'));
+                    $order->add_order_note(__('The invoice has expired while a partial payment has been sent', 'btcpay-for-woocommerce'));
                 }
             }
             $this->log('    [Info] Leaving ipn_callback()...');
