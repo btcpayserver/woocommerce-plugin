@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.0.12
 - make plugin able to expand BTCPay payment methods as individual woocommerce payment methods (see https://docs.btcpayserver.org/FAQ/FAQ-Integrations/#how-to-configure-additional-token-support)  @ndeet
+- allow plugin localization @janhn
 
 ## 3.0.12
 - Make the plugin works better with custom order number @dennisreimann @ndeet
