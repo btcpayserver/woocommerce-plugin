@@ -55,9 +55,9 @@ $ ./node_modules/.bin/grunt build
 
 ### WooCommerce Support
 
-* [Homepage](http://www.woothemes.com/woocommerce/)
-* [Documentation](http://docs.woothemes.com)
-* [Support](https://support.woothemes.com)
+* [Homepage](https://woocommerce.com/)
+* [Documentation](https://docs.woocommerce.com)
+* [Support](https://wordpress.org/support/plugin/woocommerce/)
 
 ## Troubleshooting
 
