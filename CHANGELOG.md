@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.14
+
+- Fix: the plugin would to work on some domains, due to a https error @ndeet
+
 ## 3.0.13
 - make plugin able to expand BTCPay payment methods as individual woocommerce payment methods (see https://docs.btcpayserver.org/FAQ/FAQ-Integrations/#how-to-configure-additional-token-support)  @ndeet
 - allow plugin localization @janhn
