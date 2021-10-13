@@ -2,7 +2,7 @@
 Contributors: Kukks,NicolasDorier,bitcoinshirt
 Tags: bitcoin,cryptocurrency,btcpay,BTCPay Server,btcpayserver, accept bitcoin,bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, Litecoin
 Requires at least: 3.9
-Tested up to: 5.5
+Tested up to: 5.8
 Requires PHP: 5.6
 Stable tag: master
 License: MIT
