@@ -7,7 +7,7 @@
     Author:      BTCPay
     Author URI:  https://github.com/btcpayserver
 
-    Version:           3.0.14
+    Version:           3.0.15
     License:           Copyright 2011-2018 BTCPay & BitPay Inc., MIT License
     License URI:       https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
     GitHub Plugin URI: https://github.com/btcpayserver/woocommerce-plugin
@@ -23,7 +23,7 @@ if (false === defined('ABSPATH')) {
     exit;
 }
 
-define("BTCPAY_VERSION", "3.0.14");
+define("BTCPAY_VERSION", "3.0.15");
 $autoloader_param = __DIR__ . '/lib/Bitpay/Autoloader.php';
 
 // Load up the BitPay library
@@ -287,7 +287,7 @@ function woocommerce_btcpay_init()
 
             // Ensure the currency is supported by BitPay
             try {
-                $currency = new \Bitpay\Currency(get_woocommerce_currency());
+                $currency = new \Bitpay\CurrencyUnrestricted(get_woocommerce_currency());
 
                 if (false === isset($currency) || true === empty($currency)) {
                     $this->log('    [Error] The BTCPay payment plugin was called to check if it was valid for use but could not instantiate a currency object.');
