@@ -45,13 +45,13 @@ $ ./node_modules/.bin/grunt build
 
 ## Support
 
-### BitPay Support
+### BTCPay Support
 
 * Last Version Tested: Wordpress 4.8.1 WooCommerce 3.1.2
 * [GitHub Issues](https://github.com/btcpayserver/woocommerce-plugin/issues)
   * Open an issue if you are having issues with this plugin.
 * [Support](https://docs.btcpayserver.org)
-  * BitPay merchant support documentation
+  * BTCPay merchant support documentation
 
 ### WooCommerce Support
 
@@ -64,7 +64,7 @@ $ ./node_modules/.bin/grunt build
 1. Ensure a valid SSL certificate is installed on your server. Also ensure your root CA cert is updated. If your CA cert is not current, you will see curl SSL verification errors.
 2. Verify that your web server is not blocking POSTs from servers it may not recognize. Double check this on your firewall as well, if one is being used.
 3. Check the version of this plugin against the official plugin repository to ensure you are using the latest version. Your issue might have been addressed in a newer version! See the [Releases](https://github.com/btcpayserver/woocommerce-plugin/releases) page for the latest.
-4. If all else fails, enable debug logging in the plugin options and send the log along with an email describing your issue **in detail** to support@bitpay.com
+4. If all else fails, enable debug logging in the plugin options and open an issue or contact the [community](https://github.com/btcpayserver/btcpayserver#-community).
 
 **TIP**: When contacting support it will help us is you provide:
 
@@ -86,8 +86,8 @@ Powershell:
 Linux:
 ```
 rm -rf dist/
-docker build -t woocommerce_bitpay .
-docker run -ti -v "`pwd`/dist:/app/dist" --rm woocommerce_bitpay
+docker build -t woocommerce_btcpay .
+docker run -ti -v "`pwd`/dist:/app/dist" --rm woocommerce_btcpay
 echo "Output available in `pwd`/dist/btcpay-for-woocommerce.zip"
 ```
 
@@ -114,7 +114,7 @@ Would you like to help with this project?  Great!  You don't have to be a develo
 
 If you *are* a developer wanting contribute an enhancement, bugfix or other patch to this project, please fork this repository and submit a pull request detailing your changes.  We review all PRs!
 
-This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [BitPay Labs](https://labs.bitpay.com).
+This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please get [in contact](https://github.com/btcpayserver/btcpayserver#-community).
 
 ## License
 
