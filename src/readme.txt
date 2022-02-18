@@ -2,7 +2,7 @@
 Contributors: Kukks,NicolasDorier,bitcoinshirt,ndeet
 Tags: bitcoin,cryptocurrency,btcpay,BTCPay Server,btcpayserver, accept bitcoin,bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, Litecoin
 Requires at least: 3.9
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
 Stable tag: master
 License: MIT
@@ -13,7 +13,7 @@ Now discontinued BTCPay Server plugin based on BitPay API. Please use the new [B
 == Description ==
 
 **NOTE:** 
-**This plugin, based on the legacy BitPay API and has been discontinued and will only receive security updates. We encourage you use our more modern and actively developed [BTCPay for WooCommerce V2](https://wordpress.org/plugins/btcpay-greenfield-for-woocommerce/) plugin.**    
+**This plugin, based on the legacy BitPay API and has been discontinued and will only receive security updates. While it will continue to work just fine it won't get any new features. We encourage you use our more modern and actively developed [BTCPay for WooCommerce V2](https://wordpress.org/plugins/btcpay-greenfield-for-woocommerce/) plugin that builds on top of the more feature rich BTCPay Server Greenfield API.**    
 
 BTCPay Server is a free and open-source cryptocurrency payment processor which allows you to receive payments in Bitcoin and altcoins directly, with no fees, transaction cost or a middleman.
 
