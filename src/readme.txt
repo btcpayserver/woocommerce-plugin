@@ -1,17 +1,19 @@
-=== BTCPay for WooCommerce ===
-Contributors: Kukks,NicolasDorier,bitcoinshirt
+=== BTCPay for WooCommerce (Legacy) ===
+Contributors: Kukks,NicolasDorier,bitcoinshirt,ndeet
 Tags: bitcoin,cryptocurrency,btcpay,BTCPay Server,btcpayserver, accept bitcoin,bitcoin plugin, bitcoin payment processor, bitcoin e-commerce, Lightning Network, Litecoin
 Requires at least: 3.9
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
 Stable tag: master
 License: MIT
 License URI: https://github.com/btcpayserver/woocommerce-plugin/blob/master/LICENSE
 
-BTCPay Server is a free and open-source cryptocurrency payment processor which allows you to receive payments in Bitcoin and altcoins directly, with no fees, transaction cost or a middleman.
-This plugin is a fork of  https://github.com/bitpay/woocommerce-plugin which in turn is a fork of https://github.com/jaafit/bitpayWoocommerce
+Now discontinued BTCPay Server plugin based on BitPay API. Please use the new [BTCPay for WooCommerce V2](https://wordpress.org/plugins/btcpay-greenfield-for-woocommerce/) instead.
 
 == Description ==
+
+**NOTE:** 
+**This plugin, based on the legacy BitPay API and has been discontinued and will only receive security updates. While it will continue to work just fine it won't get any new features. We encourage you use our more modern and actively developed [BTCPay for WooCommerce V2](https://wordpress.org/plugins/btcpay-greenfield-for-woocommerce/) plugin that builds on top of the more feature rich BTCPay Server Greenfield API.**    
 
 BTCPay Server is a free and open-source cryptocurrency payment processor which allows you to receive payments in Bitcoin and altcoins directly, with no fees, transaction cost or a middleman.
 
@@ -21,7 +23,7 @@ You can run BTCPay as a self-hosted solution on your own server, or use a third-
 
 The self-hosted solution allows you not only to attach an unlimited number of stores and use the Lightning Network but also become the payment processor for others.
 
-If you previosly used BitPay's plugin, you can very easily migrate and use BTCPay.
+If you previously used BitPay's plugin, you can very easily migrate and use BTCPay.
 
 This plugin is a fork of https://github.com/bitpay/woocommerce-plugin which in turn is a fork of https://github.com/jaafit/bitpayWoocommerce. We have modified the plugin in order to support alternative bitpay compliant servers and enhance usability and functionality. This plugin should be able to run alongside the original bitpay plugin. 
 
@@ -119,6 +121,10 @@ You'll find extensive documentation and answers to many of your questions on [do
 6. Example of the PoS app you can launch.
 
 == Changelog ==
+
+## 3.0.16
+
+- Updating readme with legacy notice and link to new V2 version.
 
 ## 3.0.15
 
