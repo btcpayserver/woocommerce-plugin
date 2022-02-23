@@ -1,3 +1,9 @@
+| :warning: WARNING          |
+|:---------------------------|
+| **This plugin, based on the legacy BitPay API and has been discontinued and will only receive security updates. While it will continue to work just fine it won't get any new features. We encourage you use our more modern and actively developed [BTCPay for WooCommerce V2](https://wordpress.org/plugins/btcpay-greenfield-for-woocommerce/) plugin that builds on top of the more feature rich BTCPay Server Greenfield API.**  |
+
+
+
 ## Quick Start Guide
 
 To get up and running with our plugin quickly, see the GUIDE here: https://docs.btcpayserver.org/integrations/woocommerce
